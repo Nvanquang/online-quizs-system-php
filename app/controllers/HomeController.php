@@ -4,22 +4,32 @@ class HomeController extends Controller
 {
     public function index()
     {
-
-        // Get users list for debug (optional)
-        $users = [];
+        // Get current user
+        $user = null;
         try {
-            $userRepo = new UserRepository();
-            $users = $userRepo->findAll([], 'created_at DESC', 20);
+            $auth = Auth::getInstance();
+            $user = $auth->user();
         } catch (Exception $e) {
-            // Database error
+            // User not logged in or error
         }
-        
+
+        $login_success = null;
+        if (isset($_SESSION['login_success'])) {
+            $login_success = $_SESSION['login_success'];
+            unset($_SESSION['login_success']);  // Xóa để tránh lặp nếu refresh
+        }
+
         echo $this->render('home/index', [
             'title' => 'Trang Chủ - Quiz System',
-            'users' => $users,
+            'login_success' => $login_success,
+            'user' => $user,
         ]);
     }
 
+    public function test()
+    {
+        echo $this->render('home/test', [
+            'title' => 'Test PHP Info',
+        ]);
+    }
 }
-
-

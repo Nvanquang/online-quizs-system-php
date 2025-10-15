@@ -22,14 +22,14 @@ class Model
     public function fill(array $data): void
     {
         // Assign primary key if present
-        if (isset($data[$this->primaryKey]) && property_exists($this, $this->primaryKey)) {
-            $this->{$this->primaryKey} = $this->applyCast($this->primaryKey, $data[$this->primaryKey]);
+        if (array_key_exists($this->primaryKey, $data)) {
+            $this->setAttribute($this->primaryKey, $data[$this->primaryKey]);
         }
 
         // Assign fillable fields only
         foreach ($this->fillable as $field) {
-            if (array_key_exists($field, $data) && property_exists($this, $field)) {
-                $this->{$field} = $this->applyCast($field, $data[$field]);
+            if (array_key_exists($field, $data)) {
+                $this->setAttribute($field, $data[$field]);
             }
         }
     }
@@ -50,9 +50,7 @@ class Model
         $keys = array_values(array_unique(array_merge([$this->primaryKey], $this->fillable)));
         $result = [];
         foreach ($keys as $key) {
-            if (property_exists($this, $key)) {
-                $result[$key] = $this->{$key};
-            }
+            $result[$key] = $this->getAttribute($key);
         }
         return $this->hideFields($result);
     }
@@ -91,7 +89,11 @@ class Model
     public function find($id)
     {
         $sql = "SELECT * FROM {$this->table} WHERE {$this->primaryKey} = ?";
-        return $this->db->fetch($sql, [$id]);
+        $row = $this->db->fetch($sql, [$id]);
+        if (!$row) {
+            return null;
+        }
+        return $this->mapRowToModel($row);
     }
 
     /**
@@ -119,7 +121,10 @@ class Model
             $sql .= " LIMIT {$limit}";
         }
 
-        return $this->db->fetchAll($sql, $params);
+        $rows = $this->db->fetchAll($sql, $params);
+        return array_map(function ($row) {
+            return $this->mapRowToModel($row);
+        }, $rows);
     }
 
     /**
@@ -141,27 +146,42 @@ class Model
 
         $sql .= " LIMIT 1";
 
-        return $this->db->fetch($sql, $params);
+        $row = $this->db->fetch($sql, $params);
+        if (!$row) {
+            return null;
+        }
+        return $this->mapRowToModel($row);
     }
 
     /**
      * Create new record
      */
-    public function create($data)
+    public function create(array $data): int
     {
-        // Filter data by fillable fields
+        // Filter data by fillable fields TRƯỚC TẤT CẢ (để validate chính xác)
         $data = $this->filterFillable($data);
 
-        // Validate (full create)
+        // Validate (full create) dựa trên data đã filter
         $errors = $this->validate($data, false);
         if (!empty($errors)) {
-            throw new InvalidArgumentException('Validation failed: ' . json_encode($errors, JSON_UNESCAPED_UNICODE));
+            throw new InvalidArgumentException('Validation thẩt bại: ' . json_encode($errors, JSON_UNESCAPED_UNICODE));
         }
 
-        // Add timestamps
+        
+        $originalFillable = $this->fillable;  // Lưu tạm để check
         if ($this->timestamps) {
-            $data['created_at'] = date('Y-m-d H:i:s');
-            $data['updated_at'] = date('Y-m-d H:i:s');
+            $now = date('Y-m-d H:i:s');
+            if (in_array('created_at', $originalFillable)) {
+                $data['created_at'] = $now;
+            }
+            if (in_array('updated_at', $originalFillable)) {
+                $data['updated_at'] = $now;
+            }
+        }
+
+        
+        if (empty($data)) {
+            throw new InvalidArgumentException('Không có dữ liệu');
         }
 
         $fields = array_keys($data);
@@ -171,36 +191,40 @@ class Model
         $sql = "INSERT INTO {$this->table} (" . implode(', ', $fields) . ") VALUES (" . implode(', ', $placeholders) . ")";
 
         $this->db->query($sql, $values);
-        return $this->db->lastInsertId();
+        return (int)$this->db->lastInsertId();
     }
 
     /**
      * Update record by ID
      */
-    public function update($id, $data)
+    public function update($id, array $data)
     {
-        // Filter data by fillable fields
+        // Filter data by fillable fields TRƯỚC
         $data = $this->filterFillable($data);
 
-        // Validate (partial update)
+        // Validate (partial update) dựa trên data đã filter
         $errors = $this->validate($data, true);
         if (!empty($errors)) {
-            throw new InvalidArgumentException('Validation failed: ' . json_encode($errors, JSON_UNESCAPED_UNICODE));
+            throw new InvalidArgumentException('Validation thất bại: ' . json_encode($errors, JSON_UNESCAPED_UNICODE));
         }
 
-        // Add updated timestamp
-        if ($this->timestamps) {
+        // Add updated timestamp AN TOÀN nếu có data để update
+        if (!empty($data) && $this->timestamps && in_array('updated_at', $this->fillable)) {
             $data['updated_at'] = date('Y-m-d H:i:s');
+        }
+
+        // Nếu không có field nào để update, skip
+        if (empty($data)) {
+            $sql = "UPDATE {$this->table} SET updated_at = updated_at WHERE {$this->primaryKey} = ?";  // Hoặc return early
+            return $this->db->query($sql, [$id]);
         }
 
         $fields = [];
         $values = [];
-
         foreach ($data as $field => $value) {
             $fields[] = "{$field} = ?";
             $values[] = $value;
         }
-
         $values[] = $id;
 
         $sql = "UPDATE {$this->table} SET " . implode(', ', $fields) . " WHERE {$this->primaryKey} = ?";
@@ -244,10 +268,10 @@ class Model
     public function paginate($page = 1, $perPage = 10, $conditions = [], $orderBy = null)
     {
         $offset = ($page - 1) * $perPage;
-        
+
         // Get total count
         $total = $this->count($conditions);
-        
+
         // Get records
         $sql = "SELECT * FROM {$this->table}";
         $params = [];
@@ -267,7 +291,10 @@ class Model
 
         $sql .= " LIMIT {$perPage} OFFSET {$offset}";
 
-        $data = $this->db->fetchAll($sql, $params);
+        $rows = $this->db->fetchAll($sql, $params);
+        $data = array_map(function ($row) {
+            return $this->mapRowToModel($row);
+        }, $rows);
 
         return [
             'data' => $data,
@@ -291,7 +318,10 @@ class Model
      */
     public function fetchAll($sql, $params = [])
     {
-        return $this->db->fetchAll($sql, $params);
+        $rows = $this->db->fetchAll($sql, $params);
+        return array_map(function ($row) {
+            return (object)$row;
+        }, $rows);
     }
 
     /**
@@ -299,7 +329,8 @@ class Model
      */
     public function fetch($sql, $params = [])
     {
-        return $this->db->fetch($sql, $params);
+        $row = $this->db->fetch($sql, $params);
+        return $row !== false && $row !== null ? (object)$row : null;
     }
 
     /**
@@ -324,6 +355,60 @@ class Model
         }
 
         return array_diff_key($data, array_flip($this->hidden));
+    }
+
+    /**
+     * Convert snake_case to StudlyCase (for setter/getter names)
+     */
+    protected function studly(string $value): string
+    {
+        return str_replace(' ', '', ucwords(str_replace('_', ' ', $value)));
+    }
+
+    /**
+     * Set attribute using setter when available, otherwise via reflection
+     */
+    protected function setAttribute(string $field, $value): void
+    {
+        $casted = $this->applyCast($field, $value);
+        $setter = 'set' . $this->studly($field);
+        if (method_exists($this, $setter)) {
+            $this->{$setter}($casted);
+            return;
+        }
+        if (property_exists($this, $field)) {
+            $ref = new ReflectionProperty($this, $field);
+            $ref->setAccessible(true);
+            $ref->setValue($this, $casted);
+        }
+    }
+
+    /**
+     * Get attribute using getter when available, otherwise via reflection
+     */
+    protected function getAttribute(string $field)
+    {
+        $getter = 'get' . $this->studly($field);
+        if (method_exists($this, $getter)) {
+            return $this->{$getter}();
+        }
+        if (property_exists($this, $field)) {
+            $ref = new ReflectionProperty($this, $field);
+            $ref->setAccessible(true);
+            return $ref->getValue($this);
+        }
+        return null;
+    }
+
+    /**
+     * Convert a DB row (assoc array) to a model object of the current class
+     */
+    protected function mapRowToModel(array $row)
+    {
+        $className = get_class($this);
+        $model = new $className();
+        $model->fromArray($row);
+        return $model;
     }
 
     /**
@@ -382,7 +467,7 @@ class Model
             if (isset($ruleMap['float']) && filter_var($value, FILTER_VALIDATE_FLOAT) === false) {
                 $errors[$field][] = 'Phải là số thực';
             }
-            if (isset($ruleMap['boolean']) && !in_array($value, [0,1,true,false,'0','1'], true)) {
+            if (isset($ruleMap['boolean']) && !in_array($value, [0, 1, true, false, '0', '1'], true)) {
                 $errors[$field][] = 'Phải là boolean';
             }
             if (isset($ruleMap['email']) && !filter_var($value, FILTER_VALIDATE_EMAIL)) {

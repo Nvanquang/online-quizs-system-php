@@ -30,7 +30,7 @@ class GameHistory extends Model
     private $avg_response_time;
     private $played_at;
 
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         parent::__construct();
         if ($data) { $this->fill($data); }

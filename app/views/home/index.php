@@ -1,3 +1,10 @@
+<script src="/public/js/notify.js"></script>
+<?php if (isset($login_success) && $login_success): ?>
+    <script>
+        notifySuccess(<?php echo json_encode($login_success); ?>);
+    </script>
+<?php endif; ?>
+
 <div class="row">
     <div class="col-12">
         <?php if (isset($user) && $user): ?>
@@ -111,36 +118,5 @@
             </div>
         </div>
 
-        <!-- Debug info (only show if users array exists) -->
-        <?php if (isset($users) && !empty($users)): ?>
-            <div class="card mt-4">
-                <div class="card-header">
-                    <h3 class="card-title mb-0">Debug: Users List (<?php echo count($users); ?> users)</h3>
-                </div>
-                <div class="card-body">
-                    <ul class="list-group">
-                        <?php foreach ($users as $u): ?>
-                            <li class="list-group-item">
-                                <?php if (is_object($u)): ?>
-                                    <!-- User object -->
-                                    <strong><?php echo htmlspecialchars($u->getUsername() ?? 'Unknown'); ?></strong>
-                                    - <?php echo htmlspecialchars($u->getEmail() ?? ''); ?>
-                                    <?php if ($u->getFullName()): ?>
-                                        (<?php echo htmlspecialchars($u->getFullName()); ?>)
-                                    <?php endif; ?>
-                                <?php else: ?>
-                                    <!-- User array -->
-                                    <strong><?php echo htmlspecialchars($u['username'] ?? $u['full_name'] ?? 'Unknown'); ?></strong>
-                                    - <?php echo htmlspecialchars($u['email'] ?? ''); ?>
-                                    <?php if (!empty($u['full_name'])): ?>
-                                        (<?php echo htmlspecialchars($u['full_name']); ?>)
-                                    <?php endif; ?>
-                                <?php endif; ?>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-            </div>
-        <?php endif; ?>
     </div>
 </div>

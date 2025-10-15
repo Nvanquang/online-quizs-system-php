@@ -29,7 +29,7 @@ class Question extends Model
     private $created_by;
     private $created_at;
 
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         parent::__construct();
         if ($data) { $this->fill($data); }

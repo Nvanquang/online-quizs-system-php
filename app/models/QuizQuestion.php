@@ -21,7 +21,7 @@ class QuizQuestion extends Model
     private $time_limit;
     private $max_points;
 
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         parent::__construct();
         if ($data) { $this->fill($data); }

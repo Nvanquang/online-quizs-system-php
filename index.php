@@ -12,6 +12,7 @@ spl_autoload_register(function ($class) {
         __DIR__ . '/app/controllers/' . $class . '.php',
         __DIR__ . '/app/models/' . $class . '.php',
         __DIR__ . '/app/services/' . $class . '.php',
+        __DIR__ . '/app/services/impl/' . $class . '.php',
         __DIR__ . '/app/repositories/' . $class . '.php',
         __DIR__ . '/app/middleware/' . $class . '.php',
     ];
@@ -44,6 +45,7 @@ $router = new Router();
 
 // Routes công khai (không cần middleware)
 $router->get('/', 'Home@index');
+$router->get('/test', 'Home@test');
 
 // Routes chỉ dành cho guest (chưa đăng nhập)
 $router->get('/auth/login', 'Auth@login', ['GuestMiddleware']);

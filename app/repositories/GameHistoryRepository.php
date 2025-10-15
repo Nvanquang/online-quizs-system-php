@@ -2,51 +2,22 @@
 
 class GameHistoryRepository extends BaseRepository
 {
-    protected function getModelInstance()
+    /**
+     * @var GameHistory
+     */
+    protected $model;
+
+    /**
+     * @return GameHistory
+     */
+    protected function getModelInstance(): GameHistory
     {
         return new GameHistory();
     }
 
-    // CRUD wrappers
-    public function create(array $data)
-    {
-        return $this->model->create($data);
-    }
-
-    public function update($id, array $data)
-    {
-        return $this->model->update($id, $data);
-    }
-
-    public function delete($id)
-    {
-        return $this->model->delete($id);
-    }
-
-    public function findById($id)
-    {
-        return $this->model->findById($id);
-    }
-
-    public function findAll(array $conditions = [], $orderBy = null, $limit = null)
-    {
-        return $this->model->findAll($conditions, $orderBy, $limit);
-    }
-
-    public function exists(array $conditions = []): bool
-    {
-        return $this->model->exists($conditions);
-    }
-
-    public function paginate(int $page = 1, int $perPage = 10, array $conditions = [], $orderBy = null)
-    {
-        return $this->model->paginate($page, $perPage, $conditions, $orderBy);
-    }
-
+    // Chỉ giữ các method custom, không duplicate CRUD vì BaseRepository đã có
     public function findByUser(int $userId, $orderBy = 'played_at DESC', $limit = 50)
     {
         return $this->model->findAll(['user_id' => $userId], $orderBy, $limit);
     }
 }
-
-

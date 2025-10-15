@@ -1,5 +1,4 @@
 <?php
-
 class Quiz extends Model
 {
     protected $table = 'quizzes';
@@ -36,7 +35,7 @@ class Quiz extends Model
     private $started_at;
     private $ended_at;
 
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         parent::__construct();
         if ($data) { $this->fill($data); }

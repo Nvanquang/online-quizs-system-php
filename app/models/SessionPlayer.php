@@ -1,5 +1,4 @@
 <?php
-
 class SessionPlayer extends Model
 {
     protected $table = 'session_players';
@@ -25,7 +24,7 @@ class SessionPlayer extends Model
     private $is_ready;
     private $joined_at;
 
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         parent::__construct();
         if ($data) { $this->fill($data); }

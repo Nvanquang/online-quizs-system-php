@@ -1,53 +1,23 @@
 <?php
 
+
 class UserRepository extends BaseRepository
 {
-    protected function getModelInstance()
+    /**
+     * @var User
+     */
+    protected $model;
+
+    /**
+     * @return User  // Thêm return type hint để match abstract
+     */
+    protected function getModelInstance(): User  // Fix: Thêm return statement
     {
-        return new User();
+        $this->model = new User();
+        return $this->model;  // Đây là fix chính: return instance
     }
 
-    // CRUD wrappers
-    public function create(array $data)
-    {
-        return $this->model->create($data);
-    }
-
-    public function update($id, array $data)
-    {
-        return $this->model->update($id, $data);
-    }
-
-    public function delete($id)
-    {
-        return $this->model->delete($id);
-    }
-
-    public function findById($id)
-    {
-        return $this->model->findById($id);
-    }
-
-    public function findAll(array $conditions = [], $orderBy = null, $limit = null)
-    {
-        return $this->model->findAll($conditions, $orderBy, $limit);
-    }
-
-    public function findBy(array $conditions = [], $orderBy = null, $limit = null)
-    {
-        return $this->model->findBy($conditions, $orderBy, $limit);
-    }
-
-    public function exists(array $conditions = []): bool
-    {
-        return $this->model->exists($conditions);
-    }
-
-    public function paginate(int $page = 1, int $perPage = 10, array $conditions = [], $orderBy = null)
-    {
-        return $this->model->paginate($page, $perPage, $conditions, $orderBy);
-    }
-
+    // Chỉ giữ các method custom
     public function findByEmail(string $email)
     {
         return $this->model->findOne(['email' => $email]);
@@ -61,18 +31,16 @@ class UserRepository extends BaseRepository
     /**
      * Find user by username or email
      */
-    public function findByUsernameOrEmail(string $identifier)
-    {
-        // Try username first
-        $user = $this->findByUsername($identifier);
+    // public function findByUsernameOrEmail(string $identifier)
+    // {
+    //     // Try username first
+    //     $user = $this->findByUsername($identifier);
         
-        if (!$user) {
-            // Try email
-            $user = $this->findByEmail($identifier);
-        }
+    //     if (!$user) {
+    //         // Try email
+    //         $user = $this->findByEmail($identifier);
+    //     }
         
-        return $user;
-    }
+    //     return $user;
+    // }
 }
-
-

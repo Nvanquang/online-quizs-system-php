@@ -1,5 +1,4 @@
 <?php
-
 class User extends Model
 {
     protected $table = 'users';
@@ -26,7 +25,7 @@ class User extends Model
     private $games_played;
     private $created_at;
 
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         parent::__construct();
         if ($data) { $this->fill($data); }

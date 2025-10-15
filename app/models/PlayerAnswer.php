@@ -1,5 +1,4 @@
 <?php
-
 class PlayerAnswer extends Model
 {
     protected $table = 'player_answers';
@@ -28,7 +27,7 @@ class PlayerAnswer extends Model
     private $points_earned;
     private $answered_at;
 
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         parent::__construct();
         if ($data) { $this->fill($data); }
