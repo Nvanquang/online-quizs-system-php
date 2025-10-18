@@ -1,3 +1,5 @@
+<?php
+?>
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -389,10 +391,11 @@
         </div>
     </div>
 
-    <script src="/public/js/notify.js"></script>
+    
     <?php if (isset($error) && $error): ?>
         <script>
-            notifySuccess(<?php echo json_encode($error); ?>);
+            window._notifyQueue = window._notifyQueue || [];
+            window._notifyQueue.push({ message: <?php echo json_encode($error); ?>, type: 'error' });
         </script>
     <?php endif; ?>
 
@@ -443,6 +446,8 @@
             }
         });
     </script>
+
+    <script src="../../../public/js/notify.js"></script>
 </body>
 
 </html>

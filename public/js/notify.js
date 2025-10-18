@@ -1,4 +1,11 @@
 
+window._notifyQueue = window._notifyQueue || [];
+
+// Exposed helper (will be set to enqueue while script is loading)
+window.notify = function(message, type) {
+    window._notifyQueue.push({ message: message, type: type || 'info' });
+};
+
 // Hàm chính để hiển thị thông báo
 function showNotify(message, type = 'info') {
     let container = document.getElementById('notify-container');
@@ -121,4 +128,30 @@ function notifyInfo(message) {
 
 function notifyWarning(message) {
     showNotify(message, 'warning');
+}
+
+// Process any queued notifications that were added before this script loaded
+function _flushNotifyQueue() {
+    if (!window._notifyQueue || !Array.isArray(window._notifyQueue)) return;
+    while (window._notifyQueue.length) {
+        var item = window._notifyQueue.shift();
+        try {
+            if (item && item.message) {
+                showNotify(item.message, item.type || 'info');
+            }
+        } catch (e) {
+            // ignore individual notification errors
+            console.error('notify queue item failed', e);
+        }
+    }
+}
+
+// Wait for DOMContentLoaded then flush queue
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        _flushNotifyQueue();
+    });
+} else {
+    // DOM already ready
+    _flushNotifyQueue();
 }

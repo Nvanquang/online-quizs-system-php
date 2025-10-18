@@ -60,10 +60,15 @@ $router->get('/user/history', 'User@history', ['AuthMiddleware']);
 $router->post('/user/update-profile', 'User@updateProfile', ['AuthMiddleware', 'CSRFMiddleware']);
 
 // Routes game cần đăng nhập
-$router->get('/game/join/{code}', 'Game@join', ['AuthMiddleware']);
-$router->post('/game/join/{code}', 'Game@doJoin', ['AuthMiddleware', 'CSRFMiddleware']);
-$router->get('/game/play/{sessionId}', 'Game@play', ['AuthMiddleware']);
+$router->get('/game/lobby/{code}', 'Game@lobby', ['AuthMiddleware']); // Phòng chờ ủa chủ tạo quiz
+$router->post('/game/join/{code}', 'Game@doJoin', ['AuthMiddleware', 'CSRFMiddleware']); // Yêu cầu tham gia quiz
+$router->get('/game/waiting/{code}', 'Game@waiting', ['AuthMiddleware', 'CSRFMiddleware']); // Phòng chờ của người chơi
+$router->get('/game/play/{sessionId}', 'Game@play', ['AuthMiddleware']); // Trang chơi
 $router->post('/game/answer', 'Game@submitAnswer', ['AuthMiddleware', 'CSRFMiddleware']);
+
+// Routes edit cần đăng nhập
+$router->get('/quiz/create', 'Quiz@create', ['AuthMiddleware']);
+$router->post('/quiz/create', 'Quiz@doCreate', ['AuthMiddleware', 'CSRFMiddleware']);
 
 // Routes admin (cần quyền admin)
 $router->get('/admin/dashboard', 'Admin@dashboard', ['AdminMiddleware']);

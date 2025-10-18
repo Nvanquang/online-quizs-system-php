@@ -12,7 +12,7 @@ class Database
 
     private function __construct()
     {
-        $config = require __DIR__ . '/../../config/database.php';
+        $config = require __DIR__ . '/../../config/config.php';
         
         $this->host = $config['host'];
         $this->db_name = $config['db'];

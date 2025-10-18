@@ -1,0 +1,227 @@
+/* ===== HEADER ===== */
+.header-main {
+    /* position: relative; */
+    z-index: 1000;
+}
+
+.navbar {
+    padding: 1rem 0;
+    transition: var(--transition);
+    position: fixed;
+    z-index: 1001;
+    width: 100%;
+    max-width: 1248px;
+}
+
+.navbar.scrolled {
+    box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Logo Styling */
+.logo-brand {
+    font-size: 2rem;
+    font-weight: bold;
+    text-decoration: none;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    margin-right: 20px !important;
+}
+
+.logo-brand:hover {
+    transform: scale(1.05);
+}
+
+.logo-q {
+    color: var(--color-pink);
+    animation: bounce 2s infinite;
+}
+
+.logo-u {
+    color: var(--color-yellow);
+    animation: bounce 2s infinite 0.1s;
+}
+
+.logo-i {
+    color: var(--color-green);
+    animation: bounce 2s infinite 0.2s;
+}
+
+.logo-z {
+    color: var(--color-blue);
+    animation: bounce 2s infinite 0.3s;
+}
+
+.logo-dot {
+    color: var(--color-dark);
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+/* Join Game Section */
+.join-game-section {
+    background: var(--color-pink);
+    padding: 0.8rem 1.5rem;
+    border-radius: 15px;
+    align-items: center;
+    gap: 1rem;
+    animation: fadeInDown 0.6s ease;
+}
+
+.join-text {
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--color-dark);
+    white-space: nowrap;
+}
+
+.join-input {
+    border: none;
+    border-radius: 25px;
+    padding: 0.5rem 1rem;
+    width: 150px;
+    text-align: center;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.join-input:focus {
+    box-shadow: 0 0 0 3px rgba(255, 180, 200, 0.3);
+    transform: scale(1.05);
+}
+
+/* Header Buttons */
+.btn-search {
+    background: transparent;
+    border: 2px solid #ddd;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    transition: var(--transition);
+    margin-left: 30px !important;
+}
+
+.btn-search:hover {
+    background: var(--color-yellow);
+    border-color: var(--color-yellow);
+    transform: rotate(90deg);
+}
+
+.btn-signin {
+    background: var(--color-green);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 0.6rem 1.8rem;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.btn-signin:hover {
+    background: #9fd66e;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(184, 233, 134, 0.4);
+}
+
+/* ===== FOOTER ===== */
+.footer-main {
+    margin-top: 5rem;
+    position: relative;
+}
+
+.discord-banner {
+    background: linear-gradient(135deg, #7289da 0%, #5865f2 100%);
+    padding: 3rem 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.discord-banner::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
+    animation: pulse 4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.discord-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.discord-icon {
+    font-size: 4rem;
+    color: white;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.btn-discord {
+    background: white;
+    color: #5865f2;
+    border: none;
+    border-radius: 30px;
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-discord:hover {
+    background: var(--color-yellow);
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.footer-info {
+    background: #f8f9fa;
+    padding: 2rem 0;
+    border-top: 1px solid #e0e0e0;
+}
+
+.footer-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    color: #666;
+}
+
+.footer-links a {
+    color: #666;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.footer-links a:hover {
+    color: var(--color-teal);
+    transform: translateY(-2px);
+}
+
+.separator {
+    color: #ccc;
+}

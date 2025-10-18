@@ -301,10 +301,11 @@
         </div>
     </div>
 
-    <script src="/public/js/notify.js"></script>
+    <script src="../../../public/js/notify.js"></script>
     <?php if (isset($register_success) && $register_success): ?>
         <script>
-            notifySuccess(<?php echo json_encode($register_success); ?>);
+            window._notifyQueue = window._notifyQueue || [];
+            window._notifyQueue.push({ message: <?php echo json_encode($register_success); ?>, type: 'success' });
         </script>
     <?php endif; ?>
 

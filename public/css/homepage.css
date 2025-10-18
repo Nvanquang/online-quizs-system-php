@@ -1,0 +1,455 @@
+/* assets/css/style.css */
+
+:root {
+    --color-pink: #ef5f85;
+    --color-yellow: #FFE180;
+    --color-green: #B8E986;
+    --color-blue: #89CFF0;
+    --color-teal: #2D5F5D;
+    --color-dark: #1a1a1a;
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+}
+
+/* Category Navigation */
+.category-nav {
+    animation: fadeIn 0.8s ease;
+    padding-top: 100px;
+}
+
+.category-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+    border-radius: 10px;
+    position: relative;
+}
+
+.category-item:hover {
+    background: #f8f9fa;
+    transform: translateY(-3px);
+}
+
+.category-item.active {
+    color: var(--color-teal);
+}
+
+.category-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 3px;
+    background: var(--color-teal);
+    border-radius: 3px;
+}
+
+.category-item i {
+    font-size: 1.5rem;
+}
+
+.category-item span {
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* ===== MAIN CONTENT ===== */
+
+/* Constrain page layout to centered max width */
+.header-main,
+.main-content,
+.footer-main {
+    max-width: 1248px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+.main-content {
+    min-height: calc(100vh - 200px);
+}
+
+/* Create Section */
+.create-section {
+    animation: fadeInUp 0.8s ease;
+}
+
+.create-card {
+    background: var(--color-teal);
+    color: white;
+    border-radius: 20px;
+    padding: 3rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    /* min-height: 300px; */
+    height: 250px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-ai {
+    background: var(--color-teal);
+}
+
+.create-title {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.create-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.btn-create-manual,
+.btn-create-ai {
+    background: var(--color-green);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 1rem 3rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.btn-create-manual:hover,
+.btn-create-ai:hover {
+    background: white;
+    color: var(--color-teal);
+    transform: scale(1.1);
+}
+
+.btn-create-ai {
+    background: var(--color-blue);
+}
+
+.btn-create-ai:hover {
+    color: #667eea;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Quiz Sections */
+.quiz-section {
+    animation: fadeInUp 1s ease;
+}
+
+.section-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--color-dark);
+}
+
+.see-all-link {
+    color: var(--color-teal);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.see-all-link:hover {
+    color: var(--color-blue);
+    transform: translateX(5px);
+}
+
+/* Quiz Cards */
+.quiz-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: var(--transition);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.quiz-image-wrapper {
+    position: relative;
+    padding-top: 100%;
+    overflow: hidden;
+}
+
+.quiz-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.quiz-image { cursor: pointer; }
+
+.quiz-image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    opacity: 0;
+    transition: var(--transition);
+    z-index: 1;
+}
+
+.quiz-image:hover::after {
+    opacity: 1;
+}
+
+.quiz-card .play-now-btn {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0.96);
+    background: rgba(255, 225, 128, 0.95);
+    color: #111;
+    padding: 0.5rem 1.2rem;
+    border-radius: 30px;
+    font-weight: 700;
+    border: 2px solid rgba(0, 0, 0, 0.25);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+    text-decoration: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none;
+    transition: var(--transition);
+    z-index: 2; /* above dim overlay */
+    display: inline-block;
+    cursor: pointer;
+    width: 70%;
+}
+
+.play-now-btn:link,
+.play-now-btn:visited {
+    color: #111 !important;
+    text-decoration: none !important;
+}
+
+.quiz-image:hover .play-now-btn {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.ai-badge,
+.hard-badge {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(184, 233, 134, 0.9);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.hard-badge {
+    background: rgba(255, 87, 87, 0.9);
+}
+
+.quiz-info {
+    padding: 1rem;
+}
+
+.quiz-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--color-dark);
+    min-height: 40px;
+    display: -webkit-box;
+    /* -webkit-line-clamp: 2; */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.quiz-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+}
+
+.quiz-rating {
+    color: var(--color-yellow);
+    font-weight: 600;
+}
+
+.quiz-rating i {
+    color: #FFD700;
+}
+
+.quiz-author {
+    color: #666;
+}
+
+
+
+/* Scroll to Top Button */
+.scroll-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--color-green);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition);
+    z-index: 999;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.scroll-to-top.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.scroll-to-top:hover {
+    background: var(--color-teal);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 991px) {
+    .category-nav {
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .category-nav::-webkit-scrollbar {
+        height: 5px;
+    }
+
+    .category-nav::-webkit-scrollbar-thumb {
+        background: var(--color-teal);
+        border-radius: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .create-title {
+        font-size: 2rem;
+    }
+
+    .create-subtitle {
+        font-size: 1rem;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+    }
+
+    .discord-content {
+        flex-direction: column;
+    }
+
+    .footer-links {
+        font-size: 0.9rem;
+    }
+
+    /* Make create cards full width on small screens */
+    .create-card {
+        width: 100%;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+
+    .join-game-section {
+        width: auto;
+        /* Hoặc 500px */
+        min-width: 500px;
+    }
+}
+
+@media (max-width: 576px) {
+    .quiz-card {
+        margin-bottom: 1rem;
+    }
+
+    .btn-create-manual,
+    .btn-create-ai {
+        padding: 0.8rem 2rem;
+        font-size: 1rem;
+    }
+}
+
+
