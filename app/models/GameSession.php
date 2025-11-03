@@ -5,7 +5,7 @@ class GameSession extends Model
     protected $table = 'game_sessions';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'quiz_id','session_code','host_id','status','current_question','total_players','started_at','ended_at','created_at'
+        'quiz_id','session_code','host_id','status','current_question','total_players','started_at','ended_at','created_at', 'actual_mode', 'pin_code'
     ];
     protected $casts = [
         'id' => 'int',
@@ -22,6 +22,8 @@ class GameSession extends Model
     private $status;
     private $current_question;
     private $total_players;
+    private $actual_mode;
+    private $pin_code;
     private $started_at;
     private $ended_at;
     private $created_at;
@@ -47,6 +49,10 @@ class GameSession extends Model
     public function setCurrentQuestion($v): void { $this->current_question = (int)$v; }
     public function getTotalPlayers() { return (int)$this->total_players; }
     public function setTotalPlayers($v): void { $this->total_players = (int)$v; }
+    public function getActualMode() { return $this->actual_mode; }
+    public function setActualMode($v): void { $this->actual_mode = $v; }
+    public function getPinCode() { return $this->pin_code; }
+    public function setPinCode($v): void { $this->pin_code = $v; }
     public function getStartedAt() { return $this->started_at; }
     public function setStartedAt($v): void { $this->started_at = $v; }
     public function getEndedAt() { return $this->ended_at; }

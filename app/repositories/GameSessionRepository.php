@@ -3,20 +3,23 @@
 
 class GameSessionRepository extends BaseRepository
 {
-    /**
-     * @var GameSession
-     */
     protected $model;
+    private static $instance = null;
 
-    /**
-     * @return GameSession
-     */
     protected function getModelInstance(): GameSession
     {
-        return new GameSession();
+        $this->model = new GameSession();
+        return $this->model;
     }
 
-    // Chỉ giữ các method custom, không duplicate CRUD vì BaseRepository đã có
+    public static function getInstance()
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
     public function findBySessionCode(string $sessionCode)
     {
         return $this->model->findOne(['session_code' => $sessionCode]);

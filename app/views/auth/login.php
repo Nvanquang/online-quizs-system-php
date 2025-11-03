@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/ico" href="../../../public/images/logo/favicon.ico">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <title><?php echo $title ?? 'Đăng Nhập'; ?></title>
     <style>
         * {
@@ -277,7 +280,7 @@
                             required
                             autocomplete="current-password">
                         <button type="button" class="password-toggle" onclick="togglePassword()">
-                            👁️
+                            <i class="bi bi-eye"></i>
                         </button>
                     </div>
                 </div>
@@ -301,47 +304,50 @@
         </div>
     </div>
 
-    <script src="../../../public/js/notify.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
     <?php if (isset($register_success) && $register_success): ?>
         <script>
-            window._notifyQueue = window._notifyQueue || [];
-            window._notifyQueue.push({ message: <?php echo json_encode($register_success); ?>, type: 'success' });
+            toastr.success(<?php echo json_encode($register_success); ?>);
         </script>
     <?php endif; ?>
-
+    
     <script>
-        // Toggle password visibility
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const toggleButton = document.querySelector('.password-toggle');
+        $(document).ready(function() {
+            // Toggle password visibility
+            function togglePassword() {
+                const $passwordInput = $('#password');
+                const $toggleButton = $('.password-toggle');
 
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                toggleButton.textContent = '🙈';
-            } else {
-                passwordInput.type = 'password';
-                toggleButton.textContent = '👁️';
+                if ($passwordInput.attr('type') === 'password') {
+                    $passwordInput.attr('type', 'text');
+                    $toggleButton.html('<i class="bi bi-eye-slash"></i>');
+                } else {
+                    $passwordInput.attr('type', 'password');
+                    $toggleButton.html('<i class="bi bi-eye"></i>');
+                }
             }
-        }
 
-        // Form submission with loading state
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            const button = document.getElementById('loginButton');
-            const buttonText = document.getElementById('buttonText');
-            const loadingSpinner = document.getElementById('loadingSpinner');
+            // Form submission with loading state
+            $('#loginForm').on('submit', function(e) {
+                const $button = $('#loginButton');
+                const $buttonText = $('#buttonText');
+                const $loadingSpinner = $('#loadingSpinner');
 
-            // Show loading state
-            button.disabled = true;
-            buttonText.style.display = 'none';
-            loadingSpinner.style.display = 'inline-block';
-        });
+                // Show loading state
+                $button.prop('disabled', true);
+                $buttonText.hide();
+                $loadingSpinner.css('display', 'inline-block');
+            });
 
-        // Auto-focus on first input
-        document.addEventListener('DOMContentLoaded', function() {
-            const firstInput = document.querySelector('.form-input');
-            if (firstInput) {
-                firstInput.focus();
-            }
+            // Auto-focus on first input
+            $(function() {
+                const $firstInput = $('.form-input').first();
+                if ($firstInput.length) {
+                    $firstInput.trigger('focus');
+                }
+            });
         });
     </script>
 </body>

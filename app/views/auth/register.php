@@ -6,6 +6,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/ico" href="../../../public/images/logo/favicon.ico">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <title><?php echo $title ?? 'Đăng Ký'; ?></title>
     <style>
         * {
@@ -346,7 +349,7 @@
                                 required
                                 autocomplete="new-password">
                             <button type="button" class="password-toggle" onclick="togglePassword('password')">
-                                👁️
+                                <i class="bi bi-eye"></i>
                             </button>
                         </div>
                     </div>
@@ -366,7 +369,7 @@
                                 required
                                 autocomplete="new-password">
                             <button type="button" class="password-toggle" onclick="togglePassword('confirm_password')">
-                                👁️
+                                <i class="bi bi-eye"></i>
                             </button>
                         </div>
                     </div>
@@ -391,63 +394,68 @@
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     
     <?php if (isset($error) && $error): ?>
         <script>
-            window._notifyQueue = window._notifyQueue || [];
-            window._notifyQueue.push({ message: <?php echo json_encode($error); ?>, type: 'error' });
+            toastr.error(<?php echo json_encode($error); ?>);
         </script>
     <?php endif; ?>
 
     <script>
         // Toggle password visibility
         function togglePassword(inputId) {
-            const passwordInput = document.getElementById(inputId);
-            const toggleButton = passwordInput.parentNode.querySelector('.password-toggle');
+            const $passwordInput = $('#' + inputId);
+            const $toggleButton = $passwordInput.parent().find('.password-toggle');
 
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                toggleButton.textContent = '🙈';
+            if ($passwordInput.attr('type') === 'password') {
+                $passwordInput.attr('type', 'text');
+                $toggleButton.html('<i class="bi bi-eye-slash"></i>');
             } else {
-                passwordInput.type = 'password';
-                toggleButton.textContent = '👁️';
+                $passwordInput.attr('type', 'password');
+                $toggleButton.html('<i class="bi bi-eye"></i>');
             }
         }
 
         // Form submission with loading state
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
-            const button = document.getElementById('registerButton');
-            const buttonText = document.getElementById('buttonText');
-            const loadingSpinner = document.getElementById('loadingSpinner');
+        $('#registerForm').on('submit', function(e) {
+            const $button = $('#registerButton');
+            const $buttonText = $('#buttonText');
+            const $loadingSpinner = $('#loadingSpinner');
 
             // Show loading state
-            button.disabled = true;
-            buttonText.style.display = 'none';
-            loadingSpinner.style.display = 'inline-block';
+            $button.prop('disabled', true);
+            $buttonText.hide();
+            $loadingSpinner.css('display', 'inline-block');
         });
 
         // Auto-focus on first input
-        document.addEventListener('DOMContentLoaded', function() {
-            const firstInput = document.querySelector('.form-input');
-            if (firstInput) {
-                firstInput.focus();
+        $(function() {
+            const $firstInput = $('.form-input').first();
+            if ($firstInput.length) {
+                $firstInput.trigger('focus');
             }
         });
 
-        // Password confirmation validation
-        document.getElementById('confirm_password').addEventListener('input', function() {
-            const password = document.getElementById('password').value;
-            const confirmPassword = this.value;
+        // Password confirmation validation (jQuery, validate on both fields)
+        $('#password, #confirm_password').on('input', function() {
+            const password = $('#password').val() || '';
+            const confirmPassword = $('#confirm_password').val() || '';
+            const confirmEl = $('#confirm_password').get(0);
 
-            if (password !== confirmPassword) {
-                this.setCustomValidity('Mật khẩu xác nhận không khớp');
+            if (!confirmEl) return;
+
+            if (confirmPassword.length === 0) {
+                confirmEl.setCustomValidity('');
+            } else if (password !== confirmPassword) {
+                confirmEl.setCustomValidity('Mật khẩu xác nhận không khớp');
             } else {
-                this.setCustomValidity('');
+                confirmEl.setCustomValidity('');
             }
         });
     </script>
 
-    <script src="../../../public/js/notify.js"></script>
 </body>
 
 </html>

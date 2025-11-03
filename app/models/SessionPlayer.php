@@ -4,12 +4,13 @@ class SessionPlayer extends Model
     protected $table = 'session_players';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'session_id','user_id','nickname','total_score','rank_position','is_ready','joined_at'
+        'session_id','user_id','nickname','total_score','rank_position','is_ready','joined_at','avatar'
     ];
     protected $casts = [
         'id' => 'int',
         'session_id' => 'int',
         'user_id' => 'int',
+        'avatar' => 'string',
         'total_score' => 'int',
         'rank_position' => 'int',
         'is_ready' => 'bool',
@@ -19,6 +20,7 @@ class SessionPlayer extends Model
     private $session_id;
     private $user_id;
     private $nickname;
+    private $avatar;
     private $total_score;
     private $rank_position;
     private $is_ready;
@@ -39,6 +41,8 @@ class SessionPlayer extends Model
     public function setUserId($v): void { $this->user_id = (int)$v; }
     public function getNickname() { return $this->nickname; }
     public function setNickname($v): void { $this->nickname = $v; }
+    public function getAvatar() { return $this->avatar; }
+    public function setAvatar($v): void { $this->avatar = $v; }
     public function getTotalScore() { return (int)$this->total_score; }
     public function setTotalScore($v): void { $this->total_score = (int)$v; }
     public function getRankPosition() { return (int)$this->rank_position; }

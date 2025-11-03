@@ -1,44 +1,46 @@
 <!-- includes/header.php -->
 <header class="header-main">
     <nav class="navbar navbar-expand navbar-light bg-white">
-    <div class="container-fluid px-4 d-flex align-items-center justify-content-between flex-nowrap">
-        <!-- Logo -->
-        <a class="navbar-brand logo-brand" href="/">
-            <span class="logo-q">Q</span><span class="logo-u">U</span><span class="logo-i">I</span><span class="logo-z">Z</span><span class="logo-dot">.com</span>
-        </a>
+        <div class="container-fluid px-4 d-flex align-items-center justify-content-between flex-nowrap">
+            <!-- Logo -->
+            <a class="logo" href="/">
+                <img src="../../../public/images/logo/quiz-multicolor.svg" alt="Quiz.com" />
+            </a>
 
-        <!-- Join Game Section (giữa, flex-grow để chiếm space, shrink khi hẹp) -->
-        <div class="join-game-section d-flex justify-content-center align-items-center mx-auto flex-grow-1">
-            <span class="join-text">Join Game? Enter PIN:</span>
-            <input type="text" class="form-control join-input" placeholder="123 456" maxlength="7">
-        </div>
+            <!-- Join Game Section (giữa, flex-grow để chiếm space, shrink khi hẹp) -->
+            <div class="join-game-section d-flex justify-content-center align-items-center mx-auto flex-grow-1">
+                <span class="join-text">Join Game? Enter PIN:</span>
+                <input type="text" class="form-control join-input" placeholder="123 456" maxlength="7">
+            </div>
 
-        <!-- Right Side (push phải) -->
-        <div class="d-flex align-items-center ms-auto">
-            <button class="btn btn-search me-3">
-                <i class="fas fa-search"></i>
-            </button>
-            <?php $auth = Auth::getInstance(); ?>
-            <?php if ($auth->check()): ?>
-                <?php $user = $auth->user(); ?>
-                <div class="dropdown">
-                    <a href="#" class="d-inline-flex align-items-center p-0 border-0 bg-transparent" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="../../../public/images/avatar/<?= $user->getAvatarUrl() ?>" alt="Avatar" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="user/profile">Hồ sơ</a></li>
-                        <li><a class="dropdown-item" href="user/my-quizzes">Quiz của tôi</a></li>
-                        <li><a class="dropdown-item" href="user/history">Lịch sử</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="/auth/logout">Đăng xuất</a></li>
-                    </ul>
-                </div>
-            <?php else: ?>
-                <a href="/auth/login"><button class="btn btn-signin">Đăng nhập</button></a>
-            <?php endif; ?>
+            <!-- Right Side (push phải) -->
+            <div class="d-flex align-items-center ms-auto">
+                <button class="btn btn-search me-3">
+                    <i class="fas fa-search"></i>
+                </button>
+                <?php $auth = Auth::getInstance(); ?>
+                <?php if ($auth->check()): ?>
+                    <?php $user = $auth->user(); ?>
+                    <div class="dropdown">
+                        <a href="#" class="d-inline-flex align-items-center p-0 border-0 bg-transparent" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="../../../public/uploads/avatars/<?= $user->getAvatarUrl() ?>" alt="Avatar" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="user/profile">Hồ sơ</a></li>
+                            <li><a class="dropdown-item" href="user/my-quizzes">Quiz của tôi</a></li>
+                            <li><a class="dropdown-item" href="user/history">Lịch sử</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="/auth/logout">Đăng xuất</a></li>
+                        </ul>
+                    </div>
+                <?php else: ?>
+                    <a href="/auth/login"><button class="btn btn-signin">Đăng nhập</button></a>
+                <?php endif; ?>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
     <!-- Category Navigation -->
     <div class="category-nav bg-white border-bottom">

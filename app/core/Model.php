@@ -156,19 +156,19 @@ class Model
     /**
      * Create new record
      */
-    public function create(array $data): int
+    public function create(array $data): object
     {
-        // Filter data by fillable fields TRƯỚC TẤT CẢ (để validate chính xác)
+        // Lọc dữ liệu theo fillable
         $data = $this->filterFillable($data);
 
-        // Validate (full create) dựa trên data đã filter
-        $errors = $this->validate($data, false);
+        // Validate nếu có
+        // $errors = $this->validate($data, false);
         if (!empty($errors)) {
-            throw new InvalidArgumentException('Validation thẩt bại: ' . json_encode($errors, JSON_UNESCAPED_UNICODE));
+            throw new InvalidArgumentException('Validation thất bại: ' . json_encode($errors, JSON_UNESCAPED_UNICODE));
         }
 
-        
-        $originalFillable = $this->fillable;  // Lưu tạm để check
+        // Tự động thêm timestamp nếu có
+        $originalFillable = $this->fillable;
         if ($this->timestamps) {
             $now = date('Y-m-d H:i:s');
             if (in_array('created_at', $originalFillable)) {
@@ -179,20 +179,28 @@ class Model
             }
         }
 
-        
         if (empty($data)) {
             throw new InvalidArgumentException('Không có dữ liệu');
         }
 
+        // Build SQL insert
         $fields = array_keys($data);
         $placeholders = array_fill(0, count($fields), '?');
         $values = array_values($data);
 
         $sql = "INSERT INTO {$this->table} (" . implode(', ', $fields) . ") VALUES (" . implode(', ', $placeholders) . ")";
-
         $this->db->query($sql, $values);
-        return (int)$this->db->lastInsertId();
+
+
+        $id = (int)$this->db->lastInsertId();
+
+
+        $sqlSelect = "SELECT * FROM {$this->table} WHERE id = ?";
+        $record = $this->db->query($sqlSelect, [$id])->fetch(PDO::FETCH_ASSOC);
+
+        return $record ? $this->mapRowToModel($record) : (object)[];
     }
+
 
     /**
      * Update record by ID

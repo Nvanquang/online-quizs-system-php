@@ -22,60 +22,10 @@ body {
     scroll-behavior: smooth;
 }
 
-/* Category Navigation */
-.category-nav {
-    animation: fadeIn 0.8s ease;
-    padding-top: 100px;
-}
-
-.category-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.3rem;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    transition: var(--transition);
-    border-radius: 10px;
-    position: relative;
-}
-
-.category-item:hover {
-    background: #f8f9fa;
-    transform: translateY(-3px);
-}
-
-.category-item.active {
-    color: var(--color-teal);
-}
-
-.category-item.active::after {
-    content: '';
-    position: absolute;
-    bottom: -15px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 40px;
-    height: 3px;
-    background: var(--color-teal);
-    border-radius: 3px;
-}
-
-.category-item i {
-    font-size: 1.5rem;
-}
-
-.category-item span {
-    font-size: 0.85rem;
-    font-weight: 500;
-}
-
 /* ===== MAIN CONTENT ===== */
 
-/* Constrain page layout to centered max width */
-.header-main,
-.main-content,
-.footer-main {
+.main-content
+ {
     max-width: 1248px;
     margin-left: auto;
     margin-right: auto;
@@ -175,7 +125,6 @@ body {
 
 .see-all-link {
     color: var(--color-teal);
-    text-decoration: none;
     font-weight: 600;
     transition: var(--transition);
 }
@@ -197,7 +146,7 @@ body {
 
 .quiz-image-wrapper {
     position: relative;
-    padding-top: 100%;
+    height: 150px;
     overflow: hidden;
 }
 
@@ -295,7 +244,7 @@ body {
     color: var(--color-dark);
     min-height: 40px;
     display: -webkit-box;
-    /* -webkit-line-clamp: 2; */
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }

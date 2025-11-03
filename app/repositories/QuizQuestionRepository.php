@@ -3,20 +3,23 @@
 
 class QuizQuestionRepository extends BaseRepository
 {
-    /**
-     * @var QuizQuestion
-     */
     protected $model;
-
-    /**
-     * @return QuizQuestion
-     */
+    private static $instance = null;
+    
     protected function getModelInstance(): QuizQuestion
     {
-        return new QuizQuestion();
+        $this->model = new QuizQuestion();
+        return $this->model;
     }
 
-    // Chỉ giữ các method custom, không duplicate CRUD vì BaseRepository đã có
+    public static function getInstance()
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
     public function findByQuiz(int $quizId, $orderBy = 'order_number ASC')
     {
         return $this->model->findAll(['quiz_id' => $quizId], $orderBy);

@@ -124,7 +124,7 @@ class AuthController extends Controller
                 'email' => $email,
                 'password' => $password,
                 'full_name' => $fullName,
-                'avatar' => 'avatar-default.jpg',
+                'avatar_url' => 'avatar-default.jpg',
                 'is_admin' => 0,
                 'total_points' => 0,
                 'games_played' => 0,

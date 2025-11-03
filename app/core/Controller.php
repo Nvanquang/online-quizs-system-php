@@ -13,15 +13,6 @@ class Controller
     }
 
     /**
-     * Render view với layout
-     */
-    protected function render($view, $data = [], $layout = 'main')
-    {
-        $this->data = array_merge($this->data, $data);
-        return $this->view->render($view, $this->data, $layout);
-    }
-
-    /**
      * Render view không có layout
      */
     protected function renderPartial($view, $data = [])

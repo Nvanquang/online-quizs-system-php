@@ -6,12 +6,11 @@ class Question extends Model
     protected $primaryKey = 'id';
     protected $fillable = [
         'content','answer_a','answer_b','answer_c','answer_d','correct_answer',
-        'explanation','image_url','time_limit','max_points','created_by','created_at'
+        'explanation','image_url','time_limit','created_by','created_at'
     ];
     protected $casts = [
         'id' => 'int',
         'time_limit' => 'int',
-        'max_points' => 'int',
         'created_by' => 'int',
     ];
 
@@ -25,7 +24,6 @@ class Question extends Model
     private $explanation;
     private $image_url;
     private $time_limit;
-    private $max_points;
     private $created_by;
     private $created_at;
 
@@ -56,8 +54,6 @@ class Question extends Model
     public function setImageUrl($v): void { $this->image_url = $v; }
     public function getTimeLimit() { return (int)$this->time_limit; }
     public function setTimeLimit($v): void { $this->time_limit = (int)$v; }
-    public function getMaxPoints() { return (int)$this->max_points; }
-    public function setMaxPoints($v): void { $this->max_points = (int)$v; }
     public function getCreatedBy() { return (int)$this->created_by; }
     public function setCreatedBy($v): void { $this->created_by = (int)$v; }
     public function getCreatedAt() { return $this->created_at; }

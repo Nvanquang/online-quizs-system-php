@@ -15,6 +15,7 @@ spl_autoload_register(function ($class) {
         __DIR__ . '/app/services/impl/' . $class . '.php',
         __DIR__ . '/app/repositories/' . $class . '.php',
         __DIR__ . '/app/middleware/' . $class . '.php',
+        __DIR__ . '/app/utils/' . $class . '.php',
     ];
     foreach ($paths as $path) {
         if (file_exists($path)) {
@@ -60,35 +61,16 @@ $router->get('/user/history', 'User@history', ['AuthMiddleware']);
 $router->post('/user/update-profile', 'User@updateProfile', ['AuthMiddleware', 'CSRFMiddleware']);
 
 // Routes game cần đăng nhập
-$router->get('/game/lobby/{code}', 'Game@lobby', ['AuthMiddleware']); // Phòng chờ ủa chủ tạo quiz
-$router->post('/game/join/{code}', 'Game@doJoin', ['AuthMiddleware', 'CSRFMiddleware']); // Yêu cầu tham gia quiz
-$router->get('/game/waiting/{code}', 'Game@waiting', ['AuthMiddleware', 'CSRFMiddleware']); // Phòng chờ của người chơi
-$router->get('/game/play/{sessionId}', 'Game@play', ['AuthMiddleware']); // Trang chơi
-$router->post('/game/answer', 'Game@submitAnswer', ['AuthMiddleware', 'CSRFMiddleware']);
+$router->post('/game/lobby/{quizId}', 'Game@startLobby', ['AuthMiddleware']); // Tạo/khởi động session theo quizId rồi redirect
+$router->get('/game/lobby/{sessionCode}', 'Game@lobby', ['AuthMiddleware']); // Phòng chờ của chủ tạo quiz (GET render theo sessionCode)
+$router->post('/game/join/{sessionCode}', 'Game@doJoin', ['AuthMiddleware', 'CSRFMiddleware']); // Yêu cầu tham gia quiz
+$router->get('/game/waiting/{sessionCode}', 'Game@waiting', ['AuthMiddleware', 'CSRFMiddleware']); // Phòng chờ của người chơi
+$router->get('/game/play/{sessionCode}', 'Game@play', ['AuthMiddleware']); // Trang chơi
+$router->post('/game/end/{sessionCode}', 'Game@endGame', ['AuthMiddleware', 'CSRFMiddleware']); // Kết thúc game
 
 // Routes edit cần đăng nhập
 $router->get('/quiz/create', 'Quiz@create', ['AuthMiddleware']);
 $router->post('/quiz/create', 'Quiz@doCreate', ['AuthMiddleware', 'CSRFMiddleware']);
-
-// Routes admin (cần quyền admin)
-$router->get('/admin/dashboard', 'Admin@dashboard', ['AdminMiddleware']);
-$router->get('/admin/quizzes', 'Admin@quizzes', ['AdminMiddleware']);
-$router->get('/admin/questions', 'Admin@questions', ['AdminMiddleware']);
-$router->post('/admin/quizzes/create', 'Admin@createQuiz', ['AdminMiddleware', 'CSRFMiddleware']);
-$router->post('/admin/questions/create', 'Admin@createQuestion', ['AdminMiddleware', 'CSRFMiddleware']);
-
-// Routes với rate limiting (ví dụ cho API)
-$router->post('/api/submit-answer', 'Game@apiSubmitAnswer', ['AuthMiddleware', 'RateLimitMiddleware']);
-$router->get('/api/leaderboard', 'Leaderboard@apiGetLeaderboard', ['RateLimitMiddleware']);
-
-
-// Tất cả routes admin sẽ có AdminMiddleware
-$router->group('/admin', function($router) {
-    $router->get('/users', 'Admin@users');
-    $router->get('/reports', 'Admin@reports');
-    $router->post('/users/{id}/ban', 'Admin@banUser', ['CSRFMiddleware']);
-}, ['AdminMiddleware']);
-
 
 // Dispatch current request
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';

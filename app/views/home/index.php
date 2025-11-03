@@ -6,15 +6,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/ico" href="../../../public/images/logo/favicon.ico">
     <title>Quiz.com - Play Free Quizzes</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../../../public/css/homepage.css">
     <link rel="stylesheet" href="../../../public/css/layout.css">
+    <script>
+        console.log(<?php echo $login_success ?> + 'login_success');
+    </script>
 </head>
 
 <body>
@@ -49,52 +54,36 @@
             <div class="container-fluid px-4">
                 <div class="d-flex align-items-center gap-2 mb-4">
                     <h3 class="section-title mb-0" style="margin-right:10px;">Recently published</h3>
-                    <a href="#" class="see-all-link">See all (65)</a>
+                    <a href="#" class="see-all-link">See all (<?php echo count($quizzes); ?>)</a>
                 </div>
-                <div class="row g-4">
+                <div class="row g-4" style="--bs-gutter-x: 15px;">
                     <?php
-                    $recentQuizzes = [
-                        ['title' => 'Guess the App Logo', 'rating' => 2.9, 'author' => 'Zeezo', 'image' => 'xe.jpeg', 'ai' => true, 'code' => '123'],
-                        ['title' => 'Hellenism', 'rating' => 4.0, 'author' => 'kevino', 'image' => 'hellenism.jpg', 'ai' => false, 'code' => '123'],
-                        ['title' => 'Brain Draining - Think Outside the Box', 'rating' => 0, 'author' => 'Anonymous', 'image' => 'brain.jpg', 'ai' => false, 'code' => '123'],
-                        ['title' => 'Blackpink Quiz', 'rating' => 3.8, 'author' => 'SiSiTurtle27', 'image' => 'blackpink.jpg', 'ai' => true, 'code' => '123'],
-                        ['title' => 'UK Sports and Leisure', 'rating' => 3.6, 'author' => 'Julie09', 'image' => 'sports.jpg', 'ai' => false, 'code' => '123'],
-                        ['title' => 'Trap Soda "For The Culture" Trivia #8', 'rating' => 0, 'author' => 'SODA.online', 'image' => 'trap-soda.jpg', 'ai' => false, 'code' => '123']
-                    ];
-
-                    foreach ($recentQuizzes as $quiz): ?>
+                    foreach ($quizzes as $quiz): ?>
                         <div class="col-lg-2 col-md-4 col-sm-6">
                             <div class="quiz-card">
                                 <div class="quiz-image-wrapper">
                                     <?php
-                                        $hasImage = isset($quiz['image']) && $quiz['image'] && file_exists(__DIR__ . "/../../../public/images/{$quiz['image']}");
-                                        $fallback = "background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);";
+                                    $hasImage = $quiz->getImage() != null && $quiz->getImage() && file_exists(__DIR__ . "/../../../public/uploads/quizzes/{$quiz->getImage()}");
+                                    $fallback = "background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);";
                                     ?>
                                     <div class="quiz-image" style="<?= $hasImage ? '' : $fallback ?>">
                                         <?php if ($hasImage): ?>
-                                            <img src="../../../public/images/<?= htmlspecialchars($quiz['image']) ?>" alt="<?= htmlspecialchars($quiz['title']) ?>" style="width:100%;height:100%;object-fit:cover;">
+                                            <img src="../../../public/uploads/quizzes/<?= htmlspecialchars($quiz->getImage()) ?>" alt="<?= htmlspecialchars($quiz->getTitle()) ?>" style="width:100%;height:100%;object-fit:cover;">
                                         <?php endif; ?>
-                                        <?php
-                                            $auth = Auth::getInstance();
-                                            $isAdmin = $auth->isAdmin();
-                                            $playUrl = ($isAdmin)
-                                                ? "/game/lobby/" . htmlspecialchars($quiz['code'])
-                                                : "/game/waiting/" . htmlspecialchars($quiz['code']);
-                                        ?>
-                                        <a href="<?= $playUrl ?>" class="play-now-btn">Chơi ngay</a>
-                                        <?php if ($quiz['ai']): ?>
-                                            <span class="ai-badge">AI GENERATED</span>
-                                        <?php endif; ?>
+
+                                        <form action="/game/lobby/<?= $quiz->getId() ?>" method="post" style="display:inline;">
+                                            <button type="submit" class="play-now-btn">Chơi ngay</button>
+                                        </form>
                                     </div>
                                 </div>
                                 <div class="quiz-info">
-                                    <h5 class="quiz-title"><?= $quiz['title'] ?></h5>
+                                    <h5 class="quiz-title"><?= $quiz->getTitle() ?></h5>
                                     <div class="quiz-meta">
                                         <span class="quiz-rating">
-                                            <?= $quiz['rating'] > 0 ? $quiz['rating'] : '-' ?>
+
                                             <i class="fas fa-star"></i>
                                         </span>
-                                        <span class="quiz-author">By <?= $quiz['author'] ?></span>
+                                        <span class="quiz-author">By <?= $quiz->getAuthor() ?></span>
                                     </div>
                                 </div>
                             </div>
@@ -127,12 +116,12 @@
                             <div class="quiz-card">
                                 <div class="quiz-image-wrapper">
                                     <?php
-                                        $hasImage = isset($quiz['image']) && $quiz['image'] && file_exists(__DIR__ . "/../../../public/images/{$quiz['image']}");
-                                        $fallback = "background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);";
+                                    $hasImage = isset($quiz['image']) && $quiz['image'] && file_exists(__DIR__ . "/../../../public/uploads/quizzes/{$quiz['image']}");
+                                    $fallback = "background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);";
                                     ?>
                                     <div class="quiz-image" style="<?= $hasImage ? '' : $fallback ?>">
                                         <?php if ($hasImage): ?>
-                                            <img src="../../../public/images/<?= htmlspecialchars($quiz['image']) ?>" alt="<?= htmlspecialchars($quiz['title']) ?>" style="width:100%;height:100%;object-fit:cover;">
+                                            <img src="../../../public/uploads/quizzes/<?= htmlspecialchars($quiz['image']) ?>" alt="<?= htmlspecialchars($quiz['title']) ?>" style="width:100%;height:100%;object-fit:cover;">
                                         <?php endif; ?>
                                         <a href="#" class="play-now-btn">Chơi ngay</a>
                                         <?php if (isset($quiz['ai']) && $quiz['ai']): ?>
@@ -164,7 +153,7 @@
                 <div class="row g-4">
                     <?php
                     $popularQuizzes = [
-                        ['title' => 'Italian Brainrot', 'rating' => 3.9, 'author' => 'ThomasNguyen1405', 'image' => 'xe.jpeg'],
+                        ['title' => 'Italian Brainrot', 'rating' => 3.9, 'author' => 'Thomas', 'image' => 'xe.jpeg'],
                         ['title' => 'Guess the logo', 'rating' => 4.1, 'author' => 'Indy', 'image' => 'xe.jpeg'],
                         ['title' => 'Flags of World Quiz', 'rating' => 4.0, 'author' => 'kinzaa', 'image' => 'xe.jpeg'],
                         ['title' => 'World Geography Quiz', 'rating' => 4.1, 'author' => 'haanthu', 'image' => 'xe.jpeg'],
@@ -177,12 +166,12 @@
                             <div class="quiz-card">
                                 <div class="quiz-image-wrapper">
                                     <?php
-                                        $hasImage = isset($quiz['image']) && $quiz['image'] && file_exists(__DIR__ . "/../../../public/images/{$quiz['image']}");
-                                        $fallback = "background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);";
+                                    $hasImage = isset($quiz['image']) && $quiz['image'] && file_exists(__DIR__ . "/../../../public/uploads/quizzes/{$quiz['image']}");
+                                    $fallback = "background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);";
                                     ?>
                                     <div class="quiz-image" style="<?= $hasImage ? '' : $fallback ?>">
                                         <?php if ($hasImage): ?>
-                                            <img src="../../../public/images/<?= htmlspecialchars($quiz['image']) ?>" alt="<?= htmlspecialchars($quiz['title']) ?>" style="width:100%;height:100%;object-fit:cover;">
+                                            <img src="../../../public/uploads/quizzes/<?= htmlspecialchars($quiz['image']) ?>" alt="<?= htmlspecialchars($quiz['title']) ?>" style="width:100%;height:100%;object-fit:cover;">
                                         <?php endif; ?>
                                         <a href="#" class="play-now-btn">Chơi ngay</a>
                                         <?php if (isset($quiz['ai']) && $quiz['ai']): ?>
@@ -227,12 +216,12 @@
                             <div class="quiz-card">
                                 <div class="quiz-image-wrapper">
                                     <?php
-                                        $hasImage = isset($quiz['image']) && $quiz['image'] && file_exists(__DIR__ . "/../../../public/images/{$quiz['image']}");
-                                        $fallback = "background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);";
+                                    $hasImage = isset($quiz['image']) && $quiz['image'] && file_exists(__DIR__ . "/../../../public/uploads/quizzes/{$quiz['image']}");
+                                    $fallback = "background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);";
                                     ?>
                                     <div class="quiz-image" style="<?= $hasImage ? '' : $fallback ?>">
                                         <?php if ($hasImage): ?>
-                                            <img src="../../../public/images/<?= htmlspecialchars($quiz['image']) ?>" alt="<?= htmlspecialchars($quiz['title']) ?>" style="width:100%;height:100%;object-fit:cover;">
+                                            <img src="../../../public/uploads/quizzes/<?= htmlspecialchars($quiz['image']) ?>" alt="<?= htmlspecialchars($quiz['title']) ?>" style="width:100%;height:100%;object-fit:cover;">
                                         <?php endif; ?>
                                         <a href="#" class="play-now-btn">Chơi ngay</a>
                                         <?php if (isset($quiz['ai']) && $quiz['ai']): ?>
@@ -259,19 +248,21 @@
     </main>
     <?php include __DIR__ . '/../layouts/footer.php'; ?>
 
-    <?php if (isset($login_success) && $login_success): ?>
-        <script>
-            // Enqueue a site-wide notification (works even if notify.js hasn't loaded yet)
-            window._notifyQueue = window._notifyQueue || [];
-            window._notifyQueue.push({ message: <?php echo json_encode($login_success); ?>, type: 'success' });
-        </script>
-    <?php endif; ?>
-
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JS -->
     <script src="../../../public/js/main.js"></script>
-    <script src="../../../public/js/notify.js"></script>
+
+    <?php if (isset($login_success) && $login_success): ?>
+        <script>
+            toastr.success(<?php echo json_encode($login_success ?? ''); ?>);
+        </script>
+    <?php endif; ?>
+
 </body>
 
 </html>

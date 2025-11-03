@@ -2,20 +2,24 @@
 
 class QuizRepository extends BaseRepository
 {
-    /**
-     * @var Quiz
-     */
     protected $model;
-
-    /**
-     * @return Quiz
-     */
+    private static $instance = null;
+    
     protected function getModelInstance(): Quiz
     {
-        return new Quiz();
+        $this->model = new Quiz();
+        return $this->model;
     }
 
-    // Chỉ giữ các method custom, không duplicate CRUD vì BaseRepository đã có
+    public static function getInstance()
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    
     public function findByCode(string $quizCode)
     {
         return $this->model->findOne(['quiz_code' => $quizCode]);
