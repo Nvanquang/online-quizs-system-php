@@ -2,12 +2,21 @@
 
 class SessionPlayerServiceImpl extends BaseService implements SessionPlayerService
 {
+    private static $instant = null;
     private $sessionPlayerRepository;
 
     public function __construct()
     {
         parent::__construct();
         $this->sessionPlayerRepository = SessionPlayerRepository::getInstance();
+    }
+
+    public static function getInstance()
+    {
+        if (self::$instant === null) {
+            self::$instant = new self();
+        }
+        return self::$instant;
     }
 
     protected function getRepositoryInstance()

@@ -28,7 +28,7 @@ abstract class BaseRepository
      * @param mixed $id
      * @return T|null
      */
-    public function findById($id)
+    public function findById($id): object | null
     {
         return $this->model->find($id);
     }
@@ -37,7 +37,7 @@ abstract class BaseRepository
      * @param array $conditions
      * @return T|null
      */
-    public function findOneBy(array $conditions = [])
+    public function findOneBy(array $conditions = []): object
     {
         return $this->model->findOne($conditions);
     }

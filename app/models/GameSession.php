@@ -59,6 +59,24 @@ class GameSession extends Model
     public function setEndedAt($v): void { $this->ended_at = $v; }
     public function getCreatedAt() { return $this->created_at; }
     public function setCreatedAt($v): void { $this->created_at = $v; }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'quiz_id' => $this->getQuizId(),
+            'session_code' => $this->getSessionCode(),
+            'host_id' => $this->getHostId(),
+            'status' => $this->getStatus(),
+            'current_question' => $this->getCurrentQuestion(),
+            'total_players' => $this->getTotalPlayers(),
+            'actual_mode' => $this->getActualMode(),
+            'pin_code' => $this->getPinCode(),
+            'started_at' => $this->getStartedAt(),
+            'ended_at' => $this->getEndedAt(),
+            'created_at' => $this->getCreatedAt(),
+        ];
+    }
 }
 
 

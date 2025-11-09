@@ -5,7 +5,7 @@ class QuestionRepository extends BaseRepository
 {
     protected $model;
     private static $instance = null;
-    
+
     protected function getModelInstance(): Question
     {
         $this->model = new Question();
@@ -38,13 +38,18 @@ class QuestionRepository extends BaseRepository
             q.correct_answer,
             q.explanation,
             q.image_url,
-            COALESCE(qq.time_limit, q.time_limit) AS time_limit,
+            COALESCE(q.time_limit, qq.time_limit) AS time_limit, 
             qq.order_number
         FROM questions q
         INNER JOIN quiz_questions qq ON q.id = qq.question_id
         WHERE qq.quiz_id = :quiz_id
         ORDER BY qq.order_number ASC
-    ";
+        ";
         return $this->model->fetchAll($sql, ['quiz_id' => $quizId]);
+    }
+
+    public function findById($id): Question|null
+    {
+        return $this->model->find($id);
     }
 }

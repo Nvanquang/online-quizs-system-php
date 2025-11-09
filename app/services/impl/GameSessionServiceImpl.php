@@ -2,6 +2,7 @@
 
 class GameSessionServiceImpl extends BaseService implements GameSessionService
 {
+    private static $instant = null;
     private $gameSessionRepository;
     private $codeGenerator;
     private $userRepository;
@@ -12,6 +13,14 @@ class GameSessionServiceImpl extends BaseService implements GameSessionService
         $this->gameSessionRepository = GameSessionRepository::getInstance();
         $this->codeGenerator = CodeGenerator::getInstance();
         $this->userRepository = UserRepository::getInstance();
+    }
+
+    public static function getInstance()
+    {
+        if (self::$instant === null) {
+            self::$instant = new self();
+        }
+        return self::$instant;
     }
 
     protected function getRepositoryInstance()
@@ -86,6 +95,6 @@ class GameSessionServiceImpl extends BaseService implements GameSessionService
         if($data['total_players'] != 0) {
             $session->setTotalPlayers($data['total_players']);
         }
-        return $this->gameSessionRepository->update((int)$session->getId(), $data);
+        return $this->gameSessionRepository->update((int)$session->getId(), $session->toArray());
     }
 }

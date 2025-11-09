@@ -58,6 +58,24 @@ class Question extends Model
     public function setCreatedBy($v): void { $this->created_by = (int)$v; }
     public function getCreatedAt() { return $this->created_at; }
     public function setCreatedAt($v): void { $this->created_at = $v; }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'content' => $this->getContent(),
+            'answer_a' => $this->getAnswerA(),
+            'answer_b' => $this->getAnswerB(),
+            'answer_c' => $this->getAnswerC(),
+            'answer_d' => $this->getAnswerD(),
+            'correct_answer' => $this->getCorrectAnswer(),
+            'explanation' => $this->getExplanation(),
+            'image_url' => $this->getImageUrl(),
+            'time_limit' => $this->getTimeLimit(),
+            'created_by' => $this->getCreatedBy(),
+            'created_at' => $this->getCreatedAt(),
+        ];
+    }
 }
 
 

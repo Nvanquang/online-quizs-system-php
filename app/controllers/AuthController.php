@@ -12,7 +12,7 @@ class AuthController extends Controller
     {
         parent::__construct();
         $this->auth = Auth::getInstance();
-        $this->userService = new UserServiceImpl();
+        $this->userService = UserServiceImpl::getInstance();
     }
 
     /**

@@ -24,4 +24,10 @@ class QuizQuestionRepository extends BaseRepository
     {
         return $this->model->findAll(['quiz_id' => $quizId], $orderBy);
     }
+
+    public function findLastQuestionByQuizId(int $quizId): ?object
+    {
+        $results = $this->model->findAll(['quiz_id' => $quizId], 'order_number DESC', 1);
+        return $results[0] ?? null;
+    }
 }

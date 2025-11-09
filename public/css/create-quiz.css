@@ -1,0 +1,319 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #264d52;
+    font-family: "Poppins", sans-serif;
+    color: #333;
+    min-height: 100vh;
+}
+
+/* ===== HEADER ===== */
+.quiz-header {
+    height: 53px;
+    background: #073237;
+    border-bottom: 1px solid #091719;
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-content {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+}
+
+.logo-quiz img {
+    height: 28px;
+    width: auto;
+    display: block;
+}
+
+
+/* ===== UPLOAD AREA ===== */
+.upload-area {
+    position: relative;
+}
+
+.border-dashed {
+    border-style: dashed !important;
+    border-color: #ccc !important;
+}
+
+.bg-light-custom {
+    background-color: #f5f5f5 !important;
+    transition: all 0.3s ease;
+}
+
+.upload-area:hover .bg-light-custom {
+    background-color: #efefef;
+    border-color: #999 !important;
+}
+
+.upload-area.dragover .bg-light-custom {
+    background-color: #e8f4f8;
+    border-color: #1abc9c !important;
+    box-shadow: 0 0 12px rgba(26, 188, 156, 0.15);
+}
+
+#dropZone {
+    overflow: hidden;
+}
+
+#dropZone.has-image {
+    padding: 0 !important;
+}
+
+#dropZone.has-image #uploadContent {
+    display: none !important;
+}
+
+#dropZone.has-image #previewImage {
+    display: block !important;
+}
+
+#previewImage {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    display: block;
+    animation: fadeIn 0.4s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* ===== BUTTONS ===== */
+.btn-upload {
+    background: white !important;
+    color: #264d52 !important;
+    border: 1px solid #ddd !important;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 10px;
+}
+
+.btn-upload:hover {
+    background: #f9f9f9 !important;
+    border-color: #264d52 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.btn-upload i {
+    font-size: 16px;
+}
+
+/* ===== FORM CONTROLS ===== */
+.form-control {
+    border: none !important;
+    background-color: #f5f5f5 !important;
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    background-color: #f0f0f0 !important;
+    box-shadow: inset 0 0 0 2px #264d52 !important;
+    outline: none;
+}
+
+.form-control::placeholder {
+    color: #999;
+}
+
+.form-label {
+    color: #1a1a1a;
+    margin-bottom: 10px;
+    font-size: 15px;
+}
+
+/* ===== TOGGLE SWITCH ===== */
+.form-switch .form-check-input {
+    width: 48px;
+    height: 28px;
+    background-color: #1abc9c;
+    border-color: #1abc9c;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.form-switch .form-check-input:not(:checked) {
+    background-color: #ccc;
+    border-color: #ccc;
+}
+
+.form-switch .form-check-input:focus {
+    box-shadow: 0 0 0 0.2rem rgba(26, 188, 156, 0.25);
+}
+
+/* ===== CREATION METHOD BUTTONS ===== */
+.btn-method {
+    background: #f5f5f5 !important;
+    color: #666 !important;
+    border: 2px solid transparent !important;
+    border-radius: 12px;
+    font-weight: 600;
+    padding: 12px 20px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-method:hover {
+    background: #efefef !important;
+    transform: translateY(-2px);
+}
+
+.btn-method.active {
+    background: #1abc9c !important;
+    color: white !important;
+    border-color: #1abc9c !important;
+    box-shadow: 0 4px 12px rgba(26, 188, 156, 0.3);
+}
+
+/* ===== CREATE BUTTON ===== */
+.btn-create {
+    background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%) !important;
+    color: white !important;
+    border: none !important;
+    font-weight: 700;
+    border-radius: 12px;
+    padding: 14px 40px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(26, 188, 156, 0.3);
+}
+
+.btn-create:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(26, 188, 156, 0.4);
+}
+
+.btn-create:active {
+    transform: translateY(-1px);
+}
+
+/* ===== MODAL ===== */
+.modal-content {
+    border-radius: 16px;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%);
+    color: white;
+}
+
+.modal-header .btn-close {
+    filter: invert(1) brightness(1.2);
+}
+
+/* ===== TEXT ===== */
+.text-danger {
+    color: #e74c3c !important;
+}
+
+.text-muted {
+    color: #999 !important;
+}
+
+.text-dark {
+    color: #1a1a1a !important;
+}
+
+.fw-bold {
+    font-weight: 700;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 16px;
+    }
+
+    .container-lg {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .row {
+        margin-left: -7.5px;
+        margin-right: -7.5px;
+    }
+
+    .col-lg-5,
+    .col-lg-7 {
+        padding-left: 7.5px;
+        padding-right: 7.5px;
+    }
+
+    .btn-method {
+        flex: 1 1 calc(50% - 8px);
+    }
+
+    .form-control {
+        font-size: 16px;
+    }
+
+    .card-body {
+        padding: 20px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar-brand i {
+        margin-right: 8px;
+    }
+
+    .btn-upload {
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+
+    .btn-method {
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+
+    .btn-create {
+        padding: 12px 30px;
+        font-size: 14px;
+    }
+
+    .form-label {
+        font-size: 13px;
+    }
+}

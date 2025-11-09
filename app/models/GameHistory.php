@@ -5,7 +5,7 @@ class GameHistory extends Model
     protected $table = 'game_history';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'session_id','quiz_id','user_id','final_score','final_rank','correct_answers','total_questions','avg_response_time','played_at'
+        'session_id','quiz_id','user_id','final_score','final_rank','correct_answers','total_questions','played_at'
     ];
     protected $casts = [
         'id' => 'int',
@@ -16,7 +16,6 @@ class GameHistory extends Model
         'final_rank' => 'int',
         'correct_answers' => 'int',
         'total_questions' => 'int',
-        'avg_response_time' => 'float',
     ];
 
     private $id;
@@ -27,7 +26,6 @@ class GameHistory extends Model
     private $final_rank;
     private $correct_answers;
     private $total_questions;
-    private $avg_response_time;
     private $played_at;
 
     public function __construct(?array $data = null)
@@ -53,8 +51,6 @@ class GameHistory extends Model
     public function setCorrectAnswers($v): void { $this->correct_answers = (int)$v; }
     public function getTotalQuestions() { return (int)$this->total_questions; }
     public function setTotalQuestions($v): void { $this->total_questions = (int)$v; }
-    public function getAvgResponseTime() { return (float)$this->avg_response_time; }
-    public function setAvgResponseTime($v): void { $this->avg_response_time = (float)$v; }
     public function getPlayedAt() { return $this->played_at; }
     public function setPlayedAt($v): void { $this->played_at = $v; }
 }

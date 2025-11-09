@@ -84,6 +84,31 @@ class Model
     }
 
     /**
+     * Kiểm tra record có tồn tại theo conditions
+     */
+    public function exists(array $conditions = []): bool
+    {
+        if (empty($conditions)) {
+            throw new InvalidArgumentException("conditions không được rỗng");
+        }
+
+        $sql = "SELECT 1 FROM {$this->table}";
+        $params = [];
+
+        $where = [];
+        foreach ($conditions as $field => $value) {
+            $where[] = "{$field} = ?";
+            $params[] = $value;
+        }
+
+        $sql .= " WHERE " . implode(' AND ', $where) . " LIMIT 1";
+
+        $result = $this->db->fetch($sql, $params);
+        return $result !== false && $result !== null;
+    }
+
+
+    /**
      * Find record by ID
      */
     public function find($id)
@@ -191,14 +216,27 @@ class Model
         $sql = "INSERT INTO {$this->table} (" . implode(', ', $fields) . ") VALUES (" . implode(', ', $placeholders) . ")";
         $this->db->query($sql, $values);
 
+        $primaryKey = $this->primaryKey;
+        if ($primaryKey !== null) {
+            $id = $this->db->lastInsertId();
+            if (!empty($id)) {
+                $sqlSelect = "SELECT * FROM {$this->table} WHERE {$primaryKey} = ?";
+                $record = $this->db->query($sqlSelect, [$id])->fetch(PDO::FETCH_ASSOC);
+                if ($record) {
+                    return $this->mapRowToModel($record);
+                }
+            }
+        }
 
-        $id = (int)$this->db->lastInsertId();
+        $found = $this->findOne($data);
+        if ($found) {
+            return $found;
+        }
 
-
-        $sqlSelect = "SELECT * FROM {$this->table} WHERE id = ?";
-        $record = $this->db->query($sqlSelect, [$id])->fetch(PDO::FETCH_ASSOC);
-
-        return $record ? $this->mapRowToModel($record) : (object)[];
+        $className = get_class($this);
+        $model = new $className();
+        $model->fromArray($data);
+        return $model;
     }
 
 

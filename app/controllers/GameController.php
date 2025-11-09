@@ -12,12 +12,12 @@ class GameController extends Controller
     public function __construct()
     {
         parent::__construct();
-        $this->gameSessionService = new GameSessionServiceImpl();
-        $this->sessionPlayerService = new SessionPlayerServiceImpl();
+        $this->gameSessionService = GameSessionServiceImpl::getInstance();
+        $this->sessionPlayerService = SessionPlayerServiceImpl::getInstance();
         $this->auth = Auth::getInstance();
-        $this->quizService = new QuizServiceImpl();
-        $this->questionService = new QuestionServiceImpl();
-        $this->gameHistoryService = new GameHistoryServiceImpl();
+        $this->quizService = QuizServiceImpl::getInstance();
+        $this->questionService = QuestionServiceImpl::getInstance();
+        $this->gameHistoryService = GameHistoryServiceImpl::getInstance();
     }
 
     public function startLobby($quizId)
@@ -184,7 +184,7 @@ class GameController extends Controller
                 'final_rank' => 1,
                 'total_questions' => $totalQuestions,
                 'correct_answers' => $correctAnswers,
-                'played_at' => date('Y-m-d H:i:s'),
+                'played_at' => $gameSession->getStartedAt(),
             ];
             $this->gameHistoryService->create($gameHistoryData);
 

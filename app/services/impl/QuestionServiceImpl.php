@@ -2,12 +2,21 @@
 
 class QuestionServiceImpl extends BaseService implements QuestionService
 {
+    private static $instant = null;
     private $questionRepository;
 
     public function __construct()
     {
         parent::__construct();
         $this->questionRepository = QuestionRepository::getInstance();
+    }
+
+    public static function getInstance()
+    {
+        if (self::$instant === null) {
+            self::$instant = new self();
+        }
+        return self::$instant;
     }
 
     protected function getRepositoryInstance()
@@ -28,5 +37,45 @@ class QuestionServiceImpl extends BaseService implements QuestionService
 
     public function findByQuiz(int $quizId): array{
         return $this->questionRepository->findByQuiz($quizId);
+    }
+
+    public function update($id, array $data){
+        $question = $this->questionRepository->findById($id);
+        if (!$question) {
+            throw new Exception("Question not found");
+        }
+
+        if($data['content'] != null) {
+            $question->setContent($data['content']);
+        }
+        if($data['answer_a'] != null) {
+            $question->setAnswerA($data['answer_a']);
+        }
+        if($data['answer_b'] != null) {
+            $question->setAnswerB($data['answer_b']);
+        }
+        if($data['answer_c'] != null) {
+            $question->setAnswerC($data['answer_c']);
+        }
+        if($data['answer_d'] != null) {
+            $question->setAnswerD($data['answer_d']);
+        }
+        if($data['correct_answer'] != null) {
+            $question->setCorrectAnswer($data['correct_answer']);
+        }
+        if($data['explanation'] != null) {
+            $question->setExplanation($data['explanation']);
+        }
+        if($data['image_url'] != null) {
+            $question->setImageUrl($data['image_url']);
+        }
+        if($data['time_limit'] != null) {
+            $question->setTimeLimit($data['time_limit']);
+        }
+        return $this->questionRepository->update($id, $question->toArray());
+    }
+
+    public function delete($id){
+        return $this->questionRepository->delete($id);
     }
 }

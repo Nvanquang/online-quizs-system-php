@@ -5,21 +5,19 @@ class QuizQuestion extends Model
     protected $table = 'quiz_questions';
     protected $primaryKey = null; // composite key
     protected $fillable = [
-        'quiz_id','question_id','order_number','time_limit','max_points'
+        'quiz_id','question_id','order_number','time_limit'
     ];
     protected $casts = [
         'quiz_id' => 'int',
         'question_id' => 'int',
         'order_number' => 'int',
         'time_limit' => 'int',
-        'max_points' => 'int',
     ];
 
     private $quiz_id;
     private $question_id;
     private $order_number;
     private $time_limit;
-    private $max_points;
 
     public function __construct(?array $data = null)
     {
@@ -36,8 +34,6 @@ class QuizQuestion extends Model
     public function setOrderNumber($v): void { $this->order_number = (int)$v; }
     public function getTimeLimit() { return $this->time_limit !== null ? (int)$this->time_limit : null; }
     public function setTimeLimit($v): void { $this->time_limit = $v !== null ? (int)$v : null; }
-    public function getMaxPoints() { return $this->max_points !== null ? (int)$this->max_points : null; }
-    public function setMaxPoints($v): void { $this->max_points = $v !== null ? (int)$v : null; }
 }
 
 

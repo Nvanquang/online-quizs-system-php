@@ -2,12 +2,21 @@
 
 class GameHistoryServiceImpl extends BaseService implements GameHistoryService
 {
+    private static $instant = null;
     private $gameHistoryRepository;
 
     public function __construct()
     {
         parent::__construct();
         $this->gameHistoryRepository = GameHistoryRepository::getInstance();
+    }
+
+    public static function getInstance()
+    {
+        if (self::$instant === null) {
+            self::$instant = new self();
+        }
+        return self::$instant;
     }
 
     protected function getRepositoryInstance()

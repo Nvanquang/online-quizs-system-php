@@ -2,12 +2,26 @@
 
 class UserServiceImpl extends BaseService implements UserService
 {
-
+    private static $instant = null;
     private $userRepository;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->userRepository = UserRepository::getInstance();
+    }
+
+    public static function getInstance()
+    {
+        if (self::$instant === null) {
+            self::$instant = new self();
+        }
+        return self::$instant;
+    }
 
     protected function getRepositoryInstance()
     {
-        $this->userRepository = new UserRepository();
+        return UserRepository::getInstance();
     }
 
     public function findByEmail($email)

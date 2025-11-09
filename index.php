@@ -47,6 +47,7 @@ $router = new Router();
 // Routes công khai (không cần middleware)
 $router->get('/', 'Home@index');
 $router->get('/test', 'Home@test');
+$router->get('/study', 'Home@study');
 
 // Routes chỉ dành cho guest (chưa đăng nhập)
 $router->get('/auth/login', 'Auth@login', ['GuestMiddleware']);
@@ -71,6 +72,13 @@ $router->post('/game/end/{sessionCode}', 'Game@endGame', ['AuthMiddleware', 'CSR
 // Routes edit cần đăng nhập
 $router->get('/quiz/create', 'Quiz@create', ['AuthMiddleware']);
 $router->post('/quiz/create', 'Quiz@doCreate', ['AuthMiddleware', 'CSRFMiddleware']);
+$router->post('/quiz/create-question/{quizId}', 'Quiz@doCreateQuestion', ['AuthMiddleware', 'CSRFMiddleware']);
+$router->get('/quiz/edit/{quizId}', 'Quiz@edit', ['AuthMiddleware']);
+$router->post('/quiz/edit/{quizId}', 'Quiz@doEdit', ['AuthMiddleware', 'CSRFMiddleware']);
+
+$router->post('/question/create', 'Question@doCreate', ['AuthMiddleware', 'CSRFMiddleware']);
+$router->post('/question/edit/{questionId}', 'Question@doEdit', ['AuthMiddleware', 'CSRFMiddleware']);
+$router->post('/question/delete/{questionId}', 'Question@doDelete', ['AuthMiddleware', 'CSRFMiddleware']);
 
 // Dispatch current request
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';

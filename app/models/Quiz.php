@@ -52,6 +52,20 @@ class Quiz extends Model
     public function setAuthor($v): void { $this->author = $v; }
     public function getImage() { return $this->image; }
     public function setImage($v): void { $this->image = $v; }
-}
 
-    
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'title' => $this->getTitle(),
+            'quiz_code' => $this->getQuizCode(),
+            'thumbnail_url' => $this->getThumbnailUrl(),
+            'created_by' => $this->getCreatedBy(),
+            'is_public' => $this->isPublic(),
+            'total_questions' => $this->getTotalQuestions(),
+            'created_at' => $this->getCreatedAt(),
+            'author' => $this->getAuthor(),
+            'image' => $this->getImage(),
+        ];
+    }
+}
