@@ -1,0 +1,348 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap");
+
+* {
+    font-family: "Nunito", sans-serif;
+}
+
+body {
+    background: #f7f7f7;
+}
+
+/* Header */
+.main-header {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 20px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.page-title {
+    font-size: 36px;
+    font-weight: 900;
+    color: #1a202c;
+    margin: 0;
+}
+
+.btn-create {
+    width: 44px;
+    height: 44px;
+    background: #26c6da;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 18px;
+    transition: background 0.2s;
+}
+
+.btn-create:hover {
+    background: #00acc1;
+}
+
+.search-wrapper {
+    position: relative;
+    flex: 1;
+    max-width: 600px;
+}
+
+.search-input {
+    width: 100%;
+    height: 44px;
+    padding-left: 44px;
+    border: 2px solid #cbd5e0;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.search-input:focus {
+    border-color: #26c6da;
+    box-shadow: none;
+}
+
+.search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #718096;
+    font-size: 16px;
+}
+
+.user-badge {
+    background: #9333ea;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+    transition: background 0.2s;
+    border: none;
+}
+
+.user-badge:hover {
+    background: #7e22ce;
+    color: white;
+}
+
+.user-icon {
+    width: 24px;
+    height: 24px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9333ea;
+    font-size: 12px;
+}
+
+.logo img {
+    height: 32px;
+    width: auto;
+    display: inline-block;
+    /* display: flex; */
+    align-items: center;
+    justify-content: center;
+    margin-right: 30px !important;
+}
+
+/* Cards */
+.quiz-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.quiz-card {
+    cursor: pointer;
+}
+
+.card-image-wrapper {
+    position: relative;
+    height: 180px;
+    overflow: hidden;
+}
+
+.card-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-views-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.card-questions-badge {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* Blooket Special Card */
+.card-blooket .card-image-wrapper {
+    background: none;
+}
+
+.blooket-title {
+    font-size: 64px;
+    font-weight: 900;
+    color: white;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.card-body {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-title {
+    font-size: 20px;
+    font-weight: 900;
+    color: #1a202c;
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-plays {
+    font-size: 14px;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 2px;
+}
+
+.card-edited {
+    font-size: 13px;
+    color: #718096;
+    margin-bottom: 8px;
+}
+
+.card-actions {
+    display: flex;
+    gap: 0;
+    padding: 0;
+    border-top: 1px solid #e2e8f0;
+    border-bottom: none;
+    margin-bottom: 8px;
+    align-items: stretch;
+    justify-content: stretch;
+}
+
+.action-btn {
+    flex: 1 1 0;
+    height: 48px;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    color: #4a5568;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.action-btn:hover {
+    background: transparent;
+    color: #2d3748;
+}
+
+/* Full-height vertical separators like the screenshot */
+.card-actions .action-btn:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 8px;
+    bottom: 8px;
+    width: 1px;
+    background: #e2e8f0;
+}
+
+.btn-assign {
+    flex: 1;
+    height: 40px;
+    background: white;
+    border: 2px solid #cbd5e0;
+    border-radius: 8px;
+    font-weight: 700;
+    color: #4a5568;
+    transition: all 0.2s;
+}
+
+.btn-assign:hover {
+    background: #f7fafc;
+    border-color: #a0aec0;
+}
+
+.btn-host {
+    flex: 1;
+    height: 40px;
+    background: #26c6da;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    color: white;
+    transition: all 0.2s;
+}
+
+.btn-host:hover {
+    background: #00acc1;
+}
+
+/* Watermark */
+.assign-host-group {
+    display: flex;
+    width: 100%;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.assign-host-group .btn {
+    flex: 1 1 0;
+    height: 44px;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    font-weight: 800;
+    font-size: 16px;
+}
+
+.assign-host-group .btn-assign {
+    background: #ffffff;
+    color: #2d3748;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0 14px;
+}
+
+.assign-host-group .btn-host {
+    background: #26c6da;
+    color: #ffffff;
+    border-left: 1px solid #e2e8f0;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.08) inset;
+}
+
+.assign-host-group .btn-host:hover {
+    background: #00acc1;
+}
+
+.assign-host-group .bi {
+    font-size: 18px;
+}
+
+.assign-host-group .btn-assign:hover {
+    background: #f7fafc;
+}
+.watermark {
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+    text-align: right;
+    opacity: 0.25;
+    pointer-events: none;
+}
+
+.watermark-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #000;
+}
+
+.watermark-text {
+    font-size: 13px;
+    color: #000;
+}

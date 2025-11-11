@@ -233,12 +233,6 @@ $(document).ready(() => {
     // TODO: Implement save functionality
   })
 
-  // Edit Info
-  $('button:contains("Edit Info")').click(() => {
-    alert("Open edit info modal")
-    // TODO: Implement edit info modal
-  })
-
   // Time Limit: open modal
   $('#btnTimeLimit').on('click', () => {
     const modalEl = document.getElementById('timeLimitModal')

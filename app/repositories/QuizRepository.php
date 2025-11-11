@@ -30,4 +30,9 @@ class QuizRepository extends BaseRepository
         if ($pinCode === null) return null;
         return $this->model->findOne(['pin_code' => $pinCode]);
     }
+
+    public function findAllByUserId(int $userId)
+    {
+        return $this->model->findAll(['created_by' => $userId]);
+    }
 }

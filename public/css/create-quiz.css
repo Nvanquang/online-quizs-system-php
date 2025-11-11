@@ -42,6 +42,14 @@ body {
     flex: 1;
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 0 0 auto;
+  margin-right: 24px;
+}
+
 .logo-quiz img {
     height: 28px;
     width: auto;
@@ -89,6 +97,27 @@ body {
 
 #dropZone.has-image #previewImage {
     display: block !important;
+}
+
+#dropZone.has-image:hover #previewImage {
+    filter: brightness(0.6);
+}
+
+#dropZone .remove-overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+#dropZone .remove-overlay button {
+    pointer-events: auto;
+}
+
+#dropZone.has-image:hover .remove-overlay {
+    display: flex;
 }
 
 #previewImage {

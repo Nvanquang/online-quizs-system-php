@@ -1,19 +1,19 @@
 // assets/js/main.js
 
-document.addEventListener('DOMContentLoaded', function() {
-    
+document.addEventListener('DOMContentLoaded', function () {
+
     // ===== SCROLL EFFECTS =====
     const navbar = document.querySelector('.navbar');
     const scrollToTopBtn = document.getElementById('scrollToTop');
-    
-    window.addEventListener('scroll', function() {
+
+    window.addEventListener('scroll', function () {
         // Navbar shadow on scroll
         if (window.scrollY > 50) {
             navbar.classList.add('scrolled');
         } else {
             navbar.classList.remove('scrolled');
         }
-        
+
         // Show/hide scroll to top button
         if (scrollToTopBtn) {
             if (window.scrollY > 300) {
@@ -23,52 +23,52 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
-    
+
     // Scroll to top functionality
     if (scrollToTopBtn) {
-        scrollToTopBtn.addEventListener('click', function() {
+        scrollToTopBtn.addEventListener('click', function () {
             window.scrollTo({
                 top: 0,
                 behavior: 'smooth'
             });
         });
     }
-    
+
     // ===== CATEGORY NAVIGATION =====
     const categoryItems = document.querySelectorAll('.category-item');
-    
+
     categoryItems.forEach(item => {
-        item.addEventListener('click', function() {
+        item.addEventListener('click', function () {
             // Remove active class from all items
             categoryItems.forEach(cat => cat.classList.remove('active'));
             // Add active class to clicked item
             this.classList.add('active');
-            
+
             // Add ripple effect
             const ripple = document.createElement('span');
             ripple.classList.add('ripple-effect');
             this.appendChild(ripple);
-            
+
             setTimeout(() => {
                 ripple.remove();
             }, 600);
         });
-        
+
         // Hover sound effect (visual feedback)
-        item.addEventListener('mouseenter', function() {
+        item.addEventListener('mouseenter', function () {
             this.style.transform = 'translateY(-3px) scale(1.05)';
         });
-        
-        item.addEventListener('mouseleave', function() {
+
+        item.addEventListener('mouseleave', function () {
             this.style.transform = 'translateY(0) scale(1)';
         });
     });
-    
-    
+
+
     // ===== SECTION TITLES ANIMATION =====
     const sectionTitles = document.querySelectorAll('.section-title');
-    
-    const titleObserver = new IntersectionObserver(function(entries) {
+
+    const titleObserver = new IntersectionObserver(function (entries) {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.style.animation = 'fadeInLeft 0.8s ease forwards';
@@ -76,23 +76,23 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }, { threshold: 0.5 });
-    
+
     sectionTitles.forEach(title => {
         titleObserver.observe(title);
     });
-    
+
     // ===== JOIN GAME VIA PIN =====
     const joinInput = document.querySelector('.join-input');
     if (joinInput) {
         // Sanitize input to digits and spaces only
-        joinInput.addEventListener('input', function() {
+        joinInput.addEventListener('input', function () {
             const caret = this.selectionStart;
             this.value = this.value.replace(/[^0-9\s]/g, '');
             this.setSelectionRange(caret, caret);
         });
 
         // On Enter key -> navigate to waiting page
-        joinInput.addEventListener('keydown', function(e) {
+        joinInput.addEventListener('keydown', function (e) {
             if (e.key === 'Enter') {
                 const code = this.value.replace(/\s+/g, '').trim();
                 if (!code) {
@@ -106,20 +106,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
+
     // ===== DISCORD BUTTON EFFECT =====
     const discordBtn = document.querySelector('.btn-discord');
-    
+
     if (discordBtn) {
-        discordBtn.addEventListener('mouseenter', function() {
+        discordBtn.addEventListener('mouseenter', function () {
             this.innerHTML = '<i class="fab fa-discord"></i> JOIN NOW!';
         });
-        
-        discordBtn.addEventListener('mouseleave', function() {
+
+        discordBtn.addEventListener('mouseleave', function () {
             this.innerHTML = 'JOIN OUR DISCORD';
         });
     }
-    
+
     // ===== RANDOM GRADIENT FOR QUIZ IMAGES =====
     const gradients = [
         'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
         'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
         'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)'
     ];
-    
+
     const quizImages = document.querySelectorAll('.quiz-image');
     quizImages.forEach(img => {
         if (!img.style.background || img.style.background === '') {
@@ -139,10 +139,10 @@ document.addEventListener('DOMContentLoaded', function() {
             img.style.background = randomGradient;
         }
     });
-    
+
     // ===== SMOOTH SCROLL FOR LINKS =====
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
+        anchor.addEventListener('click', function (e) {
             e.preventDefault();
             const target = document.querySelector(this.getAttribute('href'));
             if (target) {
@@ -153,18 +153,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-    
+
     // ===== ADD LOADING ANIMATION =====
-    window.addEventListener('load', function() {
+    window.addEventListener('load', function () {
         document.body.style.opacity = '0';
         setTimeout(() => {
             document.body.style.transition = 'opacity 0.5s ease';
             document.body.style.opacity = '1';
         }, 100);
     });
-    
+
     // ===== KEYBOARD NAVIGATION =====
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
         // Press 'S' to focus on search
         if (e.key === 's' || e.key === 'S') {
             if (e.target.tagName !== 'INPUT') {
@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.querySelector('.btn-search')?.click();
             }
         }
-        
+
         // Press 'ESC' to scroll to top
         if (e.key === 'Escape') {
             window.scrollTo({
@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
-    
+
     // ===== PERFORMANCE: Lazy load images =====
     if ('IntersectionObserver' in window) {
         const imageObserver = new IntersectionObserver((entries) => {
@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         });
-        
+
         document.querySelectorAll('img[data-src]').forEach(img => {
             imageObserver.observe(img);
         });
@@ -246,3 +246,111 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// ===== Enhanced Recently Published Carousel =====
+// ===== Enhanced Recently Published Carousel =====
+(function ($) {
+  // Guard: nếu không có carousel trên trang thì thoát
+  if (!$('#quizCarouselTrack').length || !$('#quizCarouselViewport').length) return;
+
+  const $track = $('#quizCarouselTrack');
+  const $viewport = $('#quizCarouselViewport');
+  const $prev = $('#quizPrevBtn');
+  const $next = $('#quizNextBtn');
+  const $pp = $('#quizPlayPauseBtn');
+  const $empty = $('#quizEmptyAlert');
+  const regionId = 'quizCarouselRegion';
+
+  const $items = $track.children('.quiz-col');
+  if ($items.length === 0) {
+    if ($empty.length) $empty.removeClass('d-none');
+    return; // hợp lệ vì đang ở trong IIFE
+  }
+
+  // Không auto-slide -> ẩn nút
+  if ($pp.length) $pp.addClass('d-none');
+
+  const getItemsPerSlide = () => {
+    const w = window.innerWidth;
+    if (w >= 1200) return 6;
+    if (w >= 768) return 4;
+    return 2;
+  };
+
+  let itemsPerSlide = getItemsPerSlide();
+  let currentIndex = 0;
+  let slideWidth = 0;
+
+  const totalSlides = () =>
+    Math.max(1, Math.ceil($track.children('.quiz-col').length / itemsPerSlide));
+
+  const updateNav = () => {
+    const max = totalSlides();
+    if ($prev.length) $prev.prop('disabled', currentIndex === 0);
+    if ($next.length) $next.prop('disabled', currentIndex >= max - 1);
+  };
+
+  const jumpToIndex = (slideIndex, animate = true) => {
+    const offsetCols = slideIndex * itemsPerSlide;
+    const tx = -(offsetCols * slideWidth);
+    $track.css('transition', animate ? 'transform 400ms ease' : 'none');
+    $track.css('transform', `translateX(${tx}px)`);
+    $('#' + regionId).attr('aria-live', 'polite');
+  };
+
+  const layout = () => {
+    itemsPerSlide = getItemsPerSlide();
+    const vpWidth = $viewport.innerWidth();
+    slideWidth = vpWidth / itemsPerSlide;
+    $track.find('.quiz-col').css('width', `${100 / itemsPerSlide}%`);
+    const max = totalSlides();
+    if (currentIndex > max - 1) currentIndex = Math.max(0, max - 1);
+    jumpToIndex(currentIndex, false);
+    updateNav();
+  };
+
+  const slideNext = () => {
+    const max = totalSlides();
+    if (currentIndex < max - 1) {
+      currentIndex++;
+      jumpToIndex(currentIndex, true);
+      updateNav();
+    }
+  };
+
+  const slidePrev = () => {
+    if (currentIndex > 0) {
+      currentIndex--;
+      jumpToIndex(currentIndex, true);
+      updateNav();
+    }
+  };
+
+  $next.on('click', slideNext);
+  $prev.on('click', slidePrev);
+
+  $(document).on('keydown', (e) => {
+    if (!$(e.target).closest('#quizCarouselRegion').length) return;
+    if (e.key === 'ArrowRight') { e.preventDefault(); slideNext(); }
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); slidePrev(); }
+  });
+
+  let touchStartX = null, touchDX = 0;
+  $viewport.on('touchstart', (e) => {
+    if (!e.originalEvent.touches || !e.originalEvent.touches[0]) return;
+    touchStartX = e.originalEvent.touches[0].clientX; touchDX = 0;
+  });
+  $viewport.on('touchmove', (e) => {
+    if (!touchStartX || !e.originalEvent.touches || !e.originalEvent.touches[0]) return;
+    const x = e.originalEvent.touches[0].clientX; touchDX = x - touchStartX;
+  });
+  $viewport.on('touchend', () => {
+    if (Math.abs(touchDX) > 40) { if (touchDX < 0) slideNext(); else slidePrev(); }
+    touchStartX = null; touchDX = 0;
+  });
+
+  let resizeTimer = null;
+  $(window).on('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => layout(), 150); });
+
+  layout();
+})(jQuery);

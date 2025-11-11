@@ -250,4 +250,13 @@ class UploadFileServiceImpl implements UploadFileService
 
         return $success;
     }
+
+    public function deleteFileFromFolder(string $folder, string $fileName): bool
+    {
+        $fullPath = $this->config['uploadDir'] . $folder . '\\' . $fileName;
+        if (file_exists($fullPath)) {
+            return unlink($fullPath);
+        }
+        return false;
+    }
 }

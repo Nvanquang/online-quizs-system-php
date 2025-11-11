@@ -25,6 +25,50 @@
 <body>
     <?php include __DIR__ . '/../layouts/header.php'; ?>
 
+    <!-- Category Navigation -->
+    <div class="category-nav bg-white border-bottom">
+        <div class="container-fluid px-4">
+            <div class="d-flex justify-content-between align-items-center py-3">
+                <div class="category-item active">
+                    <img src="../../../public/images/navigation/start.svg" alt="Home" style="width:24px;height:24px;object-fit:contain;">
+                    <span>Start</span>
+                </div>
+                <div class="category-item">
+                    <img src="../../../public/images/navigation/art-and-literature.svg" alt="Art & Literature" style="width:24px;height:24px;object-fit:contain;">
+                    <span>Art & Literature</span>
+                </div>
+                <div class="category-item">
+                    <img src="../../../public/images/navigation/entertainment.svg" alt="Entertainment" style="width:24px;height:24px;object-fit:contain;">
+                    <span>Entertainment</span>
+                </div>
+                <div class="category-item">
+                    <img src="../../../public/images/navigation/geography.svg" alt="Geography" style="width:24px;height:24px;object-fit:contain;">
+                    <span>Geography</span>
+                </div>
+                <div class="category-item">
+                    <img src="../../../public/images/navigation/history.svg" alt="History" style="width:24px;height:24px;object-fit:contain;">
+                    <span>History</span>
+                </div>
+                <div class="category-item">
+                    <img src="../../../public/images/navigation/languages.svg" alt="Languages" style="width:24px;height:24px;object-fit:contain;">
+                    <span>Languages</span>
+                </div>
+                <div class="category-item">
+                    <img src="../../../public/images/navigation/science-and-nature.svg" alt="Science & Nature" style="width:24px;height:24px;object-fit:contain;">
+                    <span>Science & Nature</span>
+                </div>
+                <div class="category-item">
+                    <img src="../../../public/images/navigation/sports.svg" alt="Sports" style="width:24px;height:24px;object-fit:contain;">
+                    <span>Sports</span>
+                </div>
+                <div class="category-item">
+                    <img src="../../../public/images/navigation/trivia.svg" alt="Trivia" style="width:24px;height:24px;object-fit:contain;">
+                    <span>Trivia</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- includes/main-content.php -->
     <main class="main-content">
         <!-- Create Quiz Section -->
@@ -49,46 +93,59 @@
             </div>
         </section>
 
-        <!-- Recently Published -->
+        <!-- Recently Published (Enhanced Carousel) -->
         <section class="quiz-section py-5 bg-light">
             <div class="container-fluid px-4">
-                <div class="d-flex align-items-center gap-2 mb-4">
-                    <h3 class="section-title mb-0" style="margin-right:10px;">Recently published</h3>
-                    <a href="#" class="see-all-link">See all (<?php echo count($quizzes); ?>)</a>
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <h3 class="section-title mb-0 me-2">Recently published</h3>
+                        <a href="#" class="see-all-link text-decoration-none">See all (<?php echo count($quizzes); ?>)</a>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="btn btn-outline-secondary btn-sm" id="quizPrevBtn" aria-label="Previous quizzes">‹</button>
+                        <button class="btn btn-outline-secondary btn-sm" id="quizPlayPauseBtn" aria-pressed="false" aria-label="Pause auto slide">Pause</button>
+                        <button class="btn btn-outline-secondary btn-sm" id="quizNextBtn" aria-label="Next quizzes">›</button>
+                    </div>
                 </div>
-                <div class="row g-4" style="--bs-gutter-x: 15px;">
-                    <?php
-                    foreach ($quizzes as $quiz): ?>
-                        <div class="col-lg-2 col-md-4 col-sm-6">
-                            <div class="quiz-card">
-                                <div class="quiz-image-wrapper">
-                                    <?php
-                                    $hasImage = $quiz->getImage() != null && $quiz->getImage() && file_exists(__DIR__ . "/../../../public/uploads/quizzes/{$quiz->getImage()}");
-                                    $fallback = "background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);";
-                                    ?>
-                                    <div class="quiz-image" style="<?= $hasImage ? '' : $fallback ?>">
-                                        <?php if ($hasImage): ?>
-                                            <img src="../../../public/uploads/quizzes/<?= htmlspecialchars($quiz->getImage()) ?>" alt="<?= htmlspecialchars($quiz->getTitle()) ?>" style="width:100%;height:100%;object-fit:cover;">
-                                        <?php endif; ?>
 
-                                        <form action="/game/lobby/<?= $quiz->getId() ?>" method="post" style="display:inline;">
-                                            <button type="submit" class="play-now-btn">Chơi ngay</button>
-                                        </form>
+                <div id="quizCarouselRegion" class="position-relative" role="region" aria-roledescription="carousel" aria-label="Recently published quizzes">
+                    <div id="quizCarouselViewport" class="overflow-hidden w-100">
+                        <div id="quizCarouselTrack" class="d-flex" style="will-change: transform; transition: transform 400ms ease;">
+                            <?php foreach ($quizzes as $quiz): ?>
+                                <div class="quiz-col px-2 flex-shrink-0" style="width:auto;">
+                                    <div class="quiz-card">
+                                        <div class="quiz-image-wrapper">
+                                            <?php
+                                            $hasImage = $quiz->getImage() != null && $quiz->getImage() && file_exists(__DIR__ . "/../../../public/uploads/quizzes/{$quiz->getImage()}");
+                                            $fallback = "background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);";
+                                            ?>
+                                            <div class="quiz-image" style="<?= $hasImage ? '' : $fallback ?>">
+                                                <?php if ($hasImage): ?>
+                                                    <img src="../../../public/uploads/quizzes/<?= htmlspecialchars($quiz->getImage()) ?>" alt="<?= htmlspecialchars($quiz->getTitle()) ?>" style="width:100%;height:100%;object-fit:cover;">
+                                                <?php endif; ?>
+                                                <form action="/game/lobby/<?= $quiz->getId() ?>" method="post" style="display:inline;">
+                                                    <button type="submit" class="play-now-btn">Chơi ngay</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <div class="quiz-info">
+                                            <h5 class="quiz-title"><?= $quiz->getTitle() ?></h5>
+                                            <div class="quiz-meta">
+                                                <span class="quiz-rating">
+                                                    <i class="fas fa-star"></i>
+                                                </span>
+                                                <span class="quiz-author">By <?= $quiz->getAuthor() ?></span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="quiz-info">
-                                    <h5 class="quiz-title"><?= $quiz->getTitle() ?></h5>
-                                    <div class="quiz-meta">
-                                        <span class="quiz-rating">
-
-                                            <i class="fas fa-star"></i>
-                                        </span>
-                                        <span class="quiz-author">By <?= $quiz->getAuthor() ?></span>
-                                    </div>
-                                </div>
-                            </div>
+                            <?php endforeach; ?>
                         </div>
-                    <?php endforeach; ?>
+                    </div>
+                </div>
+
+                <div id="quizEmptyAlert" class="alert alert-warning mt-3 d-none" role="alert">
+                    No quizzes available.
                 </div>
             </div>
         </section>

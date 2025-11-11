@@ -42,18 +42,18 @@ class QuizController extends Controller
             $savedImageName = $this->uploadFileService->saveFileToFolder($tmpPath, 'quizzes', $_FILES['cover_image_file']['name']);
         }
 
-        $quizModel = new Quiz();
         $quizCode = strtoupper(substr(bin2hex(random_bytes(6)), 0, 8));
         $now = date('Y-m-d H:i:s');
 
-        $created = $quizModel->create([
+        $created = $this->quizService->create([
             'title' => $title,
             'quiz_code' => $quizCode,
-            'thumbnail_url' => null,
             'created_by' => $userId,
             'is_public' => $isPublic,
             'total_questions' => 0,
+            'rating' => 0,
             'created_at' => $now,
+            'updated_at' => null,
             'author' => $authorName,
             'image' => $savedImageName,
         ]);
@@ -69,20 +69,76 @@ class QuizController extends Controller
         echo 'Failed to create quiz';
     }
 
-    // public function doCreateQuestion($quizId)
-    // {
-    //     echo $this->renderPartial('quizzes/edit', ['quizId' => $quizId]);
-    // }
-
-    public function edit($quizId)
+    public function edit($quizId) // giao diện tao cau hoi
     {
         $quiz = $this->quizService->findById((int)$quizId);
         $questions = $this->questionService->findByQuiz((int)$quizId);
         echo $this->renderPartial('quizzes/edit', ['quizId' => $quizId, 'quiz' => $quiz, 'questions' => $questions]);
     }
 
-    public function doEdit($quizId)
+    public function editQuiz($quizId)
     {
-        // echo $this->renderPartial('quizzes/edit', ['quizId' => $quizId]);
+        $quiz = $this->quizService->findById((int)$quizId);
+        echo $this->renderPartial('quizzes/create', ['quiz' => $quiz]);
+    }
+
+    public function doEditQuiz($quizId)
+    {
+        $title = isset($_POST['title']) ? trim($_POST['title']) : '';
+        if ($title === '') {
+            http_response_code(422);
+            echo 'Title is required';
+            return;
+        }
+
+        $isPublic = isset($_POST['is_public']) && (string)$_POST['is_public'] === '1' ? 1 : 0;
+
+        $savedImageName = null;
+
+        if (isset($_FILES['cover_image_file']) && is_array($_FILES['cover_image_file']) && $_FILES['cover_image_file']['error'] === UPLOAD_ERR_OK) {
+            $tmpPath = $_FILES['cover_image_file']['tmp_name'];
+            $savedImageName = $this->uploadFileService->saveFileToFolder($tmpPath, 'quizzes', $_FILES['cover_image_file']['name']);
+        }
+
+
+        $updated = $this->quizService->update((int)$quizId, [
+            'title' => $title,
+            'is_public' => $isPublic,
+            'image' => $savedImageName,
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
+
+        if ($updated) {
+            $this->redirect("/quiz/edit/". urlencode($quizId));
+            return;
+        }
+
+        http_response_code(500);
+        echo 'Failed to update quiz';
+    }
+
+    public function doDelete($quizId)
+    {
+        try {
+            $quizId = (int)$quizId;
+            $quiz = $this->quizService->findById($quizId);
+            $this->uploadFileService->deleteFileFromFolder('quizzes', $quiz->getImage());
+            $this->quizService->delete($quizId);
+
+            http_response_code(200);
+            header('Content-Type: application/json');
+            echo json_encode(['success' => true]);
+        } catch (Throwable $e) {
+            http_response_code(500);
+            header('Content-Type: text/plain; charset=UTF-8');
+            echo 'Server error: ' . $e->getMessage();
+        }
+    }
+
+    public function view($quizId)
+    {
+        $quiz = $this->quizService->findById((int)$quizId);
+        $questions = $this->questionService->findByQuiz((int)$quizId);
+        echo $this->renderPartial('quizzes/view', ['quiz' => $quiz, 'questions' => $questions]);
     }
 }

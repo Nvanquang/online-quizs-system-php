@@ -179,7 +179,10 @@ class QuestionController extends Controller {
     public function doDelete($questionId) {
         try {
             $questionId = (int)$questionId;
+            $question = $this->questionService->findById($questionId);
+            $this->uploadFileService->deleteFileFromFolder('questions', $question->getImageUrl());
             $this->questionService->delete($questionId);
+
             http_response_code(200);
             header('Content-Type: application/json');
             echo json_encode(['success' => true]);

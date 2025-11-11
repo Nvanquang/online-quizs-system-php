@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../../../public/css/edit-quiz.css">
 </head>
+
 <body>
     <!-- Header -->
     <header class="quiz-header">
@@ -26,14 +28,17 @@
             <?php $auth = Auth::getInstance(); ?>
             <?php if ($auth->check()): ?>
                 <?php $user = $auth->user(); ?>
-                <div class="dropdown">
+                <div class="dropdown d-inline-flex align-items-center gap-2">
+                    <span class="fw-semibold m-0">
+                        <?= htmlspecialchars($user->getUsername()) ?>
+                    </span>
                     <a href="#" class="d-inline-flex align-items-center p-0 border-0 bg-transparent" data-bs-toggle="dropdown" aria-expanded="false">
                         <img src="../../../public/uploads/avatars/<?= $user->getAvatarUrl() ?>" alt="Avatar" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="user/profile">Hồ sơ</a></li>
-                        <li><a class="dropdown-item" href="user/my-quizzes">Quiz của tôi</a></li>
-                        <li><a class="dropdown-item" href="user/history">Lịch sử</a></li>
+                        <li><a class="dropdown-item" href="/user/profile">Hồ sơ</a></li>
+                        <li><a class="dropdown-item" href="/user/my-quizzes">Quiz của tôi</a></li>
+                        <li><a class="dropdown-item" href="/user/history">Lịch sử</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
@@ -48,6 +53,17 @@
 
     <!-- Main Content -->
     <div class="container-fluid main-container">
+        <!-- Breadcrumb -->
+        <div class="bg-body-tertiary border rounded px-3 py-2 mb-3">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>';">
+                    <ol class="breadcrumb mb-0 small">
+                        <li class="breadcrumb-item"><a class="text-decoration-none" href="/">Trang chủ</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Tạo danh sách câu hỏi</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
         <input type="hidden" id="quizId" value="<?= (int)$quizId ?>">
         <div class="row h-100">
             <!-- Left Sidebar -->
@@ -82,7 +98,9 @@
                     <div class="row g-2 mb-4">
                         <div class="col-6">
                             <button class="btn btn-sm btn-light w-100">
-                                <i class="fas fa-edit"></i> Edit Info
+                                <a href="<?= '/quiz/edit-quiz/' . $quizId ?>" style="text-decoration: none; color: inherit;">
+                                    <i class="fas fa-edit"></i> Edit Info
+                                </a>
                             </button>
                         </div>
                         <div class="col-6">
@@ -134,7 +152,7 @@
                 <div class="content-area">
                     <div class="d-flex justify-content-between align-items-center mb-5">
                         <div class="questions-count">
-                            <span class="text-muted" style="font-size: 18px;">3 Questions</span>
+                            <span class="text-muted" style="font-size: 18px;"><?= count($questions) ?> Questions</span>
                         </div>
                         <button class="btn btn-add-question">
                             <i class="fas fa-plus"></i> Add Question
@@ -143,46 +161,48 @@
 
                     <!-- Questions List (fake data) -->
                     <div id="questionsList" class="d-flex flex-column gap-3">
-                        <?php $index = 1; foreach ($questions as $question): ?>
-                        <div class="card shadow-sm">
-                            <div class="card-body d-flex align-items-start">
-                                <div class="me-3 d-flex flex-column">
-                                    <button class="btn btn-light btn-sm mb-1"><i class="fas fa-chevron-up"></i></button>
-                                    <button class="btn btn-light btn-sm"><i class="fas fa-chevron-down"></i></button>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="d-flex align-items-center gap-3">
-                                            <button class="btn btn-info btn-sm text-white btn-edit-question"
-                                                data-question="<?= htmlspecialchars($question->content) ?>"
-                                                data-time="<?= (int)$question->time_limit ?>"
-                                                data-type="multiple"
-                                                data-random="0"
-                                                data-image="<?= '../../../public/uploads/questions/' . htmlspecialchars($question->image_url) ?>"
-                                                data-ans1="<?= htmlspecialchars($question->answer_a) ?>"
-                                                data-ans2="<?= htmlspecialchars($question->answer_b) ?>"
-                                                data-ans3="<?= htmlspecialchars($question->answer_c) ?>"
-                                                data-ans4="<?= htmlspecialchars($question->answer_d) ?>"
-                                                data-correct="<?= htmlspecialchars($question->correct_answer) ?>"
-                                                data-question-id="<?= (int)$question->question_id ?>">
-                                                <i class="fas fa-pen"></i> Edit
-                                            </button>
-                                            <h6 class="mb-0">Question <?php echo $index; ?></h6>
-                                        </div>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <button class="btn btn-light btn-sm"><i class="fas fa-random"></i></button>
-                                            <span class="badge bg-secondary"><?php echo (int)$question->time_limit; ?> sec</span>
-                                        </div>
+                        <?php $index = 1;
+                        foreach ($questions as $question): ?>
+                            <div class="card shadow-sm">
+                                <div class="card-body d-flex align-items-start">
+                                    <div class="me-3 d-flex flex-column">
+                                        <button class="btn btn-light btn-sm mb-1"><i class="fas fa-chevron-up"></i></button>
+                                        <button class="btn btn-light btn-sm"><i class="fas fa-chevron-down"></i></button>
                                     </div>
-                                    <div class="mt-2"><?php echo htmlspecialchars($question->content); ?></div>
-                                    <div class="mt-2 d-flex gap-2">
-                                        <button class="btn btn-light btn-sm btn-delete-question" data-question-id="<?= (int)$question->question_id ?>"><i class="fas fa-trash"></i></button>
-                                        <button class="btn btn-light btn-sm"><i class="fas fa-copy"></i></button>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <button class="btn btn-info btn-sm text-white btn-edit-question"
+                                                    data-question="<?= htmlspecialchars($question->content) ?>"
+                                                    data-time="<?= (int)$question->time_limit ?>"
+                                                    data-type="multiple"
+                                                    data-random="0"
+                                                    data-image="<?= '../../../public/uploads/questions/' . htmlspecialchars($question->image_url) ?>"
+                                                    data-ans1="<?= htmlspecialchars($question->answer_a) ?>"
+                                                    data-ans2="<?= htmlspecialchars($question->answer_b) ?>"
+                                                    data-ans3="<?= htmlspecialchars($question->answer_c) ?>"
+                                                    data-ans4="<?= htmlspecialchars($question->answer_d) ?>"
+                                                    data-correct="<?= htmlspecialchars($question->correct_answer) ?>"
+                                                    data-question-id="<?= (int)$question->question_id ?>">
+                                                    <i class="fas fa-pen"></i> Edit
+                                                </button>
+                                                <h6 class="mb-0">Question <?php echo $index; ?></h6>
+                                            </div>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <button class="btn btn-light btn-sm"><i class="fas fa-random"></i></button>
+                                                <span class="badge bg-secondary"><?php echo (int)$question->time_limit; ?> sec</span>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2"><?php echo htmlspecialchars($question->content); ?></div>
+                                        <div class="mt-2 d-flex gap-2">
+                                            <button class="btn btn-light btn-sm btn-delete-question" data-action="delete" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" data-question-id="<?= (int)$question->question_id ?>"><i class="fas fa-trash"></i></button>
+                                            <button class="btn btn-light btn-sm"><i class="fas fa-copy"></i></button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <?php $index++; endforeach; ?>
+                        <?php $index++;
+                        endforeach; ?>
                     </div>
                 </div>
             </div>
@@ -297,4 +317,5 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="../../../public/js/edit-quiz.js"></script>
 </body>
+
 </html>

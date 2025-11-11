@@ -5,6 +5,7 @@ $(document).ready(() => {
   // Initialize drag and drop
   initDragAndDrop()
   initFileHandlers()
+  initRemoveOverlay()
   initMethodButtons()
   initCreateButton()
 })
@@ -46,6 +47,27 @@ function initFileHandlers() {
   })
 }
 
+// Remove image overlay click
+function initRemoveOverlay() {
+  $(document).on('click', '#removeImageBtn', function () {
+    const previewImage = $("#previewImage")
+    const uploadContent = $("#uploadContent")
+    const dropZone = $("#dropZone")
+    // Reset selected sources
+    window.selectedImageFile = null
+    window.selectedImageUrl = null
+    // Mark that existing cover (if any) was removed
+    window.removedExistingCover = true
+    // UI updates
+    previewImage.attr('src', '/placeholder.svg').addClass('d-none')
+    uploadContent.removeClass('d-none')
+    dropZone.removeClass('has-image')
+    // Clear file input selection if any
+    const fileInput = document.getElementById('fileUpload')
+    if (fileInput) fileInput.value = ''
+  })
+}
+
 // Handle File Upload
 function handleFileUpload(file) {
   if (!file.type.startsWith("image/")) {
@@ -66,6 +88,7 @@ function handleFileUpload(file) {
     // Remember selected file and clear URL state
     window.selectedImageFile = file
     window.selectedImageUrl = null
+    window.removedExistingCover = false
   }
 
   reader.readAsDataURL(file)
@@ -114,16 +137,12 @@ function initCreateButton() {
       return
     }
 
-    const description = $("#descriptionInput").val()
     const isPublic = $("#privacyToggle").is(":checked")
-    const creationMethod = $(".btn-method.active").text().trim()
 
     // Build FormData for POST
     const fd = new FormData()
     fd.append("title", title)
-    fd.append("description", description || "")
     fd.append("is_public", isPublic ? "1" : "0")
-    fd.append("creation_method", creationMethod)
 
     // Attach image if present
     if (window.selectedImageFile) {
@@ -141,7 +160,8 @@ function initCreateButton() {
 
     // Build a temporary form for standard submission
     const form = document.createElement('form')
-    form.action = '/quiz/create'
+    const action = window.QUIZ_FORM_ACTION || '/quiz/create'
+    form.action = action
     form.method = 'POST'
     form.enctype = 'multipart/form-data'
 
@@ -155,9 +175,7 @@ function initCreateButton() {
     }
 
     addHidden('title', title)
-    addHidden('description', description || '')
     addHidden('is_public', isPublic ? '1' : '0')
-    addHidden('creation_method', creationMethod)
 
     // CSRF token
     if (csrfToken) addHidden('csrf_token', csrfToken)
@@ -168,9 +186,10 @@ function initCreateButton() {
       fileInput.name = 'cover_image_file'
       form.appendChild(fileInput)
     }
-    // Or include URL if chosen via URL modal
-    if (window.selectedImageUrl && (!fileInput || fileInput.files.length === 0)) {
-      addHidden('cover_image_url', window.selectedImageUrl)
+
+    // If user removed existing cover (when editing), inform server
+    if (window.removedExistingCover) {
+      addHidden('remove_cover', '1')
     }
 
     // Submit the form

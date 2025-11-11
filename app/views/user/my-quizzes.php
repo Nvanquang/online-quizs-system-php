@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Sets - Quiz.com</title>
+    <link rel="icon" type="image/ico" href="../../../public/images/logo/favicon.ico">
+    <meta name="csrf-token" content="<?= CSRFMiddleware::getToken() ?>">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../../../public/css/my-quizzes.css">
+
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container">
+            <div class="row align-items-center g-3">
+                <a class="logo col-auto" href="/">
+                    <img src="../../../public/images/logo/quiz-multicolor.svg" alt="Quiz.com" />
+                </a>
+                <div class="col-auto">
+                    <button class="btn btn-create" data-action="create" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Create quiz">
+                        <a href="/quiz/create" style="text-decoration: none;color:inherit">
+                            <i class="bi bi-plus-lg"></i>
+                        </a>
+                    </button>
+                </div>
+                <div class="col">
+                    <div class="search-wrapper">
+                        <i class="bi bi-search search-icon"></i>
+                        <input type="text" class="form-control search-input" placeholder="Search your sets...">
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <?php $auth = Auth::getInstance(); ?>
+                    <?php if ($auth->check()): ?>
+                        <?php $user = $auth->user(); ?>
+                        <div class="dropdown d-inline-flex align-items-center gap-2">
+                            <span class="fw-semibold m-0">
+                                <?= htmlspecialchars($user->getUsername()) ?>
+                            </span>
+                            <a href="#" class="d-inline-flex align-items-center p-0 border-0 bg-transparent" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="../../../public/uploads/avatars/<?= $user->getAvatarUrl() ?>" alt="Avatar" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="/user/profile"><i class="bi bi-person"></i> Hồ sơ</a></li>
+                                <li><a class="dropdown-item" href="/user/my-quizzes"><i class="bi bi-list-check"></i> Quiz của tôi</a></li>
+                                <li><a class="dropdown-item" href="/user/history"><i class="bi bi-clock-history"></i> Lịch sử</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="/auth/logout"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
+                            </ul>
+                        </div>
+                    <?php else: ?>
+                        <a href="/auth/login"><button class="btn btn-signin">Đăng nhập</button></a>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container my-5">
+        <!-- Breadcrumb -->
+        <div class="bg-body-tertiary border rounded px-3 py-2 mb-3">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>';">
+                    <ol class="breadcrumb mb-0 small">
+                        <li class="breadcrumb-item"><a class="text-decoration-none" href="/">Trang chủ</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Quiz của tôi</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        <div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-4">
+            <!-- Blooket Card -->
+            <?php foreach ($quizzes as $quiz) : ?>
+                <div class="col">
+                    <div class="quiz-card card-blooket">
+                        <div class="card-image-wrapper">
+                            <img src="<?php echo htmlspecialchars('../../../public/uploads/quizzes/' . $quiz->getImage()); ?>" alt="<?php echo htmlspecialchars($quiz->getTitle()); ?>">
+                            <div class="card-views-badge" data-bs-toggle="tooltip" data-bs-placement="top" title="View Set">
+                                <a href="/quiz/view/<?= $quiz->getId() ?>" style="text-decoration: none;color:inherit">
+                                    <i class="bi bi-eye-fill"></i>
+                                </a>
+                            </div>
+                            <div class="card-questions-badge"><?php echo $quiz->getTotalQuestions(); ?> Questions</div>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title"><?php echo $quiz->getTitle(); ?></h3>
+                            <div class="card-edited">Edited <?php echo DateUtils::daysFromNow($quiz->getUpdatedAt()); ?> days ago</div>
+
+                            <div class="card-actions">
+                                <a href="/quiz/edit/<?= $quiz->getId() ?>" class="btn action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </a>
+                                <button class="btn action-btn openModalDelete" data-action="delete" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" data-quiz-id="<?= (int)$quiz->getId() ?>">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                                <button class="btn action-btn" data-action="settings" data-bs-toggle="tooltip" data-bs-placement="top" title="Settings">
+                                    <i class="bi bi-gear-fill"></i>
+                                </button>
+                            </div>
+
+                            <div class="assign-host-group mt-0">
+                                <span class="btn btn-assign flex-fill d-flex justify-content-center align-items-center gap-2" role="button" tabindex="0">
+                                    <i class="bi bi-clipboard"></i>
+                                    <span>Assign</span>
+                                </span>
+                                <form action="/game/lobby/<?= $quiz->getId() ?>" method="post" class="flex-fill" style="margin:0;">
+                                    <button type="submit" class="btn btn-host d-flex justify-content-center align-items-center gap-2 w-100">
+                                        <i class="bi bi-play-fill"></i>
+                                        <span>Host</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </main>
+
+    <!-- Delete Confirm Modal -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold">Confirm delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pt-2">
+                    <p class="mb-0">Do you really want to delete this set?</p>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Watermark -->
+    <div class="watermark">
+        <div class="watermark-title">Activate Windows</div>
+        <div class="watermark-text">Go to Settings to activate Windows.</div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Initialize Bootstrap tooltips
+            const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
+            // Search functionality
+            $('.search-input').on('input', function() {
+                const searchTerm = $(this).val().toLowerCase();
+                $('.quiz-card').each(function() {
+                    const title = $(this).find('.card-title').text().toLowerCase();
+                    if (title.includes(searchTerm)) {
+                        $(this).closest('.col-lg-4').show();
+                    } else {
+                        $(this).closest('.col-lg-4').hide();
+                    }
+                });
+            });
+
+            // Delete confirm flow
+            let pendingQuizId = null;
+            $(document).on('click', '.openModalDelete', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                pendingQuizId = $(this).data('quiz-id') ?? null;
+                const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+                modal.show();
+                const $confirm = $('#confirmDeleteBtn');
+                $confirm.off('click').on('click', function() {
+                    if (!pendingQuizId) return;
+                    const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+                    $confirm.prop('disabled', true);
+                    $.ajax({
+                        url: `/quiz/delete/${pendingQuizId}`,
+                        method: 'POST',
+                        headers: csrf ? {
+                            'X-CSRF-Token': csrf
+                        } : {},
+                        success: () => {
+                            location.reload();
+                        },
+                        error: (xhr) => {
+                            const msg = xhr?.responseText || 'Failed to delete quiz';
+                            alert(msg);
+                            $confirm.prop('disabled', false);
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -49,16 +49,28 @@ class QuizServiceImpl extends BaseService implements QuizService
         if($data['title']){
             $quiz->setTitle($data['title']);
         }
-        if($data['description']){
-            $quiz->setDescription($data['description']);
+        if($data['image']){
+            $quiz->setImage($data['image']);
         }
-        if($data['cover_image']){
-            $quiz->setImage($data['cover_image']);
+        if($data['is_public']){
+            $quiz->setIsPublic($data['is_public']);
         }
-        if($data['total_questions']){
-            $quiz->setTotalQuestions($data['total_questions']);
+        if($data['updated_at']){
+            $quiz->setUpdatedAt($data['updated_at']);
         }
         return $this->quizRepository->update($id, $quiz->toArray());
     }
 
+    public function findAllByUserId($id){
+        if(!$id){
+            throw new Exception("User ID is required");
+        }
+        if(!is_numeric($id)){
+            throw new Exception("User ID must be a number");
+        }
+        if($id < 1){
+            throw new Exception("User ID must be greater than 0");
+        }
+        return $this->quizRepository->findAllByUserId($id);
+    }
 }
