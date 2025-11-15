@@ -52,4 +52,8 @@ class QuestionRepository extends BaseRepository
     {
         return $this->model->find($id);
     }
+
+    public function findAllWithPagination($page, $perPage){
+        return $this->model->paginate($page, $perPage);
+    }
 }

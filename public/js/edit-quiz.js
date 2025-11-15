@@ -140,8 +140,6 @@ $(document).ready(() => {
     const fd = new FormData()
     fd.append('quiz_id', isFinite(quizId) ? quizId : '')
     fd.append('time_limit', timeLimit)
-    // fd.append('type', type)
-    // fd.append('random_order', randomOrder ? 1 : 0)
     fd.append('content', question)
     fd.append('answer_a', answers[0])
     fd.append('answer_b', answers[1])
@@ -175,13 +173,11 @@ $(document).ready(() => {
         // Close modal
         const modal = bootstrap.Modal.getInstance(document.getElementById('questionEditorModal'))
         if (modal) modal.hide()
-        // Assign response to global $questions (for debugging/inspection), then reload
-        window.$questions = res
+        alert(res.message)
         location.reload()
       },
-      error: (xhr) => {
-        const msg = xhr?.responseText || 'Failed to save question'
-        alert(msg)
+      error: (res) => {
+        alert(res.message)
       }
     })
   })
@@ -201,36 +197,6 @@ $(document).ready(() => {
         alert(msg)
       }
     })
-  })
-
-  // Quizlet Import
-  $(".btn-blue").click(() => {
-    alert("Open Quizlet import modal")
-    // TODO: Implement Quizlet import
-  })
-
-  // Spreadsheet Import
-  $(".btn-green").click(() => {
-    alert("Open spreadsheet import modal")
-    // TODO: Implement spreadsheet import
-  })
-
-  // Question Bank
-  $(".btn-dark").click(() => {
-    alert("Open question bank")
-    // TODO: Implement question bank
-  })
-
-  // Hide Answers
-  $(".btn-teal:last").click(() => {
-    alert("Toggle hide answers")
-    // TODO: Implement hide answers toggle
-  })
-
-  // Save Set
-  $(".btn-teal:first").click(() => {
-    alert("Save quiz set")
-    // TODO: Implement save functionality
   })
 
   // Time Limit: open modal

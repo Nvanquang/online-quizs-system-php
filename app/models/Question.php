@@ -6,7 +6,7 @@ class Question extends Model
     protected $primaryKey = 'id';
     protected $fillable = [
         'content','answer_a','answer_b','answer_c','answer_d','correct_answer',
-        'explanation','image_url','time_limit','created_by','created_at'
+        'explanation','image_url','time_limit','created_by','created_at', 'updated_at'
     ];
     protected $casts = [
         'id' => 'int',
@@ -26,6 +26,7 @@ class Question extends Model
     private $time_limit;
     private $created_by;
     private $created_at;
+    private $updated_at;
 
     public function __construct(?array $data = null)
     {
@@ -58,6 +59,9 @@ class Question extends Model
     public function setCreatedBy($v): void { $this->created_by = (int)$v; }
     public function getCreatedAt() { return $this->created_at; }
     public function setCreatedAt($v): void { $this->created_at = $v; }
+    public function getUpdatedAt() { return $this->updated_at; }
+    public function setUpdatedAt($v): void { $this->updated_at = $v; }
+
 
     public function toArray(): array
     {

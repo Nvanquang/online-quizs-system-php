@@ -25,17 +25,7 @@ class AuthController extends Controller
             $this->redirect('/');
         }
 
-        $register_success = null;
-        if (isset($_SESSION['register_success'])) {
-            $register_success = $_SESSION['register_success'];
-            unset($_SESSION['register_success']);  // Xóa để tránh lặp nếu refresh
-        }
-
-        echo $this->renderPartial('auth/login', [
-            'title' => 'Đăng Nhập',
-            'register_success' => $register_success,
-            'error' => $_SESSION['login_error'] ?? null
-        ]);
+        echo $this->renderPartial('auth/login');
 
         // Xóa error message sau khi hiển thị
         unset($_SESSION['login_error']);
@@ -193,6 +183,49 @@ class AuthController extends Controller
     {
         $this->auth->logout();
         $this->redirect('/');
+    }
+
+    public function loginAdmin()
+    {
+        // Nếu đã đăng nhập, redirect về trang chủ
+        if ($this->auth->check()) {
+            $this->redirect('/admin/dashboard');
+        }
+
+        echo $this->renderPartial('auth/login-admin');
+    }
+
+    public function doLoginAdmin()
+    {
+        $username = $_POST['username'] ?? '';
+        $password = $_POST['password'] ?? '';
+
+        // Validation
+        if (empty($username) || empty($password)) {
+            $_SESSION['login_error'] = 'Vui lòng nhập đầy đủ thông tin';
+            $this->redirect('/auth/login-admin');
+        }
+
+        try {
+            // Sử dụng UserService để authenticate
+            $user = $this->userService->authenticate($username, $password);
+            
+            if (!$user || $user->isAdmin() != 1) {
+                $_SESSION['login_error'] = 'Tên đăng nhập hoặc mật khẩu không đúng';
+                $this->redirect('/auth/login-admin');
+            }
+
+            // Đăng nhập thành công
+            $this->auth->login($user);
+            $_SESSION['login_success'] = 'Đăng nhập thành công!';
+
+            // Redirect về trang admin
+            $this->redirect('/admin/dashboard');
+
+        } catch (Exception $e) {
+            $_SESSION['login_error'] = $e->getMessage();
+            $this->redirect('/auth/login-admin');
+        }
     }
 
     /**

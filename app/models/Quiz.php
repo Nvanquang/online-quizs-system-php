@@ -9,7 +9,7 @@ class Quiz extends Model
     protected $casts = [
         'id' => 'int',
         'created_by' => 'int',
-        'is_public' => 'bool',
+        'is_public' => 'int',
         'total_questions' => 'int',
         'rating' => 'int',
         'created_at' => 'datetime',
@@ -43,7 +43,7 @@ class Quiz extends Model
     public function setQuizCode($v): void { $this->quiz_code = $v; }
     public function getCreatedBy() { return (int)$this->created_by; }
     public function setCreatedBy($v): void { $this->created_by = (int)$v; }
-    public function isPublic() { return (bool)$this->is_public; }
+    public function isPublic() { return (int)$this->is_public; }
     public function setIsPublic($v): void { $this->is_public = (int)$v; }
     public function getTotalQuestions() { return (int)$this->total_questions; }
     public function setTotalQuestions($v): void { $this->total_questions = (int)$v; }
@@ -52,7 +52,8 @@ class Quiz extends Model
     public function getCreatedAt() { return $this->created_at; }
     public function setCreatedAt($v): void { $this->created_at = $v; }
     public function getUpdatedAt() { return $this->updated_at; }
-        public function getAuthor() { return $this->author; }
+    public function setUpdatedAt($v): void { $this->updated_at = $v; }
+    public function getAuthor() { return $this->author; }
     public function setAuthor($v): void { $this->author = $v; }
     public function getImage() { return $this->image; }
     public function setImage($v): void { $this->image = $v; }

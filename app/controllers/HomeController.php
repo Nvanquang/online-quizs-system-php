@@ -45,30 +45,4 @@ class HomeController extends Controller
         ]);
     }
 
-    public function study(){
-        $link=@mysqli_connect("localhost","root","27072004","quiz_system");
-        mysqli_select_db($link,"quiz_system");
-        $sl="select * from quiz_system.game_sessions";
-        $result=mysqli_query($link,$sl);
-        // echo "<table border=1; width=500; align=center ; cellspacing=0>";
-        // echo "<tr><th>ID</th><th>Ten</th><th>User name</th><th>Email</th></tr>";
-        // while($row=mysqli_fetch_array($result)){
-        //     echo "<tr>";
-        //     echo "<td>".$row['id']."</td>";
-        //     echo "<td>".$row['full_name']."</td>";
-        //     echo "<td>".$row['username']."</td>";
-        //     echo "<td>".$row['email']."</td>";
-        //     echo "</tr>";
-        // }
-        // echo "</table>";
-        echo $this->renderPartial('home/study', ['result' => $result]);
-    }
-
-    public function studyDetail($id){
-         $link=@mysqli_connect("localhost","root","27072004","quiz_system");
-        mysqli_select_db($link,"quiz_system");
-        $sl="select * from quiz_system.game_sessions where id = $id";
-        $result=mysqli_query($link,$sl);
-        echo $this->renderPartial('home/studyDetail', ['result' => $result]);
-    }
 }

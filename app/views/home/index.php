@@ -17,9 +17,6 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../../../public/css/homepage.css">
     <link rel="stylesheet" href="../../../public/css/layout.css">
-    <script>
-        console.log(<?php echo $login_success ?> + 'login_success');
-    </script>
 </head>
 
 <body>

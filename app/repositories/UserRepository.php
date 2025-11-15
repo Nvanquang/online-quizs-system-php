@@ -20,6 +20,11 @@ class UserRepository extends BaseRepository
         return self::$instance;
     }
 
+    public function getById($id): User
+    {
+        return $this->findById($id);
+    }
+
     public function findByEmail(string $email)
     {
         return $this->model->findOne(['email' => $email]);
@@ -30,4 +35,7 @@ class UserRepository extends BaseRepository
         return $this->model->findOne(['username' => $username]);
     }
 
+    public function findAllWithPagination($page, $perPage){
+        return $this->model->paginate($page, $perPage);
+    }
 }

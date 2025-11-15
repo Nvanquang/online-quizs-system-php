@@ -458,6 +458,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         $(document).ready(function() {
+            const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
+            
             const jgs = document.querySelector('.join-game-section');
             if (jgs) jgs.classList.add('hide');
             const bs = document.querySelector('.btn-search');

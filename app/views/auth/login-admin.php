@@ -245,7 +245,7 @@
         <div class="login-card">
             <h1 class="login-title">Đăng Nhập</h1>
 
-            <form method="POST" action="/auth/login" id="loginForm">
+            <form method="POST" action="/auth/login-admin" id="loginForm">
                 <!-- CSRF Token -->
                 <?php echo CSRFMiddleware::getTokenField(); ?>
 
@@ -291,30 +291,21 @@
                     <span id="loadingSpinner" class="loading" style="display: none;"></span>
                 </button>
             </form>
-
-            <!-- Divider -->
-            <div class="divider">
-                <span>Or</span>
-            </div>
-
-            <!-- Register Link -->
-            <div class="register-link">
-                Chưa có tài khoản ? <a href="/auth/register">Đăng Ký</a>
-            </div>
         </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    
-    
+
+
     <script>
         $(document).ready(function() {
             <?php if (!empty($_SESSION['login_error'])) : ?>
                 toastr.error(<?= json_encode($_SESSION['login_error'], JSON_UNESCAPED_UNICODE); ?>);
                 <?php unset($_SESSION['login_error']); ?>
             <?php endif; ?>
-            
+
+
             // Toggle password visibility
             function togglePassword() {
                 const $passwordInput = $('#password');

@@ -37,9 +37,9 @@ class QuizController extends Controller
 
         $savedImageName = null;
 
-        if (isset($_FILES['cover_image_file']) && is_array($_FILES['cover_image_file']) && $_FILES['cover_image_file']['error'] === UPLOAD_ERR_OK) {
-            $tmpPath = $_FILES['cover_image_file']['tmp_name'];
-            $savedImageName = $this->uploadFileService->saveFileToFolder($tmpPath, 'quizzes', $_FILES['cover_image_file']['name']);
+        if (isset($_FILES['image']) && is_array($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $tmpPath = $_FILES['image']['tmp_name'];
+            $savedImageName = $this->uploadFileService->saveFileToFolder($tmpPath, 'quizzes', $_FILES['image']['name']);
         }
 
         $quizCode = strtoupper(substr(bin2hex(random_bytes(6)), 0, 8));
@@ -91,13 +91,13 @@ class QuizController extends Controller
             return;
         }
 
-        $isPublic = isset($_POST['is_public']) && (string)$_POST['is_public'] === '1' ? 1 : 0;
+        $isPublic = (int) (!empty($input['is_public']));
 
         $savedImageName = null;
 
-        if (isset($_FILES['cover_image_file']) && is_array($_FILES['cover_image_file']) && $_FILES['cover_image_file']['error'] === UPLOAD_ERR_OK) {
-            $tmpPath = $_FILES['cover_image_file']['tmp_name'];
-            $savedImageName = $this->uploadFileService->saveFileToFolder($tmpPath, 'quizzes', $_FILES['cover_image_file']['name']);
+        if (isset($_FILES['image']) && is_array($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $tmpPath = $_FILES['image']['tmp_name'];
+            $savedImageName = $this->uploadFileService->saveFileToFolder($tmpPath, 'quizzes', $_FILES['image']['name']);
         }
 
 

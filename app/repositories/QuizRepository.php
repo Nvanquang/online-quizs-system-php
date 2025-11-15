@@ -35,4 +35,8 @@ class QuizRepository extends BaseRepository
     {
         return $this->model->findAll(['created_by' => $userId]);
     }
+
+    public function findAllWithPagination($page, $perPage){
+        return $this->model->paginate($page, $perPage);
+    }
 }

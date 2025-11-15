@@ -146,7 +146,7 @@ function initCreateButton() {
 
     // Attach image if present
     if (window.selectedImageFile) {
-      fd.append("cover_image_file", window.selectedImageFile)
+      fd.append("image", window.selectedImageFile)
     }
 
     // CSRF token from hidden input rendered by server
@@ -183,7 +183,7 @@ function initCreateButton() {
     // Move the existing file input (so the selected file is included)
     const fileInput = document.getElementById('fileUpload')
     if (fileInput && fileInput.files && fileInput.files.length > 0) {
-      fileInput.name = 'cover_image_file'
+      fileInput.name = 'image'
       form.appendChild(fileInput)
     }
 

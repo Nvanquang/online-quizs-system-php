@@ -1,5 +1,7 @@
 <?php
 
+header('Content-Type: text/html; charset=utf-8');
+
 // Start session early
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -55,6 +57,8 @@ $router->post('/auth/login', 'Auth@doLogin', ['GuestMiddleware', 'CSRFMiddleware
 $router->get('/auth/register', 'Auth@register', ['GuestMiddleware']);
 $router->post('/auth/register', 'Auth@doRegister', ['GuestMiddleware', 'CSRFMiddleware']);
 $router->get('/auth/logout', 'Auth@logout', ['AuthMiddleware']);
+$router->get('/auth/login-admin', 'Auth@loginAdmin', ['GuestMiddleware']);
+$router->post('/auth/login-admin', 'Auth@doLoginAdmin', ['GuestMiddleware', 'CSRFMiddleware']);
 
 // Routes user
 $router->get('/user/my-quizzes', 'User@myQuizzes', ['AuthMiddleware']);
@@ -62,8 +66,13 @@ $router->get('/user/profile', 'User@profile', ['AuthMiddleware']);
 $router->get('/user/history', 'User@history', ['AuthMiddleware']);
 $router->post('/user/update-profile', 'User@updateProfile', ['AuthMiddleware', 'CSRFMiddleware']);
 $router->post('/user/update-password', 'User@updatePassword', ['AuthMiddleware', 'CSRFMiddleware']);
-$router->post('/user/update-username', 'User@updatePassword', ['AuthMiddleware', 'CSRFMiddleware']);
-$router->post('/user/update-email', 'User@updatePassword', ['AuthMiddleware', 'CSRFMiddleware']);
+$router->post('/user/update-username', 'User@updateUsername', ['AuthMiddleware', 'CSRFMiddleware']);
+$router->post('/user/update-email', 'User@updateEmail', ['AuthMiddleware', 'CSRFMiddleware']);
+
+$router->post('/user/create', 'User@createUser', ['AuthMiddleware', 'CSRFMiddleware', 'AdminMiddleware']);
+$router->post('/user/update', 'User@updateUser', ['AuthMiddleware', 'CSRFMiddleware', 'AdminMiddleware']);
+$router->post('/user/delete', 'User@deleteUser', ['AuthMiddleware', 'CSRFMiddleware', 'AdminMiddleware']);
+
 
 // Routes game
 $router->post('/game/lobby/{quizId}', 'Game@startLobby', ['AuthMiddleware']); // Tạo/khởi động session theo quizId rồi redirect
@@ -86,6 +95,15 @@ $router->post('/quiz/delete/{quizId}', 'Quiz@doDelete', ['AuthMiddleware', 'CSRF
 $router->post('/question/create', 'Question@doCreate', ['AuthMiddleware', 'CSRFMiddleware']);
 $router->post('/question/edit/{questionId}', 'Question@doEdit', ['AuthMiddleware', 'CSRFMiddleware']);
 $router->post('/question/delete/{questionId}', 'Question@doDelete', ['AuthMiddleware', 'CSRFMiddleware']);
+
+
+// Routes admin
+$router->group('/admin', function($router) {
+    $router->get('/dashboard', 'Admin@index');
+    $router->get('/users', 'Admin@users');
+    $router->get('/questions', 'Admin@questions');
+    $router->get('/quizzes', 'Admin@quizzes');
+}, ['AuthMiddleware', 'AdminMiddleware']);
 
 // Dispatch current request
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';

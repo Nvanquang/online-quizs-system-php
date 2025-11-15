@@ -52,9 +52,9 @@ class QuizServiceImpl extends BaseService implements QuizService
         if($data['image']){
             $quiz->setImage($data['image']);
         }
-        if($data['is_public']){
-            $quiz->setIsPublic($data['is_public']);
-        }
+        
+        $quiz->setIsPublic($data['is_public']);
+
         if($data['updated_at']){
             $quiz->setUpdatedAt($data['updated_at']);
         }
@@ -72,5 +72,13 @@ class QuizServiceImpl extends BaseService implements QuizService
             throw new Exception("User ID must be greater than 0");
         }
         return $this->quizRepository->findAllByUserId($id);
+    }
+
+    public function findAllWithPagination($page, $perPage){
+        return $this->quizRepository->findAllWithPagination($page, $perPage);
+    }
+
+    public function getTotalQuizzes() {
+        return $this->quizRepository->countBy([]); 
     }
 }

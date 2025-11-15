@@ -28,6 +28,10 @@ class QuestionServiceImpl extends BaseService implements QuestionService
         return $this->questionRepository->findAll();
     }
 
+    public function getTotalQuestions() {
+        return $this->questionRepository->countBy([]); 
+    }
+
     public function findById($id){
         if(!$id){
             throw new Exception("Question ID is required");
@@ -77,5 +81,9 @@ class QuestionServiceImpl extends BaseService implements QuestionService
 
     public function delete($id){
         return $this->questionRepository->delete($id);
+    }
+
+    public function findAllWithPagination($page, $perPage){
+        return $this->questionRepository->findAllWithPagination($page, $perPage);
     }
 }

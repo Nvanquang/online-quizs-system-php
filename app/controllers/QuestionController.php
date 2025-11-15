@@ -26,8 +26,6 @@ class QuestionController extends Controller {
             $answerD = trim((string)($_POST['answer_d'] ?? ''));
             $correct = strtoupper((string)($_POST['correct_answer'] ?? ''));
             $timeLimit = isset($_POST['time_limit']) ? (int)$_POST['time_limit'] : null;
-            // $type = $_POST['type'] ?? 'multiple';
-            // $randomOrder = isset($_POST['random_order']) ? (int)$_POST['random_order'] : 0;
 
             $errors = [];
             if ($quizId <= 0) $errors[] = 'quiz_id is required';
@@ -110,7 +108,6 @@ class QuestionController extends Controller {
     public function doEdit($questionId) {
         try {
             $questionId = (int)$questionId;
-            $quizId = (int)($_POST['quiz_id'] ?? 0);
             $content = trim((string)($_POST['content'] ?? ''));
             $answerA = trim((string)($_POST['answer_a'] ?? ''));
             $answerB = trim((string)($_POST['answer_b'] ?? ''));
@@ -121,7 +118,6 @@ class QuestionController extends Controller {
 
             $errors = [];
             if ($questionId <= 0) $errors[] = 'questionId is required';
-            if ($quizId <= 0) $errors[] = 'quiz_id is required';
             if ($content === '') $errors[] = 'content is required';
             if ($answerA === '' || $answerB === '' || $answerC === '' || $answerD === '') $errors[] = 'all answers are required';
             if (!in_array($correct, ['A','B','C','D'], true)) $errors[] = 'correct_answer must be one of A,B,C,D';
@@ -164,15 +160,15 @@ class QuestionController extends Controller {
             $this->questionService->update($questionId, $updateData);
 
             // Return updated list for this quiz
-            $questions = $this->questionService->findByQuiz((int)$quizId);
+            // $questions = $this->questionService->findByQuiz((int)$quizId);
 
             http_response_code(200);
             header('Content-Type: application/json');
-            echo json_encode(['questions' => $questions], JSON_UNESCAPED_UNICODE);
+            echo json_encode(['message' => 'Updated success'], JSON_UNESCAPED_UNICODE);
         } catch (Throwable $e) {
             http_response_code(500);
             header('Content-Type: text/plain; charset=UTF-8');
-            echo 'Server error: ' . $e->getMessage();
+            echo json_encode(['message' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
         }
     }
 
