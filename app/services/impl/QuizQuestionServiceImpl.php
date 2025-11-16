@@ -1,13 +1,12 @@
 <?php
 
-class QuizQuestionServiceImpl extends BaseService implements QuizQuestionService
+class QuizQuestionServiceImpl implements QuizQuestionService
 {
     private static $instant = null;
     private $quizQuestionRepository;
 
     public function __construct()
     {
-        parent::__construct();
         $this->quizQuestionRepository = QuizQuestionRepository::getInstance();
     }
 

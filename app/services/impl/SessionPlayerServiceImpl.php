@@ -1,13 +1,12 @@
 <?php
 
-class SessionPlayerServiceImpl extends BaseService implements SessionPlayerService
+class SessionPlayerServiceImpl implements SessionPlayerService
 {
     private static $instant = null;
     private $sessionPlayerRepository;
 
     public function __construct()
     {
-        parent::__construct();
         $this->sessionPlayerRepository = SessionPlayerRepository::getInstance();
     }
 

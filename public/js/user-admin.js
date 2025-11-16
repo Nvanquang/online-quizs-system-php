@@ -139,18 +139,21 @@ async function handleFormSubmit(e) {
             contentType: false,
             headers: { 'X-CSRF-Token': csrfToken },
             success: (res) => {
-                showToast('success', res.message);
-                modal.hide();
+                toastr.options = { "timeout": 2000 }
+                toastr.success(res.message);
                 setTimeout(() => {
                     location.reload()
-                }, 1000);
+                }, 2000)
             },
             error: (res) => {
-                showToast('error', res.message);
+                console.log('Form Submit Error:', res);
+                toastr.options = { "timeout": 2000 }
+                toastr.error(res.message)
             }
         })
     } catch (error) {
-        showToast('error', 'Lỗi kết nối', 'Không thể kết nối đến server. Vui lòng thử lại!');
+        toastr.options = { "timeout": 2000 }
+        toastr.error("Lỗi kết nối đến server.");
     } finally {
         // Hide loading
         submitBtn.classList.remove('btn-loading');
@@ -179,45 +182,20 @@ async function deleteUser(userId) {
             contentType: false,
             headers: { 'X-CSRF-Token': csrfToken },
             success: (res) => {
-                showToast('success', res.message);
-                modal.hide();
+                toastr.options = { "timeout": 2000 }
+                toastr.success(res.message);
                 setTimeout(() => {
                     location.reload()
-                }, 1000);
+                }, 2000)
             },
             error: (res) => {
-                showToast('error', res.message);
+                toastr.options = { "timeout": 2000 }
+                toastr.error(res.message);
             }
         })
     } catch (error) {
         console.error('Delete Error:', error);
-        showToast('error', 'Lỗi kết nối', 'Không thể kết nối đến server. Vui lòng thử lại!');
+        toastr.options = { "timeout": 2000 }
+        toastr.error("Lỗi kết nối đến server.");
     }
-}
-
-// Show Toast Notification
-function showToast(type, title, message) {
-    const iconClass = type === 'success' ? 'bi-check-circle-fill' : 'bi-x-circle-fill';
-
-    const toast = document.createElement('div');
-    toast.className = `toast-notification ${type}`;
-    toast.innerHTML = `
-        <div class="icon">
-            <i class="bi ${iconClass}"></i>
-        </div>
-        <div class="content">
-            <div class="title">${title}</div>
-            <div class="message">${message}</div>
-        </div>
-    `;
-
-    document.body.appendChild(toast);
-
-    // Auto remove after 3 seconds
-    setTimeout(() => {
-        toast.style.animation = 'slideOut 0.3s ease-out';
-        setTimeout(() => {
-            toast.remove();
-        }, 300);
-    }, 3000);
 }

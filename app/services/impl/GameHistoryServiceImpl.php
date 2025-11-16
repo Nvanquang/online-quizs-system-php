@@ -1,13 +1,12 @@
 <?php
 
-class GameHistoryServiceImpl extends BaseService implements GameHistoryService
+class GameHistoryServiceImpl implements GameHistoryService
 {
     private static $instant = null;
     private $gameHistoryRepository;
 
     public function __construct()
     {
-        parent::__construct();
         $this->gameHistoryRepository = GameHistoryRepository::getInstance();
     }
 

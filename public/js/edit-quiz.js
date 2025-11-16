@@ -173,11 +173,15 @@ $(document).ready(() => {
         // Close modal
         const modal = bootstrap.Modal.getInstance(document.getElementById('questionEditorModal'))
         if (modal) modal.hide()
-        alert(res.message)
-        location.reload()
+        toastr.options = { "timeout": 2000 }
+        toastr.success(res.message);
+        setTimeout(() => {
+          location.reload()
+        }, 2000)
       },
       error: (res) => {
-        alert(res.message)
+        toastr.options = { "timeout": 2000 }
+        toastr.error(res.message)
       }
     })
   })
@@ -189,12 +193,16 @@ $(document).ready(() => {
       url: `/question/delete/${qid}`,
       method: 'POST',
       headers: { 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content') },
-      success: () => {
-        location.reload()
+      success: (res) => {
+        toastr.options = { "timeout": 2000 }
+        toastr.success(res.message);
+        setTimeout(() => {
+          location.reload()
+        }, 2000)
       },
-      error: (xhr) => {
-        const msg = xhr?.responseText || 'Failed to delete question'
-        alert(msg)
+      error: (res) => {
+        toastr.options = { "timeout": 2000 }
+        toastr.error(res.message)
       }
     })
   })

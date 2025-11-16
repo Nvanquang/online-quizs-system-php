@@ -27,15 +27,15 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <?php if ($user->isAdmin()): ?>
-                                <li><a class="dropdown-item" href="/admin/dashboard"><i class="bi bi-speedometer2"></i> Admin</a></li>
+                                <li><a class="dropdown-item" href="/admin/dashboard">Admin</a></li>
                             <?php endif; ?>
-                            <li><a class="dropdown-item" href="/user/profile"><i class="bi bi-person"></i> Hồ sơ</a></li>
-                            <li><a class="dropdown-item" href="/user/my-quizzes"><i class="bi bi-list-check"></i> Quiz của tôi</a></li>
-                            <li><a class="dropdown-item" href="/user/history"><i class="bi bi-clock-history"></i> Lịch sử</a></li>
+                            <li><a class="dropdown-item" href="/user/profile">Hồ sơ</a></li>
+                            <li><a class="dropdown-item" href="/user/my-quizzes">Quiz của tôi</a></li>
+                            <li><a class="dropdown-item" href="/user/history">Lịch sử</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="/auth/logout"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
+                            <li><a class="dropdown-item" href="/auth/logout">Đăng xuất</a></li>
                         </ul>
                     </div>
                 <?php else: ?>

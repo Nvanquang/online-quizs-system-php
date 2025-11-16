@@ -36,30 +36,6 @@ class Router
     }
 
     /**
-     * Add PUT route
-     */
-    public function put($path, $handler, $middleware = [])
-    {
-        $this->add('PUT', $path, $handler, $middleware);
-    }
-
-    /**
-     * Add DELETE route
-     */
-    public function delete($path, $handler, $middleware = [])
-    {
-        $this->add('DELETE', $path, $handler, $middleware);
-    }
-
-    /**
-     * Add PATCH route
-     */
-    public function patch($path, $handler, $middleware = [])
-    {
-        $this->add('PATCH', $path, $handler, $middleware);
-    }
-
-    /**
      * Add route group with prefix
      */
     public function group($prefix, $callback, $middleware = [])
@@ -74,15 +50,6 @@ class Router
 
         $this->currentGroup = $oldGroup;
         $this->middlewares = $oldMiddlewares;
-    }
-
-    /**
-     * Add middleware
-     */
-    public function middleware($middleware)
-    {
-        $this->middlewares[] = $middleware;
-        return $this;
     }
 
     /**
@@ -254,23 +221,5 @@ class Router
             echo "404 - Page Not Found";
         }
         exit();
-    }
-
-    /**
-     * Get all routes (for debugging)
-     */
-    public function getRoutes()
-    {
-        return $this->routes;
-    }
-
-    /**
-     * Load routes from file
-     */
-    public function loadRoutes($file)
-    {
-        if (file_exists($file)) {
-            require $file;
-        }
     }
 }

@@ -31,30 +31,6 @@ class Controller
     }
 
     /**
-     * Get POST data
-     */
-    protected function getPost($key = null, $default = null)
-    {
-        if ($key === null) {
-            return $_POST;
-        }
-        return $_POST[$key] ?? $default;
-    }
-
-    /**
-     * Get GET data
-     */
-    protected function getGet($key = null, $default = null)
-    {
-        if ($key === null) {
-            return $_GET;
-        }
-        return $_GET[$key] ?? $default;
-    }
-
-    
-
-    /**
      * Return JSON response
      */
     protected function json($data, $statusCode = 200)

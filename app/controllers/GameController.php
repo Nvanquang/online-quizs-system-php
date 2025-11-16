@@ -167,6 +167,10 @@ class GameController extends Controller
             $this->gameSessionService->update($sessionCode, [
                 'status' => 'finished',
                 'ended_at' => date('Y-m-d H:i:s'),
+                'actual_mode' => null,
+                'started_at' => $gameSession->getStartedAt(),
+                'current_question' => $gameSession->getCurrentQuestion(),
+                'total_players' => $gameSession->getTotalPlayers(),
             ]);
 
             // update session player

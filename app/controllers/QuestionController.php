@@ -36,7 +36,7 @@ class QuestionController extends Controller {
             if (!empty($errors)) {
                 http_response_code(422);
                 header('Content-Type: text/plain; charset=UTF-8');
-                echo implode("\n", $errors);
+                echo json_encode(['message' => $errors], JSON_UNESCAPED_UNICODE);
                 return;
             }
 
@@ -67,7 +67,7 @@ class QuestionController extends Controller {
             if (!$questionId) {
                 http_response_code(500);
                 header('Content-Type: text/plain; charset=UTF-8');
-                echo 'Failed to create question';
+                echo json_encode(['message' => 'Tạo câu hỏi thất bại'], JSON_UNESCAPED_UNICODE);
                 return;
             }
 
@@ -88,20 +88,18 @@ class QuestionController extends Controller {
             // Update total questions in quiz
             $this->quizService->update($quizId, [
                 'title' => null,
-                'description' => null,
-                'cover_image' => null,
-                'total_questions' => $nextOrder,
+                'image' => null,
+                'is_public' => null,
+                'updated_at' => date('Y-m-d H:i:s'),
             ]);
-
-            $questions = $this->questionService->findByQuiz((int)$quizId);
 
             http_response_code(200);
             header('Content-Type: application/json');
-            echo json_encode(['questions' => $questions], JSON_UNESCAPED_UNICODE);
+            echo json_encode(['message' => 'Tạo mới câu hỏi thành công'], JSON_UNESCAPED_UNICODE);
         } catch (Throwable $e) {
             http_response_code(500);
             header('Content-Type: text/plain; charset=UTF-8');
-            echo 'Server error: ' . $e->getMessage();
+            echo json_encode(['message', $e->getMessage()], JSON_UNESCAPED_UNICODE);
         }
     }
 
@@ -125,7 +123,7 @@ class QuestionController extends Controller {
             if (!empty($errors)) {
                 http_response_code(422);
                 header('Content-Type: text/plain; charset=UTF-8');
-                echo implode("\n", $errors);
+                echo json_encode(['message' => $errors], JSON_UNESCAPED_UNICODE);
                 return;
             }
 
@@ -135,6 +133,7 @@ class QuestionController extends Controller {
                 http_response_code(404);
                 header('Content-Type: text/plain; charset=UTF-8');
                 echo 'Question not found';
+                echo json_encode(['message' => 'Câu hỏi không tồn tại!'], JSON_UNESCAPED_UNICODE);
                 return;
             }
 
@@ -159,12 +158,9 @@ class QuestionController extends Controller {
             // Perform update via repository
             $this->questionService->update($questionId, $updateData);
 
-            // Return updated list for this quiz
-            // $questions = $this->questionService->findByQuiz((int)$quizId);
-
             http_response_code(200);
             header('Content-Type: application/json');
-            echo json_encode(['message' => 'Updated success'], JSON_UNESCAPED_UNICODE);
+            echo json_encode(['message' => 'Cập nhật câu hỏi thành công'], JSON_UNESCAPED_UNICODE);
         } catch (Throwable $e) {
             http_response_code(500);
             header('Content-Type: text/plain; charset=UTF-8');
@@ -176,16 +172,18 @@ class QuestionController extends Controller {
         try {
             $questionId = (int)$questionId;
             $question = $this->questionService->findById($questionId);
-            $this->uploadFileService->deleteFileFromFolder('questions', $question->getImageUrl());
+            if($question->getImageUrl() != null){
+                $this->uploadFileService->deleteFileFromFolder('questions', $question->getImageUrl());
+            }
             $this->questionService->delete($questionId);
 
             http_response_code(200);
             header('Content-Type: application/json');
-            echo json_encode(['success' => true]);
+            echo json_encode(['message' => 'Xóa câu hỏi thành công'], JSON_UNESCAPED_UNICODE);
         } catch (Throwable $e) {
             http_response_code(500);
             header('Content-Type: text/plain; charset=UTF-8');
-            echo 'Server error: ' . $e->getMessage();
+            echo json_encode(['message' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
         }
     }
 }

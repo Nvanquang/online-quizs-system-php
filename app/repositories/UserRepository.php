@@ -20,9 +20,15 @@ class UserRepository extends BaseRepository
         return self::$instance;
     }
 
+    public function exists(array $conditions = []): bool
+    {
+        $row = $this->model->findOne($conditions);
+        return !empty($row);
+    }
+
     public function getById($id): User
     {
-        return $this->findById($id);
+        return $this->model->find($id);
     }
 
     public function findByEmail(string $email)
@@ -38,4 +44,20 @@ class UserRepository extends BaseRepository
     public function findAllWithPagination($page, $perPage){
         return $this->model->paginate($page, $perPage);
     }
+
+    public function create(array $data)
+    {
+        return $this->model->create($data);
+    }
+
+    public function update($id, array $data)
+    {
+        return $this->model->update($id, $data);
+    }
+
+    public function countBy(array $conditions = []): int
+    {
+        return (int)$this->model->count($conditions);
+    }
+
 }

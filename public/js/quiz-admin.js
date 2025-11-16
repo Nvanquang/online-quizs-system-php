@@ -85,14 +85,14 @@ function openUpdateModal(rawQuizData) {
 // Open View Modal
 function openViewModal(rawQuizData) {
     console.log('Raw quiz data from data-quiz:', rawQuizData);
-    
+
     try {
         const quiz = JSON.parse(rawQuizData);
         console.log('Parsed quiz data:', quiz);
 
         // Show modal immediately with data
         viewModal.show();
-        
+
         // Populate data
         document.getElementById('view_title').textContent = quiz.title || '-';
         document.getElementById('view_quiz_code').textContent = quiz.quiz_code || '-';
@@ -102,7 +102,7 @@ function openViewModal(rawQuizData) {
         document.getElementById('view_rating').textContent = quiz.rating || '0';
         document.getElementById('view_created_at').textContent = quiz.created_at || '-';
         document.getElementById('view_updated_at').textContent = quiz.updated_at || '-';
-        
+
         // Is Public
         const isPublicBadge = document.getElementById('view_is_public');
         if (quiz.is_public == 1 || quiz.is_public === true) {
@@ -112,7 +112,7 @@ function openViewModal(rawQuizData) {
             isPublicBadge.textContent = 'Riêng tư';
             isPublicBadge.className = 'badge-private';
         }
-        
+
         // Image
         const imageEl = document.getElementById('view_image');
         const noImageEl = document.getElementById('view_no_image');
@@ -124,7 +124,7 @@ function openViewModal(rawQuizData) {
             imageEl.style.display = 'none';
             noImageEl.style.display = 'block';
         }
-        
+
     } catch (error) {
         console.error('Lỗi parse JSON trong openViewModal:', error, 'Raw data:', rawQuizData);
         showToast('error', 'Lỗi dữ liệu', 'Không thể load thông tin quiz. Vui lòng refresh trang.');
@@ -136,7 +136,7 @@ function handleImagePreview(e) {
     const file = e.target.files[0];
     if (file) {
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             document.getElementById('imagePreview').src = e.target.result;
             document.getElementById('imagePreviewContainer').style.display = 'block';
         };
@@ -171,7 +171,7 @@ async function handleFormSubmit(e) {
     const fd = new FormData();
     fd.append('title', title);
     fd.append('is_public', isPublic);
-    
+
     if (imageFile) {
         fd.append('image', imageFile);
     }
@@ -197,20 +197,21 @@ async function handleFormSubmit(e) {
             contentType: false,
             headers: { 'X-CSRF-Token': csrfToken },
             success: (res) => {
-                showToast('success', 'Thành công', res.message || 'Thao tác thành công!');
-                modal.hide();
+                toastr.options = { "timeout": 2000 }
+                toastr.success(res.message);
                 setTimeout(() => {
                     location.reload();
-                }, 1000);
+                }, 2000);
             },
-            error: (xhr) => {
-                const errorMsg = xhr.responseJSON?.message || 'Có lỗi xảy ra!';
-                showToast('error', 'Lỗi', errorMsg);
+            error: (res) => {
+                toastr.options = { "timeout": 2000 }
+                toastr.error(res.message);
             }
         });
     } catch (error) {
         console.error('Submit Error:', error);
-        showToast('error', 'Lỗi kết nối', 'Không thể kết nối đến server. Vui lòng thử lại!');
+        toastr.options = { "timeout": 2000 }
+        toastr.error("Lỗi kết nối đến server.");
     } finally {
         // Hide loading
         submitBtn.classList.remove('btn-loading');
@@ -231,7 +232,7 @@ async function deleteQuiz(quizId) {
         const fd = new FormData();
         fd.append('quiz_id', quizId);
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        
+
         $.ajax({
             url: `/quiz/delete/${quizId}`,
             method: 'POST',
@@ -240,45 +241,20 @@ async function deleteQuiz(quizId) {
             contentType: false,
             headers: { 'X-CSRF-Token': csrfToken },
             success: (res) => {
-                showToast('success', 'Thành công', res.message || 'Xóa quiz thành công!');
+                toastr.options = { "timeout": 2000 }
+                toastr.success(res.message);
                 setTimeout(() => {
                     location.reload();
-                }, 1000);
+                }, 2000);
             },
-            error: (xhr) => {
-                const errorMsg = xhr.responseJSON?.message || 'Không thể xóa quiz!';
-                showToast('error', 'Lỗi', errorMsg);
+            error: (res) => {
+                toastr.options = { "timeout": 2000 }
+                toastr.error(res.message);
             }
         });
     } catch (error) {
         console.error('Delete Error:', error);
-        showToast('error', 'Lỗi kết nối', 'Không thể kết nối đến server. Vui lòng thử lại!');
+        toastr.options = { "timeout": 2000 }
+        toastr.error('Lỗi kết nối đến server.');
     }
-}
-
-// Show Toast Notification
-function showToast(type, title, message) {
-    const iconClass = type === 'success' ? 'bi-check-circle-fill' : 'bi-x-circle-fill';
-
-    const toast = document.createElement('div');
-    toast.className = `toast-notification ${type}`;
-    toast.innerHTML = `
-        <div class="icon">
-            <i class="bi ${iconClass}"></i>
-        </div>
-        <div class="content">
-            <div class="title">${title}</div>
-            <div class="message">${message || ''}</div>
-        </div>
-    `;
-
-    document.body.appendChild(toast);
-
-    // Auto remove after 3 seconds
-    setTimeout(() => {
-        toast.style.animation = 'slideOut 0.3s ease-out';
-        setTimeout(() => {
-            toast.remove();
-        }, 300);
-    }, 3000);
 }

@@ -1,13 +1,12 @@
 <?php
 
-class UserServiceImpl extends BaseService implements UserService
+class UserServiceImpl implements UserService
 {
     private static $instant = null;
     private $userRepository;
 
     public function __construct()
     {
-        parent::__construct();
         $this->userRepository = UserRepository::getInstance();
     }
 
@@ -36,6 +35,11 @@ class UserServiceImpl extends BaseService implements UserService
     public function findByUsername($username)
     {
         return $this->userRepository->findByUsername($username);
+    }
+
+    public function findById($id)
+    {
+        return $this->userRepository->findById($id);
     }
 
     public function create(array $data)
@@ -100,78 +104,6 @@ class UserServiceImpl extends BaseService implements UserService
         return $user;
     }
 
-    // public function updatePoints($userId, $points)
-    // {
-    //     $user = $this->findById($userId);
-    //     if (!$user) {
-    //         throw new Exception('User không tìm thấy!');
-    //     }
-    //     $newPoints = $user->getTotalPoints() + $points;
-    //     return $this->update($userId, ['total_points' => $newPoints]);
-    // }
-
-    // public function incrementGamesPlayed($userId)
-    // {
-    //     $user = $this->findById($userId);
-    //     if (!$user) {
-    //         throw new Exception('User không tìm thấy!');
-    //     }
-    //     $newCount = $user->getGamesPlayed() + 1;
-    //     return $this->update($userId, ['games_played' => $newCount]);
-    // }
-
-    // public function getTopUsers($limit = 10)
-    // {
-    //     return $this->repository->findAll([], 'total_points DESC', $limit);
-    // }
-
-    // public function getUsersPaginated($page = 1, $perPage = 10, $search = null)
-    // {
-    //     $conditions = [];
-    //     if ($search) {
-    //         $conditions['search'] = $search;
-    //     }
-    //     return $this->repository->paginate($page, $perPage, $conditions, 'created_at DESC');
-    // }
-
-    // public function searchUsers($query, $limit = 10)
-    // {
-    //     $sql = "SELECT * FROM users WHERE 
-    //             username LIKE ? OR 
-    //             email LIKE ? OR 
-    //             full_name LIKE ? 
-    //             ORDER BY username ASC 
-    //             LIMIT ?";
-    //     $searchTerm = "%{$query}%";
-    //     return $this->repository->fetchAll($sql, [$searchTerm, $searchTerm, $searchTerm, $limit]);
-    // }
-
-    // public function getUserCountByRole()
-    // {
-    //     $sql = "SELECT 
-    //                 CASE WHEN is_admin = 1 THEN 'admin' ELSE 'user' END as role,
-    //                 COUNT(*) as count 
-    //             FROM users 
-    //             GROUP BY is_admin";
-    //     return $this->repository->fetchAll($sql);
-    // }
-
-    // public function getRecentUsers($limit = 10)
-    // {
-    //     return $this->repository->findAll([], 'created_at DESC', $limit);
-    // }
-
-    // private function getUserRank($userId)
-    // {
-    //     $user = $this->findById($userId);
-    //     if (!$user) {
-    //         return 0;
-    //     }
-    //     $sql = "SELECT COUNT(*) + 1 as rank FROM users WHERE total_points > ?";
-    //     $result = $this->repository->fetch($sql, [$user->getTotalPoints()]);
-    //     return $result['rank'] ?? 0;
-    // }
-
     protected function validateCreateData(array $data): void
     {
         $required = ['username', 'email', 'password'];
@@ -194,7 +126,7 @@ class UserServiceImpl extends BaseService implements UserService
 
     protected function validateDelete($id): void
     {
-        $user = $this->findById($id);
+        $user = $this->userRepository->getById($id);
         if (!$user) {
             throw new Exception('User không tìm thấy!');
         }

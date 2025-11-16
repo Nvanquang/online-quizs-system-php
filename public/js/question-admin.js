@@ -107,7 +107,7 @@ function handleImageFilePreview(e) {
         }
 
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             document.getElementById('imagePreview').src = e.target.result;
             document.getElementById('imagePreviewContainer').style.display = 'block';
         };
@@ -186,20 +186,22 @@ async function handleFormSubmit(e) {
             contentType: false,
             headers: { 'X-CSRF-Token': csrfToken },
             success: (res) => {
-                showToast('success', 'Thành công', res.message || 'Thao tác thành công!');
+                toastr.options = { "timeout": 2000 }
+                toastr.success(res.message);
                 modal.hide();
                 setTimeout(() => {
                     location.reload();
-                }, 1000);
+                }, 2000);
             },
-            error: (xhr) => {
-                const errorMsg = xhr.responseJSON?.message || 'Có lỗi xảy ra!';
-                showToast('error', 'Lỗi', errorMsg);
+            error: (res) => {
+                toastr.options = { "timeout": 2000 }
+                toastr.error(res.message);
             }
         });
     } catch (error) {
         console.error('Submit Error:', error);
-        showToast('error', 'Lỗi kết nối', 'Không thể kết nối đến server. Vui lòng thử lại!');
+        toastr.options = { "timeout": 2000 }
+        toastr.error("Lỗi kết nối đến server.");
     } finally {
         // Hide loading
         submitBtn.classList.remove('btn-loading');
@@ -220,7 +222,7 @@ async function deleteQuestion(questionId) {
         const fd = new FormData();
         fd.append('question_id', questionId);
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        
+
         $.ajax({
             url: `/question/delete/${questionId}`,
             method: 'POST',
@@ -229,45 +231,20 @@ async function deleteQuestion(questionId) {
             contentType: false,
             headers: { 'X-CSRF-Token': csrfToken },
             success: (res) => {
-                showToast('success', 'Thành công', res.message || 'Xóa câu hỏi thành công!');
+                toastr.options = { "timeout": 2000 }
+                toastr.success(res.message);
                 setTimeout(() => {
                     location.reload();
-                }, 1000);
+                }, 2000);
             },
-            error: (xhr) => {
-                const errorMsg = xhr.responseJSON?.message || 'Không thể xóa câu hỏi!';
-                showToast('error', 'Lỗi', errorMsg);
+            error: (res) => {
+                toastr.options = { "timeout": 2000 }
+                toastr.error(res.message);
             }
         });
     } catch (error) {
         console.error('Delete Error:', error);
-        showToast('error', 'Lỗi kết nối', 'Không thể kết nối đến server. Vui lòng thử lại!');
+        toastr.options = { "timeout": 2000 }
+        toastr.error("Lỗi kết nối đến server.");
     }
-}
-
-// Show Toast Notification
-function showToast(type, title, message) {
-    const iconClass = type === 'success' ? 'bi-check-circle-fill' : 'bi-x-circle-fill';
-
-    const toast = document.createElement('div');
-    toast.className = `toast-notification ${type}`;
-    toast.innerHTML = `
-        <div class="icon">
-            <i class="bi ${iconClass}"></i>
-        </div>
-        <div class="content">
-            <div class="title">${title}</div>
-            <div class="message">${message || ''}</div>
-        </div>
-    `;
-
-    document.body.appendChild(toast);
-
-    // Auto remove after 3 seconds
-    setTimeout(() => {
-        toast.style.animation = 'slideOut 0.3s ease-out';
-        setTimeout(() => {
-            toast.remove();
-        }, 300);
-    }, 3000);
 }

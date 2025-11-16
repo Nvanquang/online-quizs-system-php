@@ -2,6 +2,7 @@
 
 interface QuestionService
 {
+    public function create(array $data);
     public function getAll();
     public function getTotalQuestions();
     public function findById($id);

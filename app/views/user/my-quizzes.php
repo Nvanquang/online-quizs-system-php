@@ -39,20 +39,20 @@
                     <?php if ($auth->check()): ?>
                         <?php $user = $auth->user(); ?>
                         <div class="dropdown d-inline-flex align-items-center gap-2">
-                            <span class="fw-semibold m-0">
-                                <?= htmlspecialchars($user->getUsername()) ?>
-                            </span>
                             <a href="#" class="d-inline-flex align-items-center p-0 border-0 bg-transparent" data-bs-toggle="dropdown" aria-expanded="false">
                                 <img src="../../../public/uploads/avatars/<?= $user->getAvatarUrl() ?>" alt="Avatar" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="/user/profile"><i class="bi bi-person"></i> Hồ sơ</a></li>
-                                <li><a class="dropdown-item" href="/user/my-quizzes"><i class="bi bi-list-check"></i> Quiz của tôi</a></li>
-                                <li><a class="dropdown-item" href="/user/history"><i class="bi bi-clock-history"></i> Lịch sử</a></li>
+                                <?php if ($user->isAdmin()): ?>
+                                    <li><a class="dropdown-item" href="/admin/dashboard">Admin</a></li>
+                                <?php endif; ?>
+                                <li><a class="dropdown-item" href="/user/profile">Hồ sơ</a></li>
+                                <li><a class="dropdown-item" href="/user/my-quizzes">Quiz của tôi</a></li>
+                                <li><a class="dropdown-item" href="/user/history">Lịch sử</a></li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li><a class="dropdown-item" href="/auth/logout"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
+                                <li><a class="dropdown-item" href="/auth/logout">Đăng xuất</a></li>
                             </ul>
                         </div>
                     <?php else: ?>

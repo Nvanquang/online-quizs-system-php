@@ -1,13 +1,12 @@
 <?php
 
-class QuizServiceImpl extends BaseService implements QuizService
+class QuizServiceImpl implements QuizService
 {
     private static $instant = null;
     private $quizRepository;
 
     public function __construct()
     {
-        parent::__construct();
         $this->quizRepository = QuizRepository::getInstance();
     }
 
@@ -41,6 +40,10 @@ class QuizServiceImpl extends BaseService implements QuizService
         return $this->quizRepository->findById($id);
     }
 
+    public function create($data){
+        return $this->quizRepository->create($data);
+    }
+
     public function update($id, $data){
         $quiz = $this->findById($id);
         if(!$quiz){
@@ -72,6 +75,14 @@ class QuizServiceImpl extends BaseService implements QuizService
             throw new Exception("User ID must be greater than 0");
         }
         return $this->quizRepository->findAllByUserId($id);
+    }
+
+    public function delete($id){
+        $quiz = $this->findById($id);
+        if(!$quiz){
+            throw new Exception("Quiz not found");
+        }
+        return $this->quizRepository->delete($id);
     }
 
     public function findAllWithPagination($page, $perPage){

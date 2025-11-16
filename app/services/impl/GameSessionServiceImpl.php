@@ -1,6 +1,6 @@
 <?php
 
-class GameSessionServiceImpl extends BaseService implements GameSessionService
+class GameSessionServiceImpl implements GameSessionService
 {
     private static $instant = null;
     private $gameSessionRepository;
@@ -9,7 +9,6 @@ class GameSessionServiceImpl extends BaseService implements GameSessionService
 
     public function __construct()
     {
-        parent::__construct();
         $this->gameSessionRepository = GameSessionRepository::getInstance();
         $this->codeGenerator = CodeGenerator::getInstance();
         $this->userRepository = UserRepository::getInstance();

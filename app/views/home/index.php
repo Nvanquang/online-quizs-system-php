@@ -313,6 +313,7 @@
 
     <?php if (isset($login_success) && $login_success): ?>
         <script>
+            toastr.options = {"timneout": 2000}
             toastr.success(<?php echo json_encode($login_success ?? ''); ?>);
         </script>
     <?php endif; ?>

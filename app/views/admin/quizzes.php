@@ -16,6 +16,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
     <!-- Icon Font Stylesheet -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
@@ -26,153 +27,7 @@
 
     <!-- Template Stylesheet -->
     <link href="../../../public/css/style.css" rel="stylesheet">
-
-    <style>
-        /* Toast Notification Styles */
-        .toast-notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            min-width: 300px;
-            background: white;
-            padding: 16px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            animation: slideIn 0.3s ease-out;
-            z-index: 9999;
-        }
-
-        .toast-notification.success {
-            border-left: 4px solid #198754;
-        }
-
-        .toast-notification.error {
-            border-left: 4px solid #dc3545;
-        }
-
-        .toast-notification .icon {
-            font-size: 24px;
-        }
-
-        .toast-notification.success .icon {
-            color: #198754;
-        }
-
-        .toast-notification.error .icon {
-            color: #dc3545;
-        }
-
-        .toast-notification .content .title {
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .toast-notification .content .message {
-            font-size: 14px;
-            color: #666;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideOut {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-        }
-
-        /* View Modal Styles */
-        .modal.modal-view .modal-dialog {
-            position: fixed;
-            right: 0;
-            top: 0;
-            margin: 0;
-            height: 100vh;
-            max-width: 40%;
-        }
-
-        .modal.modal-view .modal-content {
-            height: 100%;
-            border-radius: 0;
-            border: none;
-        }
-
-        .modal.modal-view .modal-body {
-            overflow-y: auto;
-        }
-
-        .info-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .info-item {
-            padding: 12px;
-            background: #f8f9fa;
-            border-radius: 6px;
-        }
-
-        .info-item label {
-            font-weight: 600;
-            font-size: 12px;
-            color: #6c757d;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .info-item .value {
-            font-size: 14px;
-            color: #212529;
-            word-break: break-word;
-        }
-
-        .info-item.full-width {
-            grid-column: 1 / -1;
-        }
-
-        .badge-public {
-            background: #198754;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-        }
-
-        .badge-private {
-            background: #dc3545;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-        }
-
-        .quiz-image-preview {
-            width: 100%;
-            max-height: 200px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-top: 8px;
-        }
-    </style>
+    <link href="../../../public/css/toastr-override.css" rel="stylesheet">
 </head>
 
 <body>
@@ -233,6 +88,7 @@
                                         <td>
                                             <a href="javascript:void(0)" 
                                                data-bs-toggle="modal"
+                                               data-bs-placement="top" 
                                                data-bs-target="#viewQuizModal_<?php echo $quiz->getId(); ?>"
                                                title="Xem chi tiết">
                                                 <i class="bi bi-eye-fill me-2"></i>
@@ -310,7 +166,8 @@
     <?php include __DIR__ . '/view/viewQuiz.php'; ?>
 
     <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../public/lib/waypoints/waypoints.min.js"></script>
 

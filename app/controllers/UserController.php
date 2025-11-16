@@ -42,21 +42,15 @@ class UserController extends Controller
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             http_response_code(405);
-            echo json_encode(['message' => 'Method not allowed. Use POST.']);
+            echo json_encode(['message' => 'Phương thức không được phép.'], JSON_UNESCAPED_UNICODE);
             return;
         }
 
-        // Đọc input từ JSON body (ưu tiên cho API) hoặc fallback $_POST
-        $input = json_decode(file_get_contents('php://input'), true);
-        if (!$input) {
-            $input = $_POST;  // Fallback nếu form data
-        }
-
-        $username = trim($input['username'] ?? '');
-        $email = trim($input['email'] ?? '');
-        $password = $input['password'] ?? '';
-        $full_name = trim($input['full_name'] ?? '');
-        $is_admin = (int) (!empty($input['is_admin']));
+        $username = trim($_POST['username'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $password = $_POST['password'] ?? '';
+        $full_name = trim($_POST['full_name'] ?? '');
+        $is_admin = (int) (!empty($_POST['is_admin']));
 
         // Validation cơ bản
         $errors = [];
@@ -89,7 +83,7 @@ class UserController extends Controller
 
         if (!empty($errors)) {
             http_response_code(400);
-            echo json_encode(['message' => $errors]);
+            echo json_encode(['message' => $errors], JSON_UNESCAPED_UNICODE);
             return;
         }
 
@@ -109,10 +103,10 @@ class UserController extends Controller
 
         if ($newUser) {
             http_response_code(201);
-            echo json_encode(['message' => 'User created successfully']);
+            echo json_encode(['message' => 'Cập nhật user thành công'], JSON_UNESCAPED_UNICODE);
         } else {
             http_response_code(500);
-            echo json_encode(['message' => 'User creation failed']);
+            echo json_encode(['message' => 'Cập nhật user thất bại'], JSON_UNESCAPED_UNICODE);
         }
     }
 
@@ -122,32 +116,22 @@ class UserController extends Controller
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {  // Hoặc PUT cho update, nhưng giữ POST như form gốc
             http_response_code(405);
-            echo json_encode(['message' => 'Method not allowed. Use POST.'], JSON_UNESCAPED_UNICODE);
+            echo json_encode(['message' => 'Phương thức không được phép.'], JSON_UNESCAPED_UNICODE);
             return;
         }
 
-        // Đọc input từ JSON body hoặc $_POST
-        $input = json_decode(file_get_contents('php://input'), true);
-        if (!$input) {
-            $input = $_POST;
-        }
-
-        $user_id = intval($input['user_id'] ?? 0);
+        $user_id = intval($_POST['user_id'] ?? 0);
         if ($user_id <= 0) {
             http_response_code(400);
-            echo json_encode([
-                'success' => false,
-                'message' => 'Invalid user ID',
-                'data' => null
-            ]);
+            echo json_encode(['message' => 'ID không hợp lệ.'], JSON_UNESCAPED_UNICODE);
             return;
         }
 
-        $username = trim($input['username'] ?? '');
-        $email = trim($input['email'] ?? '');
-        $password = $input['password'] ?? '';
-        $full_name = trim($input['full_name'] ?? '');
-        $is_admin = (int) (!empty($input['is_admin']));
+        $username = trim($_POST['username'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $password = $_POST['password'] ?? '';
+        $full_name = trim($_POST['full_name'] ?? '');
+        $is_admin = (int) (!empty($_POST['is_admin']));
 
         // Validation (password optional)
         $errors = [];
@@ -164,16 +148,15 @@ class UserController extends Controller
             $errors[] = 'Password phải có ít nhất 6 ký tự nếu thay đổi.';
         }
 
-        // Tìm user hiện tại qua service (giả sử có findById trong service)
-        $currentUser = $this->userService->findById($user_id);  // Thêm method này nếu chưa có
+
+        $currentUser = $this->userService->findById($user_id); 
         if (!$currentUser) {
             http_response_code(404);
-            echo json_encode('User not found');
+            echo json_encode('Người dùng không tồn tại.', JSON_UNESCAPED_UNICODE);
             return;
         }
 
         if (empty($errors)) {
-            // Kiểm tra unique username (trừ chính nó)
             $existingUser = $this->userService->findByUsername($username);
             if ($existingUser && $existingUser->getId() != $user_id) {
                 $errors[] = 'Username đã tồn tại.';
@@ -189,7 +172,7 @@ class UserController extends Controller
 
         if (!empty($errors)) {
             http_response_code(400);
-            echo json_encode(['message' => $errors]);
+            echo json_encode(['message' => $errors], JSON_UNESCAPED_UNICODE);
             return;
         }
 
@@ -207,10 +190,10 @@ class UserController extends Controller
 
         if ($updatedUser) {
             http_response_code(200);
-            echo json_encode(['message' => 'User updated successfully']);
+            echo json_encode(['message' => 'Cập nhật user thành công'], JSON_UNESCAPED_UNICODE);
         } else {
             http_response_code(500);
-            echo json_encode(['message' => 'User update failed']);
+            echo json_encode(['message' => 'Cập nhật user thất bại'], JSON_UNESCAPED_UNICODE);
         }
     }
 
@@ -218,31 +201,25 @@ class UserController extends Controller
     {
         header('Content-Type: application/json');
 
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {  // Hoặc PUT cho update, nhưng giữ POST như form gốc
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { 
             http_response_code(405);
-            echo json_encode(['message' => 'Method not allowed. Use POST.'], JSON_UNESCAPED_UNICODE);
+            echo json_encode(['message' => 'Phương thức không hợp lệ.'], JSON_UNESCAPED_UNICODE);
             return;
         }
 
-        // Đọc input từ JSON body hoặc $_POST
-        $input = json_decode(file_get_contents('php://input'), true);
-        if (!$input) {
-            $input = $_POST;
-        }
-
-        $user_id = intval($input['user_id'] ?? 0);
+        $user_id = intval($_POST['user_id'] ?? 0);
         if ($user_id <= 0) {
             http_response_code(400);
-            echo json_encode(['message' => 'Invalid user ID']);
+            echo json_encode(['message' => 'ID không hợp lệ.'], JSON_UNESCAPED_UNICODE);
             return;
         }
         $user = $this->userService->delete($user_id);
         if($user) {
             http_response_code(200);
-            echo json_encode(['message' => 'User deleted successfully']);
+            echo json_encode(['message' => 'Xóa user thành công'], JSON_UNESCAPED_UNICODE);
         } else {
             http_response_code(500);
-            echo json_encode(['message' => 'User deletion failed']);
+            echo json_encode(['message' => 'Xóa user thất bại'], JSON_UNESCAPED_UNICODE);
         }
     }
 }

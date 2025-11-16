@@ -1,13 +1,12 @@
 <?php
 
-class QuestionServiceImpl extends BaseService implements QuestionService
+class QuestionServiceImpl implements QuestionService
 {
     private static $instant = null;
     private $questionRepository;
 
     public function __construct()
     {
-        parent::__construct();
         $this->questionRepository = QuestionRepository::getInstance();
     }
 
@@ -22,6 +21,11 @@ class QuestionServiceImpl extends BaseService implements QuestionService
     protected function getRepositoryInstance()
     {
         return QuestionRepository::getInstance();
+    }
+
+    public function create(array $data)
+    {
+        return $this->questionRepository->create($data);
     }
 
     public function getAll(){
