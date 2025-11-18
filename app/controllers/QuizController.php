@@ -21,16 +21,20 @@ class QuizController extends Controller
 
     public function doCreate()
     {
+        header('Content-Type: application/json');
         try {
-            $title = isset($_POST['title']) ? trim($_POST['title']) : '';
-            if ($title === '') {
-                http_response_code(422);
-                echo 'Title is required';
-                echo json_encode(['message' => 'Chủ đề không được rỗng'], JSON_UNESCAPED_UNICODE);
+            $validated = $this->validate($_POST, [
+                'title' => 'required',
+                'is_public' => 'required|enum:0,1',
+            ]);
+            if (!$validated) {
+                $errors = $_SESSION['errors'] ?? 'Dữ liệu không hợp lệ';
+                unset($_SESSION['errors']);
+                echo json_encode(['errors' => false, 'message' => $errors], JSON_UNESCAPED_UNICODE);
                 return;
             }
-
-            $isPublic = isset($_POST['is_public']) && (string)$_POST['is_public'] === '1' ? 1 : 0;
+            $title = $validated['title'];
+            $isPublic = (int)$validated['is_public'];
 
             $auth = Auth::getInstance();
             $userId = $auth->id();
@@ -60,31 +64,63 @@ class QuizController extends Controller
                 'image' => $savedImageName,
             ]);
 
-            $quizId = method_exists($created, 'getId') ? $created->getId() : null;
+            $quizId = $created->getId();
 
             if ($quizId) {
-                echo json_encode(['message' => 'Tạo quiz thành công'], JSON_UNESCAPED_UNICODE);
+                $successMessage = 'Tạo quiz thành công!';
+
+                // Nếu là AJAX request
+                if ($this->isAjaxRequest()) {
+                    http_response_code(201);
+                    echo json_encode([
+                        'success' => true,
+                        'message' => $successMessage
+                    ], JSON_UNESCAPED_UNICODE);
+                    exit;
+                }
+
+                // Form submit thông thường
+                $_SESSION['success'] = $successMessage;
                 $this->redirect("/quiz/edit/" . urlencode($quizId));
                 return;
             }
         } catch (Throwable $e) {
-            http_response_code(500);
-            header('Content-Type: text/plain; charset=UTF-8');
-            echo json_encode(['message' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
+            $errorMessage = $e->getMessage();
+
+            // Nếu là AJAX request
+            if ($this->isAjaxRequest()) {
+                http_response_code(500);
+                echo json_encode([
+                    'success' => false,
+                    'message' => $errorMessage
+                ], JSON_UNESCAPED_UNICODE);
+                exit;
+            }
+
+            // Form submit thông thường
+            $_SESSION['errors'] = $errorMessage;
+            $this->redirect('/quiz/create');
             return;
         }
     }
 
-    public function edit($quizId) // giao diện tao cau hoi
+    public function edit($quizId)
     {
         try {
-            $quiz = $this->quizService->findById((int)$quizId);
-            $questions = $this->questionService->findByQuiz((int)$quizId);
-            echo $this->renderPartial('quizzes/edit', ['quizId' => $quizId, 'quiz' => $quiz, 'questions' => $questions]);
+            $data = [
+                'quiz_id' => $quizId,
+            ];
+            $validated = $this->validate($data, [
+                'quiz_id' => 'required|interger|positive',
+            ]);
+            if ($validated) {
+                $quizId = $validated['quiz_id'];
+                $quiz = $this->quizService->findById((int)$quizId);
+                $questions = $this->questionService->findByQuiz((int)$quizId);
+                echo $this->renderPartial('quizzes/edit', ['quizId' => $quizId, 'quiz' => $quiz, 'questions' => $questions]);
+            }
         } catch (Throwable $e) {
-            http_response_code(500);
-            header('Content-Type: text/plain; charset=UTF-8');
-            echo json_encode(['message' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
+            $_SESSION['errors'] = $e->getMessage();
             return;
         }
     }
@@ -92,47 +128,127 @@ class QuizController extends Controller
     public function editQuiz($quizId)
     {
         try {
-            $quiz = $this->quizService->findById((int)$quizId);
-            echo $this->renderPartial('quizzes/create', ['quiz' => $quiz]);
+            $data = [
+                'quiz_id' => $quizId,
+            ];
+            $validated = $this->validate($data, [
+                'quiz_id' => 'required|interger|positive',
+            ]);
+            if ($validated) {
+                $quizId = $validated['quiz_id'];
+                $quiz = $this->quizService->findById((int)$quizId);
+                echo $this->renderPartial('quizzes/create', ['quiz' => $quiz]);
+            }
         } catch (Throwable $e) {
-            http_response_code(500);
-            header('Content-Type: text/plain; charset=UTF-8');
-            echo json_encode(['message' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
+            $_SESSION['errors'] = $e->getMessage();
             return;
         }
     }
 
     public function doEditQuiz($quizId)
     {
+        header('Content-Type: application/json');
         try {
-            $title = isset($_POST['title']) ? trim($_POST['title']) : '';
-            if ($title === '') {
-                http_response_code(422);
-                echo json_encode(['message' => 'Chủ đề không được rỗng'], JSON_UNESCAPED_UNICODE);
-                return;
-            }
-
-            $isPublic = (int) (!empty($input['is_public']));
-
-            $savedImageName = null;
-
-            if (isset($_FILES['image']) && is_array($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                $tmpPath = $_FILES['image']['tmp_name'];
-                $savedImageName = $this->uploadFileService->saveFileToFolder($tmpPath, 'quizzes', $_FILES['image']['name']);
-            }
-
-
-            $updated = $this->quizService->update((int)$quizId, [
-                'title' => $title,
-                'is_public' => $isPublic,
-                'image' => $savedImageName,
-                'updated_at' => date('Y-m-d H:i:s'),
+            $validated = $this->validate($_POST, [
+                'title' => 'required',
+                'is_public' => 'required|enum:0,1',
             ]);
+            if ($validated) {
+                $title = $validated['title'];
+                $isPublic = (int)$validated['is_public'];
 
-            if ($updated) {
-                echo json_encode(['message' => 'Cập nhật quiz thành công'], JSON_UNESCAPED_UNICODE);
+                $savedImageName = null;
+
+                if (isset($_FILES['image']) && is_array($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+                    $tmpPath = $_FILES['image']['tmp_name'];
+                    $savedImageName = $this->uploadFileService->saveFileToFolder($tmpPath, 'quizzes', $_FILES['image']['name']);
+                }
+
+
+                $updated = $this->quizService->update((int)$quizId, [
+                    'title' => $title,
+                    'is_public' => $isPublic,
+                    'image' => $savedImageName,
+                    'total_questions' => null,
+                    'updated_at' => date('Y-m-d H:i:s'),
+                ]);
+
+                if ($updated) {
+                    $message = 'Cập nhật quiz thành công!';
+
+                    // Kiểm tra xem có phải AJAX request không
+                    if ($this->isAjaxRequest()) {
+                        echo json_encode([
+                            'success' => true,
+                            'message' => $message
+                        ], JSON_UNESCAPED_UNICODE);
+                        exit;
+                    } else {
+                        $_SESSION['success'] = $message;
+                        $this->redirect("/quiz/edit/" . urlencode($quizId));
+                        return;
+                    }
+                }
+            }
+        } catch (Throwable $e) {
+            $errorMessage = $e->getMessage();
+
+            if ($this->isAjaxRequest()) {
+                http_response_code(400);
+                echo json_encode([
+                    'success' => false,
+                    'message' => $errorMessage
+                ], JSON_UNESCAPED_UNICODE);
+                exit;
+            } else {
+                $_SESSION['errors'] = $errorMessage;
                 $this->redirect("/quiz/edit/" . urlencode($quizId));
                 return;
+            }
+        }
+    }
+
+    public function doDelete($quizId)
+    {
+        header('Content-Type: application/json');
+        try {
+            $data = [
+                'quiz_id' => $quizId,
+            ];
+            $validated = $this->validate($data, [
+                'quiz_id' => 'required|interger|positive',
+            ]);
+            if ($validated) {
+                $quizId = $validated['quiz_id'];
+                $quiz = $this->quizService->findById($quizId);
+                if ($quiz->getImage() != null) {
+                    $this->uploadFileService->deleteFileFromFolder('quizzes', $quiz->getImage());
+                }
+                $this->quizService->delete($quizId);
+
+                http_response_code(200);
+                echo json_encode(['success' => true, 'message' => 'Xóa trò chơi thành công!'], JSON_UNESCAPED_UNICODE);
+            }
+        } catch (Throwable $e) {
+            http_response_code(500);
+            echo json_encode(['success' => true, 'message' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
+        }
+    }
+
+    public function view($quizId)
+    {
+        try {
+            $data = [
+                'quiz_id' => $quizId,
+            ];
+            $validated = $this->validate($data, [
+                'quiz_id' => 'required|interger|positive',
+            ]);
+            if ($validated) {
+                $quizId = $validated['quiz_id'];
+                $quiz = $this->quizService->findById((int)$quizId);
+                $questions = $this->questionService->findByQuiz((int)$quizId);
+                echo $this->renderPartial('quizzes/view', ['quiz' => $quiz, 'questions' => $questions]);
             }
         } catch (Throwable $e) {
             http_response_code(500);
@@ -142,30 +258,9 @@ class QuizController extends Controller
         }
     }
 
-    public function doDelete($quizId)
+    private function isAjaxRequest()
     {
-        try {
-            $quizId = (int)$quizId;
-            $quiz = $this->quizService->findById($quizId);
-            if($quiz->getImage() != null){
-                $this->uploadFileService->deleteFileFromFolder('quizzes', $quiz->getImage());
-            }
-            $this->quizService->delete($quizId);
-
-            http_response_code(200);
-            header('Content-Type: application/json');
-            echo json_encode(['message' => 'Quiz deleted successfully'], JSON_UNESCAPED_UNICODE);
-        } catch (Throwable $e) {
-            http_response_code(500);
-            header('Content-Type: text/plain; charset=UTF-8');
-            echo json_encode(['message' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
-        }
-    }
-
-    public function view($quizId)
-    {
-        $quiz = $this->quizService->findById((int)$quizId);
-        $questions = $this->questionService->findByQuiz((int)$quizId);
-        echo $this->renderPartial('quizzes/view', ['quiz' => $quiz, 'questions' => $questions]);
+        return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
     }
 }

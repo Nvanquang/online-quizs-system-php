@@ -24,15 +24,8 @@ class HomeController extends Controller
         // Get all quizzes
         $quizzes = $this->quizService->getAll();
 
-        $login_success = null;
-        if (isset($_SESSION['login_success'])) {
-            $login_success = $_SESSION['login_success'];
-            unset($_SESSION['login_success']);  // Xóa để tránh lặp nếu refresh
-        }
-
         echo $this->renderPartial('home/index', [
             'title' => 'Trang Chủ - Quiz System',
-            'login_success' => $login_success,
             'user' => $user,
             'quizzes' => $quizzes,
         ]);

@@ -22,25 +22,53 @@ class GameController extends Controller
 
     public function startLobby($quizId)
     {
-        $hostId = $this->auth->user()->getId();
-        if (!$hostId) {
-            throw new Exception("Host ID is required");
+        try {
+            $data = [
+                'quiz_id' => $quizId
+            ];
+
+            $validated = $this->validate($data, [
+                'quiz_id' => 'required|integer'
+            ]);
+
+            if ($validated) {
+                if ($this->auth->user() != null) {
+                    $hostId = $this->auth->user()->getId();
+                } else {
+                    $hostId = null;
+                }
+
+                if (!$hostId) {
+                    $this->redirectWithError('/', 'Bạn cần đăng nhập');
+                }
+
+                $gameSession = $this->gameSessionService->createSession(
+                    $hostId,
+                    (int)$validated['quiz_id']
+                );
+
+                $sessionCode = $gameSession->getSessionCode();
+                return $this->redirect('/game/lobby/' . urlencode($sessionCode));
+            }
+        } catch (Exception $e) {
+            $this->redirectWithError('/', $e->getMessage());
         }
-        $gameSession = $this->gameSessionService->createSession($hostId, (int)$quizId);
-        $sessionCode = $gameSession->getSessionCode();
-        return $this->redirect('/game/lobby/' . urlencode($sessionCode));
     }
 
     public function lobby($sessionCode)
     {
-        $sessionPlayer = new SessionPlayer();
-        $gameSession = $this->gameSessionService->findBySessionCode($sessionCode);
-        if (!$gameSession) {
-            throw new Exception('Session not found');
-        }
+        try {
+            $sessionPlayer = new SessionPlayer();
+            $gameSession = $this->gameSessionService->findBySessionCode($sessionCode);
+            if (!$gameSession) {
+                $this->redirectWithError('/', 'Phiên trò chơi không tồn tại!');
+            }
 
-        $quiz = $this->quizService->findById($gameSession->getQuizId());
-        echo $this->renderPartial('game/lobby', ['sessionCode' => $sessionCode, 'gameSession' => $gameSession, 'sessionPlayer' => $sessionPlayer, 'quiz' => $quiz]);
+            $quiz = $this->quizService->findById($gameSession->getQuizId());
+            echo $this->renderPartial('game/lobby', ['sessionCode' => $sessionCode, 'gameSession' => $gameSession, 'sessionPlayer' => $sessionPlayer, 'quiz' => $quiz]);
+        } catch (Exception $e) {
+            $this->redirectWithError('/', $e->getMessage());
+        }
     }
 
     public function waiting($sessionCode)
@@ -52,11 +80,6 @@ class GameController extends Controller
     {
         try {
             $gameSession = $this->gameSessionService->findBySessionCode($sessionCode);
-            if (!$gameSession) {
-                http_response_code(404);
-                echo json_encode(['error' => 'Session not found']);
-                return;
-            }
 
             // update game session
             $actualMode = null;
@@ -80,9 +103,8 @@ class GameController extends Controller
             $avatar = $_POST['avatar'] ?? null;
 
             if (!$nickname) {
-                http_response_code(422);
-                echo json_encode(['error' => 'Nickname is required']);
-                return;
+                $_SESSION['errors'] = 'Nickname là bắt buộc!';
+                $this->redirectBack();
             }
 
             $spData = [
@@ -99,102 +121,75 @@ class GameController extends Controller
             $this->sessionPlayerService->create($spData);
             $this->redirect('/game/play/' . urlencode($sessionCode));
         } catch (Exception $e) {
-            http_response_code(500);
-            echo json_encode(['error' => $e->getMessage()]);
-            return;
+            $_SESSION['errors'] = $e->getMessage();
+            $this->redirectBack();
         }
     }
 
     public function play($sessionCode)
     {
-        $gameSession = $this->gameSessionService->findBySessionCode($sessionCode);
-        if ($gameSession === null) {
-            throw new Exception('Session not found');
+        try {
+            $gameSession = $this->gameSessionService->findBySessionCode($sessionCode);
+
+            $quiz = $this->quizService->findById($gameSession->getQuizId());
+
+            $sessionPlayer = $this->sessionPlayerService->findByUserId($this->auth->id());
+            $questions = $this->questionService->findByQuiz($gameSession->getQuizId());
+            echo $this->renderPartial('game/play', ['sessionCode' => $sessionCode, 'gameSession' => $gameSession, 'quiz' => $quiz, 'questions' => $questions, 'sessionPlayer' => $sessionPlayer]);
+        } catch (Exception $e) {
+            $this->redirectWithError('/game/waiting', $e->getMessage());
         }
-        $quiz = $this->quizService->findById($gameSession->getQuizId());
-        if ($quiz === null) {
-            throw new Exception('Quiz not found');
-        }
-        $sessionPlayer = $this->sessionPlayerService->findByUserId($this->auth->id());
-        $questions = $this->questionService->findByQuiz($gameSession->getQuizId());
-        echo $this->renderPartial('game/play', ['sessionCode' => $sessionCode, 'gameSession' => $gameSession, 'quiz' => $quiz, 'questions' => $questions, 'sessionPlayer' => $sessionPlayer]);
     }
 
     public function endGame($sessionCode)
     {
-        header('Content-Type: application/json');
-
         try {
-            // Parse JSON body
-            $raw = file_get_contents('php://input');
-            $data = json_decode($raw, true);
-
-            if (!is_array($data)) {
-                http_response_code(400);
-                echo json_encode(['success' => false, 'error' => 'Invalid JSON body']);
-                return;
-            }
-
-            // Validate session code consistency
-            $bodySessionCode = isset($data['sessionCode']) ? (string)$data['sessionCode'] : null;
-            if (!$bodySessionCode || $bodySessionCode !== $sessionCode) {
-                http_response_code(422);
-                echo json_encode(['success' => false, 'error' => 'Session code mismatch']);
-                return;
-            }
-
-            // Validate totals
-            $totalQuestions = isset($data['totalQuestions']) ? (int)$data['totalQuestions'] : 0;
-            $correctAnswers = isset($data['correctAnswers']) ? (int)$data['correctAnswers'] : 0;
-            $totalScore     = isset($data['totalScore']) ? (int)$data['totalScore'] : 0;
-            $sessionPlayerId = isset($data['sessionPlayerId']) ? (int)$data['sessionPlayerId'] : null;
-
-            if ($totalQuestions < 0 || $correctAnswers < 0 || $correctAnswers > $totalQuestions || $totalScore < 0) {
-                http_response_code(422);
-                echo json_encode(['success' => false, 'error' => 'Invalid totals']);
-                return;
-            }
-
-            // Ensure session exists
-            $gameSession = $this->gameSessionService->findBySessionCode($sessionCode);
-            if (!$gameSession) {
-                http_response_code(404);
-                echo json_encode(['success' => false, 'error' => 'Session not found']);
-                return;
-            }
-
-            // update game session
-            $this->gameSessionService->update($sessionCode, [
-                'status' => 'finished',
-                'ended_at' => date('Y-m-d H:i:s'),
-                'actual_mode' => null,
-                'started_at' => $gameSession->getStartedAt(),
-                'current_question' => $gameSession->getCurrentQuestion(),
-                'total_players' => $gameSession->getTotalPlayers(),
+            $validated = $this->validate($_POST, [
+                'total_questions' => 'required|integer',
+                'correct_answers' => 'required|integer',
+                'total_score' => 'required|integer',
+                'id' => 'required|integer',
             ]);
 
-            // update session player
-            $this->sessionPlayerService->update($sessionPlayerId, [
-                'total_score' => $totalScore,
-                'rank_position' => 1,
-            ]);
+            if ($validated) {
+                $totalQuestions = (int)$validated['total_questions'];
+                $correctAnswers = (int)$validated['corect_answers'];
+                $totalScore = (int)$validated['total_score'];
+                $sessionPlayerId = (int)$validated['id'];
 
-            // create game history
-            $gameHistoryData = [
-                'user_id' => $this->auth->id(),
-                'session_id' => $gameSession->getId(),
-                'quiz_id' => $gameSession->getQuizId(),
-                'final_score' => $totalScore,
-                'final_rank' => 1,
-                'total_questions' => $totalQuestions,
-                'correct_answers' => $correctAnswers,
-                'played_at' => $gameSession->getStartedAt(),
-            ];
-            $this->gameHistoryService->create($gameHistoryData);
+                $gameSession = $this->gameSessionService->findBySessionCode($sessionCode);
 
+                // update game session
+                $this->gameSessionService->update($sessionCode, [
+                    'status' => 'finished',
+                    'ended_at' => date('Y-m-d H:i:s'),
+                    'actual_mode' => null,
+                    'started_at' => $gameSession->getStartedAt(),
+                    'current_question' => $gameSession->getCurrentQuestion(),
+                    'total_players' => $gameSession->getTotalPlayers(),
+                ]);
+
+                // update session player
+                $this->sessionPlayerService->update($sessionPlayerId, [
+                    'total_score' => $totalScore,
+                    'rank_position' => 1,
+                ]);
+
+                // create game history
+                $gameHistoryData = [
+                    'user_id' => $this->auth->id(),
+                    'session_id' => $gameSession->getId(),
+                    'quiz_id' => $gameSession->getQuizId(),
+                    'final_score' => $totalScore,
+                    'final_rank' => 1,
+                    'total_questions' => $totalQuestions,
+                    'correct_answers' => $correctAnswers,
+                    'played_at' => $gameSession->getStartedAt(),
+                ];
+                $this->gameHistoryService->create($gameHistoryData);
+            }
         } catch (Exception $e) {
-            http_response_code(500);
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            $this->redirectWithError('/', $e->getMessage());
         }
     }
 }

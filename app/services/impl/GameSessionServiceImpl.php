@@ -6,12 +6,14 @@ class GameSessionServiceImpl implements GameSessionService
     private $gameSessionRepository;
     private $codeGenerator;
     private $userRepository;
+    private $quizRepository;
 
     public function __construct()
     {
         $this->gameSessionRepository = GameSessionRepository::getInstance();
         $this->codeGenerator = CodeGenerator::getInstance();
         $this->userRepository = UserRepository::getInstance();
+        $this->quizRepository = QuizRepository::getInstance();
     }
 
     public static function getInstance()
@@ -29,9 +31,11 @@ class GameSessionServiceImpl implements GameSessionService
 
     public function createSession($hostId, $quizId, $actualMode = null)
     {
-        // Kiểm tra host có tồn tại
         if (!$this->userRepository->exists(['id' => $hostId])) {
-            throw new Exception("Host not found");
+            throw new Exception("Chủ phòng không tồn tại!");
+        }
+        if(!$this->quizRepository->exists(['id' => $quizId])) {
+            throw new Exception("Trò chơi không tồn tại!");
         }
         if ($this->gameSessionRepository->exists(['id' => $quizId])) {
             // Nếu đã có session đang chờ cho host + quiz này thì dùng lại (idempotent)
@@ -66,7 +70,11 @@ class GameSessionServiceImpl implements GameSessionService
 
     public function findBySessionCode($sessionCode)
     {
-        return $this->gameSessionRepository->findBySessionCode($sessionCode);
+        $gameSession = $this->gameSessionRepository->findBySessionCode($sessionCode);
+        if(!$gameSession) {
+            throw new Exception("Phiên chơi không tồn tại");
+        }
+        return $gameSession;
     }
 
     public function update($sessionCode, $data)

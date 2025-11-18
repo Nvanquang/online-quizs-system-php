@@ -11,6 +11,7 @@ if (session_status() === PHP_SESSION_NONE) {
 spl_autoload_register(function ($class) {
     $paths = [
         __DIR__ . '/app/core/' . $class . '.php',
+        __DIR__ . '/app/core/traits/' . $class . '.php',
         __DIR__ . '/app/controllers/' . $class . '.php',
         __DIR__ . '/app/models/' . $class . '.php',
         __DIR__ . '/app/services/' . $class . '.php',
@@ -49,7 +50,6 @@ $router = new Router();
 // Routes home
 $router->get('/', 'Home@index');
 $router->get('/test', 'Home@test');
-$router->get('/study', 'Home@study');
 
 // Routes auth
 $router->get('/auth/login', 'Auth@login', ['GuestMiddleware']);

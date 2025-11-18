@@ -29,24 +29,6 @@
             margin: 0 auto;
         }
 
-        /* Success Message */
-        .success-message {
-            background-color: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724;
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-        }
-
-        .success-message .icon {
-            margin-right: 8px;
-            font-size: 16px;
-        }
-
         /* Register Card */
         .register-card {
             background: white;
@@ -103,6 +85,11 @@
             outline: none;
             border-color: #007bff;
             box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .form-input.error {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
         }
 
         .form-select {
@@ -225,6 +212,19 @@
             font-size: 14px;
         }
 
+        /* Field Error Message */
+        .error-message-field {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+            min-height: 18px;
+        }
+
+        .error-message-field.show {
+            display: block;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .form-grid {
@@ -281,7 +281,7 @@
         <div class="register-card">
             <h1 class="register-title">Đăng Ký Tài Khoản</h1>
 
-            <form method="POST" action="/auth/register" id="registerForm">
+            <form method="POST" action="/auth/register" id="registerForm" novalidate>
                 <!-- CSRF Token -->
                 <?php echo CSRFMiddleware::getTokenField(); ?>
 
@@ -300,6 +300,7 @@
                             value="<?php echo htmlspecialchars($_POST['username'] ?? ''); ?>"
                             required
                             autocomplete="username">
+                        <div id="username-error" class="error-message-field"></div>
                     </div>
 
                     <!-- Full Name Field -->
@@ -316,6 +317,7 @@
                             value="<?php echo htmlspecialchars($_POST['full_name'] ?? ''); ?>"
                             required
                             autocomplete="name">
+                        <div id="full_name-error" class="error-message-field"></div>
                     </div>
 
                     <!-- Email Field -->
@@ -332,6 +334,7 @@
                             value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>"
                             required
                             autocomplete="email">
+                        <div id="email-error" class="error-message-field"></div>
                     </div>
 
                     <!-- Password Field -->
@@ -352,26 +355,28 @@
                                 <i class="bi bi-eye"></i>
                             </button>
                         </div>
+                        <div id="password-error" class="error-message-field"></div>
                     </div>
 
                     <!-- Confirm Password Field -->
                     <div class="form-group">
-                        <label for="confirm_password" class="form-label">
+                        <label for="password_confirmation" class="form-label">
                             <span class="required">*</span> Nhập lại mật khẩu
                         </label>
                         <div class="password-input-container">
                             <input
                                 type="password"
-                                id="confirm_password"
-                                name="confirm_password"
+                                id="password_confirmation"
+                                name="password_confirmation"
                                 class="form-input"
                                 placeholder="Nhập lại mật khẩu"
                                 required
                                 autocomplete="new-password">
-                            <button type="button" class="password-toggle" onclick="togglePassword('confirm_password')">
+                            <button type="button" class="password-toggle" onclick="togglePassword('password_confirmation')">
                                 <i class="bi bi-eye"></i>
                             </button>
                         </div>
+                        <div id="password_confirmation-error" class="error-message-field"></div>
                     </div>
                 </div>
 
@@ -396,14 +401,111 @@
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    
-    <?php if (isset($error) && $error): ?>
-        <script>
-            toastr.error(<?php echo json_encode($error); ?>);
-        </script>
-    <?php endif; ?>
 
     <script>
+        <?php if (!empty($_SESSION['errors'])) : ?>
+            toastr.error(<?= json_encode($_SESSION['errors'], JSON_UNESCAPED_UNICODE); ?>);
+            <?php unset($_SESSION['errors']); ?>
+        <?php endif; ?>
+
+        // Utility function to show/hide error and update input border
+        function setFieldError(inputId, message) {
+            const $input = $('#' + inputId);
+            const $errorEl = $('#' + inputId + '-error');
+            if (message) {
+                $input.addClass('error');
+                $errorEl.text(message).addClass('show');
+            } else {
+                $input.removeClass('error');
+                $errorEl.text('').removeClass('show');
+            }
+        }
+
+        // Validate Username
+        function validateUsername() {
+            const val = $('#username').val().trim();
+            if (!val) {
+                setFieldError('username', 'Trường này là bắt buộc.');
+                return false;
+            }
+            if (val.length < 3) {
+                setFieldError('username', 'Tên đăng nhập phải ít nhất 3 ký tự.');
+                return false;
+            }
+            if (val.length > 50) {
+                setFieldError('username', 'Tên đăng nhập không được vượt quá 50 ký tự.');
+                return false;
+            }
+            setFieldError('username', '');
+            return true;
+        }
+
+        // Validate Full Name
+        function validateFullName() {
+            const val = $('#full_name').val().trim();
+            if (!val) {
+                setFieldError('full_name', 'Trường này là bắt buộc.');
+                return false;
+            }
+            if (val.length < 5) {
+                setFieldError('full_name', 'Họ và tên phải ít nhất 5 ký tự.');
+                return false;
+            }
+            if (val.length > 50) {
+                setFieldError('full_name', 'Họ và tên không được vượt quá 50 ký tự.');
+                return false;
+            }
+            setFieldError('full_name', '');
+            return true;
+        }
+
+        // Validate Email
+        function validateEmail() {
+            const val = $('#email').val().trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!val) {
+                setFieldError('email', 'Trường này là bắt buộc.');
+                return false;
+            }
+            if (!emailRegex.test(val)) {
+                setFieldError('email', 'Email không hợp lệ.');
+                return false;
+            }
+            setFieldError('email', '');
+            return true;
+        }
+
+        // Validate Password
+        function validatePassword() {
+            const val = $('#password').val();
+            if (!val) {
+                setFieldError('password', 'Trường này là bắt buộc.');
+                return false;
+            }
+            if (val.length < 6) {
+                setFieldError('password', 'Mật khẩu phải ít nhất 6 ký tự.');
+                return false;
+            }
+            setFieldError('password', '');
+            return true;
+        }
+
+        // Validate Confirm Password
+        function validateConfirmPassword() {
+            const password = $('#password').val();
+            const confirmVal = $('#password_confirmation').val();
+            if (!confirmVal) {
+                setFieldError('password_confirmation', 'Trường này là bắt buộc.');
+                return false;
+            }
+            if (password !== confirmVal) {
+                setFieldError('password_confirmation', 'Mật khẩu xác nhận không khớp.');
+                return false;
+            }
+            setFieldError('password_confirmation', '');
+            return true;
+        }
+
         // Toggle password visibility
         function togglePassword(inputId) {
             const $passwordInput = $('#' + inputId);
@@ -418,8 +520,35 @@
             }
         }
 
-        // Form submission with loading state
+        // Real-time validation on blur
+        $('#username').on('blur', validateUsername);
+        $('#full_name').on('blur', validateFullName);
+        $('#email').on('blur', validateEmail);
+        $('#password').on('blur', validatePassword);
+        $('#password_confirmation').on('blur', validateConfirmPassword);
+
+        // Password confirmation validation on input (existing + enhanced)
+        $('#password, #password_confirmation').on('input', function() {
+            validatePassword(); // Re-validate password on change
+            validateConfirmPassword(); // Re-validate confirmation
+        });
+
+        // Form submission with loading state and full validation
         $('#registerForm').on('submit', function(e) {
+            let isValid = true;
+
+            isValid &= validateUsername();
+            isValid &= validateFullName();
+            isValid &= validateEmail();
+            isValid &= validatePassword();
+            isValid &= validateConfirmPassword();
+
+            if (!isValid) {
+                e.preventDefault();
+                toastr.error('Vui lòng kiểm tra lại các trường thông tin.');
+                return false;
+            }
+
             const $button = $('#registerButton');
             const $buttonText = $('#buttonText');
             const $loadingSpinner = $('#loadingSpinner');
@@ -435,23 +564,6 @@
             const $firstInput = $('.form-input').first();
             if ($firstInput.length) {
                 $firstInput.trigger('focus');
-            }
-        });
-
-        // Password confirmation validation (jQuery, validate on both fields)
-        $('#password, #confirm_password').on('input', function() {
-            const password = $('#password').val() || '';
-            const confirmPassword = $('#confirm_password').val() || '';
-            const confirmEl = $('#confirm_password').get(0);
-
-            if (!confirmEl) return;
-
-            if (confirmPassword.length === 0) {
-                confirmEl.setCustomValidity('');
-            } else if (password !== confirmPassword) {
-                confirmEl.setCustomValidity('Mật khẩu xác nhận không khớp');
-            } else {
-                confirmEl.setCustomValidity('');
             }
         });
     </script>

@@ -5,6 +5,8 @@ class Controller
     protected $db;
     protected $view;
     protected $data = [];
+    
+    use ValidatesRequest;
 
     public function __construct()
     {

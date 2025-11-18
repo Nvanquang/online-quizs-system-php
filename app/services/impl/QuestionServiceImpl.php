@@ -37,10 +37,9 @@ class QuestionServiceImpl implements QuestionService
     }
 
     public function findById($id){
-        if(!$id){
-            throw new Exception("Question ID is required");
-        }
-        return $this->questionRepository->findById($id);
+        $question = $this->questionRepository->findById($id);
+        if (!$question) throw new Exception("Câu hỏi không tồn tại!");
+        return $question;
     }
 
     public function findByQuiz(int $quizId): array{
@@ -50,7 +49,7 @@ class QuestionServiceImpl implements QuestionService
     public function update($id, array $data){
         $question = $this->questionRepository->findById($id);
         if (!$question) {
-            throw new Exception("Question not found");
+            throw new Exception("Câu hỏi không tồn tại!");
         }
 
         if($data['content'] != null) {
@@ -84,6 +83,9 @@ class QuestionServiceImpl implements QuestionService
     }
 
     public function delete($id){
+        if(!$this->questionRepository->exists(['id' => $id])){
+            throw new Exception("Câu hỏi không tồn tại!");
+        }
         return $this->questionRepository->delete($id);
     }
 

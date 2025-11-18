@@ -29,22 +29,33 @@ class UserServiceImpl implements UserService
 
     public function findByEmail($email)
     {
-        return $this->userRepository->findByEmail($email);
+        $user = $this->userRepository->findByEmail($email);
+        if(!$user) {
+            throw new Exception("Người dùng không tồn tại!");
+        }
+        return $user;
     }
 
     public function findByUsername($username)
     {
-        return $this->userRepository->findByUsername($username);
+        $user = $this->userRepository->findByUsername($username);
+        if(!$user) {
+            throw new Exception("Người dùng không tồn tại!");
+        }
+        return $user;
     }
 
     public function findById($id)
     {
-        return $this->userRepository->findById($id);
+        $user = $this->userRepository->findById($id);
+        if(!$user) {
+            throw new Exception("Người dùng không tồn tại!");
+        }
+        return $user;
     }
 
     public function create(array $data)
     {
-        $this->validateCreateData($data);
         if ($this->userRepository->findByUsername($data['username'])) {
             throw new Exception('Username đã tồn tại!');
         }
@@ -55,6 +66,12 @@ class UserServiceImpl implements UserService
             $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
         }
         $data['is_admin'] = $data['is_admin'] ?? 0;
+        if($data['is_admin'] === 1){
+            $auth = Auth::getInstance();
+            if(!$auth->isAdmin()){
+                throw new Exception('Bạn không có đủ quyền hạn!');
+            }
+        }
         $data['total_points'] = $data['total_points'] ?? 0;
         $data['games_played'] = $data['games_played'] ?? 0;
         $data['created_at'] = $data['created_at'] ?? date('Y-m-d H:i:s');
@@ -66,7 +83,7 @@ class UserServiceImpl implements UserService
 
         $user = $this->userRepository->getById($id);
         if ($user && $user->getId() != $id) {
-            throw new Exception("User không tìm thấy!");
+            throw new Exception("User không tồn tại!");
         }
         
         if($data['username'] != null) {
@@ -77,6 +94,12 @@ class UserServiceImpl implements UserService
         }
         if($data['full_name'] != null) {
             $user->setFullName($data['full_name']);
+        }
+        if($data['is_admin'] === 1){
+            $auth = Auth::getInstance();
+            if(!$auth->isAdmin()){
+                throw new Exception('Bạn không có đủ quyền hạn!');
+            }
         }
         $user->setIsAdmin($data['is_admin']);
         return $this->userRepository->update($id, $user->toArray());
@@ -95,32 +118,13 @@ class UserServiceImpl implements UserService
     public function authenticate($username, $password)
     {
         $user = $this->findByEmail($username);
-        if (!$user) {
-            return false;
+        if (!$user || !password_verify($password, $user->getPassword())) {
+            throw new Exception('Tên đăng nhập hoặc mật khẩu không đúng!');
         }
-        if (!password_verify($password, $user->getPassword())) {
-            return false;
+        if($user->isAdmin() != 1){
+            throw new Exception('Bạn không có quyền truy cập trang quản trị!');
         }
         return $user;
-    }
-
-    protected function validateCreateData(array $data): void
-    {
-        $required = ['username', 'email', 'password'];
-        foreach ($required as $field) {
-            if (empty($data[$field])) {
-                throw new Exception("Field '{$field}' is required");
-            }
-        }
-        if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-            throw new Exception('Email không hợp lệ!');
-        }
-        if (strlen($data['username']) < 3) {
-            throw new Exception('Username ít nhất 3 ký tự!');
-        }
-        if (strlen($data['password']) < 6) {
-            throw new Exception('Password ít nhất 6 ký tự!');
-        }
     }
 
 
@@ -131,7 +135,7 @@ class UserServiceImpl implements UserService
             throw new Exception('User không tìm thấy!');
         }
         if ($user->isAdmin()) {
-            throw new Exception('Không thể xóa user quản trị viên!');
+            throw new Exception('Bạn không có đủ quyền hạn để xóa!');
         }
     }
 }

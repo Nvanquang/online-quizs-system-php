@@ -139,16 +139,23 @@ async function handleFormSubmit(e) {
             contentType: false,
             headers: { 'X-CSRF-Token': csrfToken },
             success: (res) => {
-                toastr.options = { "timeout": 2000 }
-                toastr.success(res.message);
-                setTimeout(() => {
-                    location.reload()
-                }, 2000)
+                if (res.success) {
+                    modal.hide();
+                    toastr.options = { "timeout": 2000 }
+                    toastr.success(res.message);
+                    setTimeout(() => {
+                        location.reload()
+                    }, 2000)
+                }
+                else {
+                    toastr.options = { "timeout": 2000 }
+                    toastr.error(res.message);
+                }
+
             },
-            error: (res) => {
-                console.log('Form Submit Error:', res);
+            error: (xhr) => {
                 toastr.options = { "timeout": 2000 }
-                toastr.error(res.message)
+                toastr.error(xhr.responseJSON?.message || 'Có lỗi xảy ra');
             }
         })
     } catch (error) {
@@ -182,15 +189,22 @@ async function deleteUser(userId) {
             contentType: false,
             headers: { 'X-CSRF-Token': csrfToken },
             success: (res) => {
-                toastr.options = { "timeout": 2000 }
-                toastr.success(res.message);
-                setTimeout(() => {
-                    location.reload()
-                }, 2000)
+                if (res.success) {
+                    toastr.options = { "timeout": 2000 }
+                    toastr.success(res.message);
+                    setTimeout(() => {
+                        location.reload()
+                    }, 2000)
+                }
+                else {
+                    toastr.options = { "timeout": 2000 }
+                    toastr.error(res.message);
+                }
+
             },
-            error: (res) => {
+            error: (xhr) => {
                 toastr.options = { "timeout": 2000 }
-                toastr.error(res.message);
+                toastr.error(xhr.responseJSON?.message || 'Có lỗi xảy ra');
             }
         })
     } catch (error) {

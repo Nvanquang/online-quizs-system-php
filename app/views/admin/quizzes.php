@@ -86,35 +86,35 @@
                                         <td><?php echo $quiz->getCreatedAt() ?></td>
                                         <td><?php echo $quiz->getUpdatedAt() ?></td>
                                         <td>
-                                            <a href="javascript:void(0)" 
-                                               data-bs-toggle="modal"
-                                               data-bs-placement="top" 
-                                               data-bs-target="#viewQuizModal_<?php echo $quiz->getId(); ?>"
-                                               title="Xem chi tiết">
+                                            <a href="javascript:void(0)"
+                                                data-bs-toggle="modal"
+                                                data-bs-placement="top"
+                                                data-bs-target="#viewQuizModal_<?php echo $quiz->getId(); ?>"
+                                                title="Xem chi tiết">
                                                 <i class="bi bi-eye-fill me-2"></i>
                                             </a>
-                                            <a href="javascript:void(0)" 
-                                               class="update-btn" 
-                                               style="color: purple" 
-                                               data-quiz='<?php echo htmlspecialchars(json_encode([
-                                                   "id" => $quiz->getId(),
-                                                   "title" => $quiz->getTitle(),
-                                                   "is_public" => $quiz->isPublic(),
-                                                   "image" => $quiz->getImage()
-                                               ]), ENT_QUOTES, 'UTF-8'); ?>'
-                                               data-bs-toggle="tooltip" 
-                                               data-bs-placement="top" 
-                                               title="Cập nhật trò chơi">
+                                            <a href="javascript:void(0)"
+                                                class="update-btn"
+                                                style="color: purple"
+                                                data-quiz='<?php echo htmlspecialchars(json_encode([
+                                                                "id" => $quiz->getId(),
+                                                                "title" => $quiz->getTitle(),
+                                                                "is_public" => $quiz->isPublic(),
+                                                                "image" => $quiz->getImage()
+                                                            ]), ENT_QUOTES, 'UTF-8'); ?>'
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="top"
+                                                title="Cập nhật trò chơi">
                                                 <i class="bi bi-pencil-fill me-2"></i>
                                             </a>
-                                            <a href="javascript:void(0)" 
-                                               class="delete-btn" 
-                                               data-quiz-id="<?php echo $quiz->getId() ?>" 
-                                               data-quiz-title="<?php echo htmlspecialchars($quiz->getTitle()) ?>" 
-                                               style="color: red" 
-                                               data-bs-toggle="tooltip" 
-                                               data-bs-placement="top" 
-                                               title="Xóa trò chơi">
+                                            <a href="javascript:void(0)"
+                                                class="delete-btn"
+                                                data-quiz-id="<?php echo $quiz->getId() ?>"
+                                                data-quiz-title="<?php echo htmlspecialchars($quiz->getTitle()) ?>"
+                                                style="color: red"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="top"
+                                                title="Xóa trò chơi">
                                                 <i class="bi bi-trash3-fill me-2"></i>
                                             </a>
                                         </td>
@@ -170,6 +170,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../public/lib/waypoints/waypoints.min.js"></script>
+
+    <script>
+        <?php if (!empty($_SESSION['errors'])) : ?>
+            toastr.error(<?= json_encode($_SESSION['errors'], JSON_UNESCAPED_UNICODE); ?>);
+            <?php unset($_SESSION['errors']); ?>
+        <?php endif; ?>
+    </script>
 
     <!-- Template Javascript -->
     <script src="../../../public/js/main_2.js"></script>

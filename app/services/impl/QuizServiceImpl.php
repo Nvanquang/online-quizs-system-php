@@ -28,16 +28,11 @@ class QuizServiceImpl implements QuizService
     }
 
     public function findById($id): object | null {
-        if(!$id){
-            throw new Exception("Quiz ID is required");
+        $quiz = $this->quizRepository->findById($id);
+        if(!$quiz){
+            throw new Exception("Trò chơi không tồn tại!");
         }
-        if(!is_numeric($id)){
-            throw new Exception("Quiz ID must be a number");
-        }
-        if($id < 1){
-            throw new Exception("Quiz ID must be greater than 0");
-        }
-        return $this->quizRepository->findById($id);
+        return $quiz;
     }
 
     public function create($data){
@@ -47,13 +42,16 @@ class QuizServiceImpl implements QuizService
     public function update($id, $data){
         $quiz = $this->findById($id);
         if(!$quiz){
-            throw new Exception("Quiz not found");
+            throw new Exception("Trò chơi không tồn tại!");
         }
         if($data['title']){
             $quiz->setTitle($data['title']);
         }
         if($data['image']){
             $quiz->setImage($data['image']);
+        }
+        if($data['total_questions']){
+            $quiz->setTotalQuestions($data['total_questions']);
         }
         
         $quiz->setIsPublic($data['is_public']);
@@ -65,22 +63,16 @@ class QuizServiceImpl implements QuizService
     }
 
     public function findAllByUserId($id){
-        if(!$id){
-            throw new Exception("User ID is required");
+        $quiz = $this->quizRepository->findAllByUserId($id);
+        if(!$quiz){
+            throw new Exception("Trò chơi không tồn tại!");
         }
-        if(!is_numeric($id)){
-            throw new Exception("User ID must be a number");
-        }
-        if($id < 1){
-            throw new Exception("User ID must be greater than 0");
-        }
-        return $this->quizRepository->findAllByUserId($id);
+        return $quiz;
     }
 
     public function delete($id){
-        $quiz = $this->findById($id);
-        if(!$quiz){
-            throw new Exception("Quiz not found");
+        if(!$this->quizRepository->exists(['id' => $id])){
+            throw new Exception("Trò chơi không tồn tại!");
         }
         return $this->quizRepository->delete($id);
     }

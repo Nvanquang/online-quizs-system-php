@@ -186,9 +186,9 @@ async function handleFormSubmit(e) {
             contentType: false,
             headers: { 'X-CSRF-Token': csrfToken },
             success: (res) => {
+                modal.hide();
                 toastr.options = { "timeout": 2000 }
                 toastr.success(res.message);
-                modal.hide();
                 setTimeout(() => {
                     location.reload();
                 }, 2000);

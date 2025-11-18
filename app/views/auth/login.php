@@ -7,6 +7,7 @@
     <link rel="icon" type="image/ico" href="../../../public/images/logo/favicon.ico">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link href="../../../public/css/toastr-override.css" rel="stylesheet">
     <title><?php echo $title ?? 'Đăng Nhập'; ?></title>
     <style>
         * {
@@ -28,24 +29,6 @@
         .login-container {
             width: 100%;
             max-width: 400px;
-        }
-
-        /* Success Message */
-        .success-message {
-            background-color: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724;
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-        }
-
-        .success-message .icon {
-            margin-right: 8px;
-            font-size: 16px;
         }
 
         /* Login Card */
@@ -96,6 +79,11 @@
             outline: none;
             border-color: #007bff;
             box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .form-input.error {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
         }
 
         .password-input-container {
@@ -197,6 +185,19 @@
             font-size: 14px;
         }
 
+        /* Field Error Message */
+        .error-message-field {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+            min-height: 18px;
+        }
+
+        .error-message-field.show {
+            display: block;
+        }
+
         /* Responsive */
         @media (max-width: 480px) {
             .login-card {
@@ -235,9 +236,9 @@
 <body>
     <div class="login-container">
         <!-- Error Message -->
-        <?php if (isset($error) && $error): ?>
+        <?php if (isset($errors) && $errors): ?>
             <div class="error-message">
-                <?php echo $error; ?>
+                <?php echo $errors; ?>
             </div>
         <?php endif; ?>
 
@@ -245,7 +246,7 @@
         <div class="login-card">
             <h1 class="login-title">Đăng Nhập</h1>
 
-            <form method="POST" action="/auth/login" id="loginForm">
+            <form method="POST" action="/auth/login" id="loginForm" novalidate>
                 <!-- CSRF Token -->
                 <?php echo CSRFMiddleware::getTokenField(); ?>
 
@@ -263,6 +264,7 @@
                         value="<?php echo htmlspecialchars($_POST['username'] ?? ''); ?>"
                         required
                         autocomplete="username">
+                    <div id="username-error" class="error-message-field"></div>
                 </div>
 
                 <!-- Password Field -->
@@ -283,6 +285,7 @@
                             <i class="bi bi-eye"></i>
                         </button>
                     </div>
+                    <div id="password-error" class="error-message-field"></div>
                 </div>
 
                 <!-- Login Button -->
@@ -306,31 +309,81 @@
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    
-    
+
+
     <script>
-        $(document).ready(function() {
-            <?php if (!empty($_SESSION['login_error'])) : ?>
-                toastr.error(<?= json_encode($_SESSION['login_error'], JSON_UNESCAPED_UNICODE); ?>);
-                <?php unset($_SESSION['login_error']); ?>
-            <?php endif; ?>
-            
-            // Toggle password visibility
-            function togglePassword() {
-                const $passwordInput = $('#password');
-                const $toggleButton = $('.password-toggle');
-
-                if ($passwordInput.attr('type') === 'password') {
-                    $passwordInput.attr('type', 'text');
-                    $toggleButton.html('<i class="bi bi-eye-slash"></i>');
-                } else {
-                    $passwordInput.attr('type', 'password');
-                    $toggleButton.html('<i class="bi bi-eye"></i>');
-                }
+        // Utility function to show/hide error and update input border
+        function setFieldError(inputId, message) {
+            const $input = $('#' + inputId);
+            const $errorEl = $('#' + inputId + '-error');
+            if (message) {
+                $input.addClass('error');
+                $errorEl.text(message).addClass('show');
+            } else {
+                $input.removeClass('error');
+                $errorEl.text('').removeClass('show');
             }
+        }
 
-            // Form submission with loading state
+        // Validate Username (Email)
+        function validateUsername() {
+            const val = $('#username').val().trim();
+            if (!val) {
+                setFieldError('username', 'Trường này là bắt buộc.');
+                return false;
+            }
+            setFieldError('username', '');
+            return true;
+        }
+
+        // Validate Password
+        function validatePassword() {
+            const val = $('#password').val();
+            if (!val) {
+                setFieldError('password', 'Trường này là bắt buộc.');
+                return false;
+            }
+            setFieldError('password', '');
+            return true;
+        }
+
+        // Toggle password visibility
+        function togglePassword() {
+            const $passwordInput = $('#password');
+            const $toggleButton = $('.password-toggle');
+
+            if ($passwordInput.attr('type') === 'password') {
+                $passwordInput.attr('type', 'text');
+                $toggleButton.html('<i class="bi bi-eye-slash"></i>');
+            } else {
+                $passwordInput.attr('type', 'password');
+                $toggleButton.html('<i class="bi bi-eye"></i>');
+            }
+        }
+
+        $(document).ready(function() {
+            <?php if (!empty($_SESSION['errors'])) : ?>
+                toastr.error(<?= json_encode($_SESSION['errors'], JSON_UNESCAPED_UNICODE); ?>);
+                <?php unset($_SESSION['errors']); ?>
+            <?php endif; ?>
+
+            // Real-time validation on blur
+            $('#username').on('blur', validateUsername);
+            $('#password').on('blur', validatePassword);
+
+            // Form submission with loading state and validation
             $('#loginForm').on('submit', function(e) {
+                let isValid = true;
+
+                isValid &= validateUsername();
+                isValid &= validatePassword();
+
+                if (!isValid) {
+                    e.preventDefault();
+                    toastr.error('Vui lòng kiểm tra lại các trường thông tin.');
+                    return false;
+                }
+
                 const $button = $('#loginButton');
                 const $buttonText = $('#buttonText');
                 const $loadingSpinner = $('#loadingSpinner');
@@ -342,12 +395,10 @@
             });
 
             // Auto-focus on first input
-            $(function() {
-                const $firstInput = $('.form-input').first();
-                if ($firstInput.length) {
-                    $firstInput.trigger('focus');
-                }
-            });
+            const $firstInput = $('.form-input').first();
+            if ($firstInput.length) {
+                $firstInput.trigger('focus');
+            }
         });
     </script>
 </body>

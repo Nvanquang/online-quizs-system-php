@@ -75,41 +75,41 @@
                                         <td><?php echo $question->getCreatedAt() ?></td>
                                         <td><?php echo $question->getUpdatedAt() ?></td>
                                         <td>
-                                            <a href="javascript:void(0)" 
-                                               data-bs-toggle="modal"
-                                               data-bs-placement="top" 
-                                               data-bs-target="#viewQuestionModal_<?php echo $question->getId(); ?>"
-                                               title="Xem chi tiết">
+                                            <a href="javascript:void(0)"
+                                                data-bs-toggle="modal"
+                                                data-bs-placement="top"
+                                                data-bs-target="#viewQuestionModal_<?php echo $question->getId(); ?>"
+                                                title="Xem chi tiết">
                                                 <i class="bi bi-eye-fill me-2"></i>
                                             </a>
-                                            <a href="javascript:void(0)" 
-                                               class="update-btn" 
-                                               data-question='<?php echo htmlspecialchars(json_encode([
-                                                   "id" => $question->getId(),
-                                                   "content" => $question->getContent(),
-                                                   "answer_a" => $question->getAnswerA(),
-                                                   "answer_b" => $question->getAnswerB(),
-                                                   "answer_c" => $question->getAnswerC(),
-                                                   "answer_d" => $question->getAnswerD(),
-                                                   "correct_answer" => $question->getCorrectAnswer(),
-                                                   "explanation" => $question->getExplanation(),
-                                                   "image_url" => $question->getImageUrl(),
-                                                   "time_limit" => $question->getTimeLimit()
-                                               ]), ENT_QUOTES, 'UTF-8'); ?>'
-                                               style="color: purple" 
-                                               data-bs-toggle="tooltip" 
-                                               data-bs-placement="top" 
-                                               title="Cập nhật câu hỏi">
+                                            <a href="javascript:void(0)"
+                                                class="update-btn"
+                                                data-question='<?php echo htmlspecialchars(json_encode([
+                                                                    "id" => $question->getId(),
+                                                                    "content" => $question->getContent(),
+                                                                    "answer_a" => $question->getAnswerA(),
+                                                                    "answer_b" => $question->getAnswerB(),
+                                                                    "answer_c" => $question->getAnswerC(),
+                                                                    "answer_d" => $question->getAnswerD(),
+                                                                    "correct_answer" => $question->getCorrectAnswer(),
+                                                                    "explanation" => $question->getExplanation(),
+                                                                    "image_url" => $question->getImageUrl(),
+                                                                    "time_limit" => $question->getTimeLimit()
+                                                                ]), ENT_QUOTES, 'UTF-8'); ?>'
+                                                style="color: purple"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="top"
+                                                title="Cập nhật câu hỏi">
                                                 <i class="bi bi-pencil-fill me-2"></i>
                                             </a>
-                                            <a href="javascript:void(0)" 
-                                               class="delete-btn" 
-                                               data-question-id="<?php echo $question->getId() ?>" 
-                                               data-question-content="<?php echo htmlspecialchars(substr($question->getContent(), 0, 50)) ?>..." 
-                                               style="color: red" 
-                                               data-bs-toggle="tooltip" 
-                                               data-bs-placement="top" 
-                                               title="Xóa câu hỏi">
+                                            <a href="javascript:void(0)"
+                                                class="delete-btn"
+                                                data-question-id="<?php echo $question->getId() ?>"
+                                                data-question-content="<?php echo htmlspecialchars(substr($question->getContent(), 0, 50)) ?>..."
+                                                style="color: red"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="top"
+                                                title="Xóa câu hỏi">
                                                 <i class="bi bi-trash3-fill me-2"></i>
                                             </a>
                                         </td>
@@ -165,6 +165,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../public/lib/waypoints/waypoints.min.js"></script>
+
+    <script>
+        <?php if (!empty($_SESSION['errors'])) : ?>
+            toastr.error(<?= json_encode($_SESSION['errors'], JSON_UNESCAPED_UNICODE); ?>);
+            <?php unset($_SESSION['errors']); ?>
+        <?php endif; ?>
+    </script>
 
     <!-- Template Javascript -->
     <script src="../../../public/js/main_2.js"></script>

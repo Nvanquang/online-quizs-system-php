@@ -197,15 +197,25 @@ async function handleFormSubmit(e) {
             contentType: false,
             headers: { 'X-CSRF-Token': csrfToken },
             success: (res) => {
-                toastr.options = { "timeout": 2000 }
-                toastr.success(res.message);
-                setTimeout(() => {
-                    location.reload();
-                }, 2000);
+                if (res.success) {
+                    modal.hide();
+                    toastr.options = { "timeout": 2000 }
+                    toastr.success(res.message);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                }
+                else {
+                    toastr.success(res.message);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                }
+
             },
-            error: (res) => {
+            error: (xhr) => {
                 toastr.options = { "timeout": 2000 }
-                toastr.error(res.message);
+                toastr.error(xhr.responseJSON?.message || "Đã có lỗi xảy ra. Vui lòng thử lại.");
             }
         });
     } catch (error) {
@@ -241,15 +251,24 @@ async function deleteQuiz(quizId) {
             contentType: false,
             headers: { 'X-CSRF-Token': csrfToken },
             success: (res) => {
-                toastr.options = { "timeout": 2000 }
-                toastr.success(res.message);
-                setTimeout(() => {
-                    location.reload();
-                }, 2000);
+                if (res.success) {
+                    toastr.options = { "timeout": 2000 }
+                    toastr.success(res.message);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                }
+                else {
+                    toastr.success(res.message);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                }
+
             },
-            error: (res) => {
+            error: (chr) => {
                 toastr.options = { "timeout": 2000 }
-                toastr.error(res.message);
+                toastr.error(xhr.responseJSON.message || "Đã có lỗi xảy ra. Vui lòng thử lại.");
             }
         });
     } catch (error) {

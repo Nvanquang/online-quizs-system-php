@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,14 +9,17 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link rel="stylesheet" href="../../../public/css/lobby.css">
+    <link href="../../../public/css/toastr-override.css" rel="stylesheet">
 </head>
+
 <body>
     <!-- Header -->
     <div class="header">
         <div class="logo">
             <a href="/">
-                <img src="../../../public/images/logo/quiz-multicolor.svg" alt="Quiz.com"/>
+                <img src="../../../public/images/logo/quiz-multicolor.svg" alt="Quiz.com" />
             </a>
         </div>
         <div class="header-right">
@@ -93,7 +97,7 @@
                         <button class="control-btn active"><i class="fas fa-check"></i></button>
                         <button class="control-btn"><i class="fas fa-lightbulb"></i></button>
                         <button class="control-btn"><i class="fas fa-ellipsis-v"></i></button>
-                    </div>  
+                    </div>
                     <img src="<?php echo htmlspecialchars('../../../public/uploads/quizzes/' . $quiz->getImage()); ?>" alt="<?php echo htmlspecialchars($quiz->getTitle()); ?>" style="width:100%; height:100%; object-fit: cover; border-radius: 12px;" />
                 </div>
                 <div class="game-title"><?php echo $quiz->getTitle(); ?></div>
@@ -144,7 +148,7 @@
             <!-- Gameplay Section -->
             <div class="settings-section">
                 <div class="section-title">Gameplay</div>
-                
+
                 <label class="checkbox-option">
                     <input type="checkbox" id="teamMode">
                     <div class="checkbox-box">
@@ -239,23 +243,37 @@
     </form>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <?php
-        $avatarDirPath = realpath(__DIR__ . '/../../../public/images/avatar-plays');
-        $files = [];
-        if ($avatarDirPath && is_dir($avatarDirPath)) {
-            foreach (scandir($avatarDirPath) as $f) {
-                if ($f === '.' || $f === '..') continue;
-                $ext = strtolower(pathinfo($f, PATHINFO_EXTENSION));
-                if (in_array($ext, ['png','jpg'])) $files[] = $f;
-            }
+    $avatarDirPath = realpath(__DIR__ . '/../../../public/images/avatar-plays');
+    $files = [];
+    if ($avatarDirPath && is_dir($avatarDirPath)) {
+        foreach (scandir($avatarDirPath) as $f) {
+            if ($f === '.' || $f === '..') continue;
+            $ext = strtolower(pathinfo($f, PATHINFO_EXTENSION));
+            if (in_array($ext, ['png', 'jpg'])) $files[] = $f;
         }
-        $authUserId = Auth::getInstance()->id();
-        $sessionCode = isset($code) ? $code : (method_exists($gameSession, 'getSessionCode') ? $gameSession->getSessionCode() : '');
+    }
+    $authUserId = Auth::getInstance()->id();
+    $sessionCode = isset($code) ? $code : (method_exists($gameSession, 'getSessionCode') ? $gameSession->getSessionCode() : '');
     ?>
     <script>
+        <?php if (!empty($_SESSION['success'])) : ?>
+            toastr.success(<?= json_encode($_SESSION['success'], JSON_UNESCAPED_UNICODE); ?>);
+            <?php unset($_SESSION['success']); ?>
+        <?php endif; ?>
+
+        <?php if (!empty($_SESSION['errors'])) : ?>
+            toastr.error(<?= json_encode($_SESSION['errors'], JSON_UNESCAPED_UNICODE); ?>);
+            <?php unset($_SESSION['errors']); ?>
+        <?php endif; ?>
+
         window.AVATAR_BASE_URL = '../../../public/images/avatar-plays/';
         window.AVATAR_LIST = <?php echo json_encode(array_values($files)); ?>;
     </script>
     <script src="../../../public/js/game.js"></script>
 </body>
+
 </html>

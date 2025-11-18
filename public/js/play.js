@@ -37,7 +37,7 @@ $(document).ready(() => {
   }
 
   // ===== Initialization =====
-  
+
   /**
    * Khởi tạo quiz game
    * Bắt đầu load câu hỏi đầu tiên
@@ -53,12 +53,12 @@ $(document).ready(() => {
   }
 
   // ===== Pause/Resume Functionality =====
-  
+
   /**
    * Setup event handler cho nút pause/resume
    */
   function setupPauseButton() {
-    $('#pause-btn').on('click', function() {
+    $('#pause-btn').on('click', function () {
       if (gameState.isPaused) {
         resumeGame()
       } else {
@@ -71,7 +71,7 @@ $(document).ready(() => {
    * Setup event handler cho nút next (skip câu hỏi)
    */
   function setupNextButton() {
-    $('#next-btn').on('click', function() {
+    $('#next-btn').on('click', function () {
       skipCurrentQuestion()
     })
   }
@@ -80,7 +80,7 @@ $(document).ready(() => {
    * Setup event handler cho nút fullscreen
    */
   function setupFullscreenButton() {
-    $('#fullscreen-btn').on('click', function() {
+    $('#fullscreen-btn').on('click', function () {
       toggleFullscreen()
     })
   }
@@ -89,7 +89,7 @@ $(document).ready(() => {
    * Setup event handler cho nút view report
    */
   function setupReportButton() {
-    $('#view-report-btn').on('click', function() {
+    $('#view-report-btn').on('click', function () {
       showReportScreen()
     })
   }
@@ -98,7 +98,7 @@ $(document).ready(() => {
    * Setup event handler cho nút view leaderboard
    */
   function setupLeaderboardButton() {
-    $('#view-leaderboard-btn').on('click', function() {
+    $('#view-leaderboard-btn').on('click', function () {
       backToResultsScreen()
     })
   }
@@ -107,7 +107,7 @@ $(document).ready(() => {
    * Setup event handler cho nút Done: gửi dữ liệu kết thúc game
    */
   function setupDoneButton() {
-    $('#done-btn').on('click', async function() {
+    $('#done-btn').on('click', async function () {
       const $btn = $(this)
       if ($btn.prop('disabled')) return
 
@@ -129,45 +129,50 @@ $(document).ready(() => {
    * Tạo payload kết thúc game để gửi lên server
    */
   function buildEndGamePayload() {
-    const totalQuestions = questions.length
-    const correctAnswers = gameState.answerHistory.filter(h => h.isCorrect).length
+    const total_questions = questions.length
+    const correct_answers = gameState.answerHistory.filter(h => h.isCorrect).length
     // const accuracy = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0
 
     // Chỉ gửi tổng quan, không gửi chi tiết từng câu
     return {
-      sessionCode: (window.SESSION_CODE || '').toString(),
-      sessionPlayerId: (typeof window.SESSION_PLAYER_ID === 'number') ? window.SESSION_PLAYER_ID : null,
-      totalScore: gameState.totalScore,
-      totalQuestions: totalQuestions,
-      correctAnswers: correctAnswers,
+      session_code: (window.SESSION_CODE || '').toString(),
+      id: Number(window.SESSION_PLAYER_ID) || null,
+      total_score: Number(gameState.totalScore),
+      total_questions: Number(total_questions),
+      correct_answers: Number(correct_answers),
       // accuracy: accuracy
     }
   }
 
   /**
-   * Gửi POST tới /game/end/{sessionCode}
-   */
+ * Gửi POST tới /game/end/{sessionCode} - Sử dụng form data để $_POST
+ */
   async function postEndGame(payload) {
-    const sessionCode = payload.sessionCode
-    if (!sessionCode) throw new Error('Missing session code')
+    const session_code = payload.session_code;
+    if (!session_code) throw new Error('Missing session code');
 
-    const url = `/game/end/${encodeURIComponent(sessionCode)}`
+    const url = `/game/end/${encodeURIComponent(session_code)}`;
+
+    const formData = new URLSearchParams();
+    for (const [key, value] of Object.entries(payload)) {
+      formData.append(key, value);
+    }
+
     const res = await fetch(url, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         'X-CSRF-Token': (window.CSRF_TOKEN || '').toString()
       },
-      body: JSON.stringify(payload),
+      body: formData,
       credentials: 'same-origin'
-    })
+    });
 
     if (!res.ok) {
-      const text = await res.text().catch(() => '')
-      throw new Error(`HTTP ${res.status}: ${text}`)
+      const text = await res.text().catch(() => '');
+      throw new Error(`HTTP ${res.status}: ${text}`);
     }
 
-    return res.json().catch(() => ({}))
+    return res.json().catch(() => ({}));
   }
 
   /**
@@ -186,7 +191,7 @@ $(document).ready(() => {
   }
 
   // Listen for fullscreen changes
-  document.addEventListener('fullscreenchange', function() {
+  document.addEventListener('fullscreenchange', function () {
     const $btn = $('#fullscreen-btn')
     if (document.fullscreenElement) {
       $btn.find('i').removeClass('fa-expand').addClass('fa-compress')
@@ -240,7 +245,7 @@ $(document).ready(() => {
     const imageSrc = question.image || ''
     const $img = $('#question-image')
     if (imageSrc) {
-      setupImageLoadHandlers($img, imageSrc, () => {}) // Empty callback, không chờ
+      setupImageLoadHandlers($img, imageSrc, () => { }) // Empty callback, không chờ
     } else {
       $img.hide()
     }
@@ -301,7 +306,7 @@ $(document).ready(() => {
   }
 
   // ===== Question Loading =====
-  
+
   /**
    * Load và hiển thị câu hỏi theo index
    * @param {number} index - Index của câu hỏi cần load
@@ -313,7 +318,7 @@ $(document).ready(() => {
     }
 
     const question = questions[index]
-    
+
     updateSlideInfo(index)
     resetGameState(question)
     clearIntervals()
@@ -374,21 +379,21 @@ $(document).ready(() => {
       .removeClass('disabled answered show-check dimmed')
       .css('opacity', '')
       .hide()
-    
+
     $('.answer-check').hide()
-    
+
     const $img = $('#question-image')
     $img.hide().css('filter', '')
-    
+
     const $expl = $('#explanation-box')
     $expl.stop(true, true).hide().text('')
-    
+
     const $qt = $('#question-text')
     $qt.stop(true, true).text('')
   }
 
   // ===== Typing Effect =====
-  
+
   /**
    * Bắt đầu hiệu ứng typing cho text câu hỏi
    * @param {Object} question - Object câu hỏi
@@ -423,7 +428,7 @@ $(document).ready(() => {
   }
 
   // ===== Image Loading =====
-  
+
   /**
    * Xử lý load và hiển thị ảnh câu hỏi
    * @param {Object} question - Object câu hỏi
@@ -453,7 +458,7 @@ $(document).ready(() => {
    */
   function setupImageLoadHandlers($img, imageSrc, callback) {
     let imgSettled = false
-    
+
     const settle = () => {
       if (imgSettled) return
       imgSettled = true
@@ -463,10 +468,10 @@ $(document).ready(() => {
 
     const imgTimeout = setTimeout(settle, QUIZ_CONFIG.imageLoadTimeout)
 
-    $img.on('load._qimg', function() {
+    $img.on('load._qimg', function () {
       clearTimeout(imgTimeout)
       $(this).fadeIn(QUIZ_CONFIG.imageFadeInDuration, settle)
-    }).on('error._qimg', function() {
+    }).on('error._qimg', function () {
       clearTimeout(imgTimeout)
       $(this).hide()
       settle()
@@ -481,7 +486,7 @@ $(document).ready(() => {
   }
 
   // ===== Answer Reveal =====
-  
+
   /**
    * Hiển thị các đáp án và bắt đầu timer
    * @param {Object} question - Object câu hỏi
@@ -500,7 +505,7 @@ $(document).ready(() => {
    * @param {Object} question - Object câu hỏi
    */
   function fillAnswerButtons($answerBtns, question) {
-    $answerBtns.each(function(i) {
+    $answerBtns.each(function (i) {
       const answerText = Array.isArray(question.answers) ? (question.answers[i] || '') : ''
       $(this).find('.answer-text').text(answerText)
       $(this).attr('data-answer', i)
@@ -512,7 +517,7 @@ $(document).ready(() => {
    * @param {jQuery} $answerBtns - jQuery object của các answer buttons
    */
   function staggerAnswerReveal($answerBtns) {
-    $answerBtns.each(function(idx) {
+    $answerBtns.each(function (idx) {
       const btn = this
       setTimeout(() => {
         $(btn).fadeIn(QUIZ_CONFIG.answerFadeInDuration)
@@ -528,20 +533,20 @@ $(document).ready(() => {
     const delay = $answerBtns.length
       ? ($answerBtns.length - 1) * QUIZ_CONFIG.answerRevealDelay + QUIZ_CONFIG.timerStartDelay
       : 0
-    
+
     setTimeout(() => {
       startQuestionTimer()
     }, delay)
   }
 
   // ===== Timers =====
-  
+
   /**
    * Bắt đầu cả countdown timer và score decrement
    */
   function startQuestionTimer() {
     if (gameState.isPaused) return // Không start timer nếu đang pause
-    
+
     startCountdownTimer()
     startScoreDecrement()
   }
@@ -555,7 +560,7 @@ $(document).ready(() => {
       if (gameState.isPaused) return // Skip khi pause
 
       gameState.timeRemaining--
-      
+
       // Cập nhật hiển thị thời gian trên UI (nếu có element)
       updateTimerDisplay()
 
@@ -606,7 +611,7 @@ $(document).ready(() => {
   }
 
   // ===== Score UI =====
-  
+
   /**
    * Cập nhật giao diện điểm số (thanh progress và text)
    */
@@ -617,11 +622,11 @@ $(document).ready(() => {
   }
 
   // ===== Answer Handling =====
-  
+
   /**
    * Event handler khi user click vào đáp án
    */
-  $(document).on('click', '.answer-btn', function() {
+  $(document).on('click', '.answer-btn', function () {
     if (gameState.answered || gameState.isPaused) return
 
     handleAnswerSelection($(this))
@@ -661,7 +666,7 @@ $(document).ready(() => {
    * Làm mờ các đáp án không được chọn
    */
   function dimUnselectedAnswers() {
-    $('.answer-btn').each(function() {
+    $('.answer-btn').each(function () {
       const answerIndex = Number.parseInt($(this).attr('data-answer'))
       if (answerIndex !== gameState.selectedAnswer) {
         $(this).addClass('dimmed')
@@ -683,17 +688,17 @@ $(document).ready(() => {
   }
 
   // ===== Correct Answer Display =====
-  
+
   /**
    * Hiển thị đáp án đúng sau khi user đã trả lời
    */
   function showCorrectAnswer() {
     stopTimer()
-    
+
     // Kiểm tra xem user trả lời đúng hay sai và cộng điểm
     const isCorrect = gameState.selectedAnswer === gameState.correctAnswer
     const earnedPoints = isCorrect ? Math.round(gameState.score) : 0
-    
+
     if (isCorrect) {
       gameState.totalScore += earnedPoints
       console.log(`Correct! Earned ${earnedPoints} points. Total: ${gameState.totalScore}`)
@@ -704,7 +709,7 @@ $(document).ready(() => {
     // Lưu lịch sử trả lời
     const question = questions[gameState.currentQuestion]
     const timeSpent = getQuestionTimeLimit(question) - gameState.timeRemaining
-    
+
     gameState.answerHistory.push({
       questionIndex: gameState.currentQuestion,
       selectedAnswer: gameState.selectedAnswer,
@@ -713,7 +718,7 @@ $(document).ready(() => {
       timeSpent: timeSpent,
       earnedPoints: earnedPoints
     })
-    
+
     highlightCorrectAnswer()
     handleExplanationAndProceed()
   }
@@ -731,7 +736,7 @@ $(document).ready(() => {
    * Highlight đáp án đúng với checkmark
    */
   function highlightCorrectAnswer() {
-    $('.answer-btn').each(function() {
+    $('.answer-btn').each(function () {
       if (Number.parseInt($(this).attr('data-answer')) === gameState.correctAnswer) {
         $(this)
           .removeClass('dimmed')
@@ -779,7 +784,7 @@ $(document).ready(() => {
 
     $wrap.css('position', 'relative')
     $img.css('filter', 'blur(6px)')
-    
+
     $expl.css({
       position: 'absolute',
       inset: 0,
@@ -803,7 +808,7 @@ $(document).ready(() => {
   }
 
   // ===== Timeout Handling =====
-  
+
   /**
    * Xử lý khi hết thời gian mà user chưa trả lời
    */
@@ -814,7 +819,7 @@ $(document).ready(() => {
     // Lưu lịch sử: timeout = không trả lời
     const question = questions[gameState.currentQuestion]
     const timeSpent = getQuestionTimeLimit(question)
-    
+
     gameState.answerHistory.push({
       questionIndex: gameState.currentQuestion,
       selectedAnswer: null,
@@ -839,16 +844,16 @@ $(document).ready(() => {
   }
 
   // ===== Quiz End =====
-  
+
   /**
    * Kết thúc quiz và hiển thị màn hình kết quả
    */
   function endQuiz() {
     console.log(`Quiz Completed! Final Total Score: ${gameState.totalScore}`)
-    
+
     // Gửi điểm số cuối cùng lên server (nếu cần)
     saveFinalScore()
-    
+
     // Chuyển sang màn hình kết quả sau 1 giây
     setTimeout(() => {
       showResultsScreen()
@@ -861,23 +866,23 @@ $(document).ready(() => {
   function showResultsScreen() {
     // Ẩn container quiz
     $('#quiz-play-container').addClass('hidden')
-    
+
     // Ẩn các nút pause và next trong header
     $('#pause-btn, #next-btn').hide()
-    
+
     // Ẩn thông tin player count
     $('#player-count-info').hide()
-    
+
     // Cập nhật slide info
     const totalQuestions = questions.length
     $('#slide-info').text(`Slide ${totalQuestions}/${totalQuestions}`)
-    
+
     // Hiển thị điểm số trên màn hình kết quả
     $('#result-score').text(gameState.totalScore)
-    
+
     // Hiển thị container kết quả
     $('#results-container').addClass('show')
-    
+
     // Thêm hiệu ứng celebration
     addCelebrationEffect()
   }
@@ -909,7 +914,7 @@ $(document).ready(() => {
   function addCelebrationEffect() {
     const colors = ['#ffd06f', '#6bcb77', '#8dd7e8', '#ffb8d1']
     const particleCount = 30
-    
+
     for (let i = 0; i < particleCount; i++) {
       setTimeout(() => {
         createParticle(colors[Math.floor(Math.random() * colors.length)])
@@ -945,7 +950,7 @@ $(document).ready(() => {
       top: endY + 'px',
       left: endX + 'px',
       opacity: 0
-    }, duration, 'linear', function() {
+    }, duration, 'linear', function () {
       $(this).remove()
     })
   }
@@ -958,13 +963,13 @@ $(document).ready(() => {
   function showReportScreen() {
     // Ẩn results container
     $('#results-container').removeClass('show')
-    
+
     // Render report table
     renderReportTable()
-    
+
     // Hiển thị report container
     $('#report-container').addClass('show')
-    
+
     // Setup download and print handlers
     setupReportActions()
   }
@@ -975,7 +980,7 @@ $(document).ready(() => {
   function backToResultsScreen() {
     // Ẩn report container
     $('#report-container').removeClass('show')
-    
+
     // Hiển thị lại results container
     $('#results-container').addClass('show')
   }
@@ -993,7 +998,7 @@ $(document).ready(() => {
     // Remove any previously appended question headers to avoid duplicates
     $headerRow.find('th.col-question').remove()
     for (let i = 0; i < totalQuestions; i++) {
-      $headerRow.append(`<th class="col-question">Q${i + 1}</th>`) 
+      $headerRow.append(`<th class="col-question">Q${i + 1}</th>`)
     }
 
     // Render player row
@@ -1009,7 +1014,7 @@ $(document).ready(() => {
         const iconClass = isCorrect ? 'correct' : 'incorrect'
         const icon = isCorrect ? '✓' : '✕'
         const timeText = `${history.timeSpent.toFixed(1)}s`
-        
+
         questionCells += `
           <td class="question-result">
             <div class="result-icon ${iconClass}">${icon}</div>
@@ -1053,13 +1058,13 @@ $(document).ready(() => {
    */
   function setupReportActions() {
     // Download CSV
-    $('#download-csv').off('click').on('click', function(e) {
+    $('#download-csv').off('click').on('click', function (e) {
       e.preventDefault()
       downloadReportCSV()
     })
 
     // Print
-    $('#print-report').off('click').on('click', function(e) {
+    $('#print-report').off('click').on('click', function (e) {
       e.preventDefault()
       window.print()
     })
@@ -1098,18 +1103,18 @@ $(document).ready(() => {
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
     const link = document.createElement('a')
     const url = URL.createObjectURL(blob)
-    
+
     link.setAttribute('href', url)
     link.setAttribute('download', `quiz_report_${playerName}_${Date.now()}.csv`)
     link.style.visibility = 'hidden'
-    
+
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
   }
 
   // ===== Utilities =====
-  
+
   /**
    * Chuẩn hóa đáp án đúng về dạng number (0-3)
    * Hỗ trợ input: number, "A"/"B"/"C"/"D", hoặc string number
@@ -1118,25 +1123,25 @@ $(document).ready(() => {
    */
   function normalizeCorrectAnswer(ans) {
     if (ans == null) return null
-    
+
     if (typeof ans === 'number' && Number.isFinite(ans)) {
       return ans
     }
-    
+
     if (typeof ans === 'string') {
       const trimmed = ans.trim().toUpperCase()
       const letterToIndexMap = { 'A': 0, 'B': 1, 'C': 2, 'D': 3 }
-      
+
       if (trimmed in letterToIndexMap) {
         return letterToIndexMap[trimmed]
       }
-      
+
       const numValue = Number.parseInt(trimmed)
       if (Number.isFinite(numValue)) {
         return numValue
       }
     }
-    
+
     return null
   }
 

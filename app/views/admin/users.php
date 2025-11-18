@@ -55,7 +55,9 @@
                 <div class="bg-light text-center rounded p-4">
                     <div class="d-flex align-items-center justify-content-between mb-4">
                         <h6 class="mb-0">Danh sách users</h6>
-                        <button type="button" class="btn btn-sm btn-primary" onclick="openCreateModal()">Tạo mới user</button>
+                        <button type="button" class="btn btn-sm btn-primary" onclick="openCreateModal()">
+                            <i class="bi bi-plus-circle me-2"></i>Tạo mới user
+                        </button>
                     </div>
                     <div class="table-responsive">
                         <table class="table text-start align-middle table-bordered table-hover mb-0" id="usersTable">
@@ -150,6 +152,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../public/lib/waypoints/waypoints.min.js"></script>
+
+    <script>
+        <?php if (!empty($_SESSION['errors'])) : ?>
+            toastr.error(<?= json_encode($_SESSION['errors'], JSON_UNESCAPED_UNICODE); ?>);
+            <?php unset($_SESSION['errors']); ?>
+        <?php endif; ?>
+    </script>
 
     <!-- Template Javascript -->
     <script src="../../../public/js/main_2.js"></script>

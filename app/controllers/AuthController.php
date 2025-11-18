@@ -28,7 +28,7 @@ class AuthController extends Controller
         echo $this->renderPartial('auth/login');
 
         // Xóa error message sau khi hiển thị
-        unset($_SESSION['login_error']);
+        unset($_SESSION['errors']);
     }
 
     /**
@@ -36,34 +36,27 @@ class AuthController extends Controller
      */
     public function doLogin()
     {
-        $username = $_POST['username'] ?? '';
-        $password = $_POST['password'] ?? '';
-
-        // Validation
-        if (empty($username) || empty($password)) {
-            $_SESSION['login_error'] = 'Vui lòng nhập đầy đủ thông tin';
-            $this->redirect('/auth/login');
-        }
-
         try {
-            // Sử dụng UserService để authenticate
-            $user = $this->userService->authenticate($username, $password);
-            
-            if (!$user) {
-                $_SESSION['login_error'] = 'Tên đăng nhập hoặc mật khẩu không đúng';
-                $this->redirect('/auth/login');
+            $validated = $this->validate($_POST, [
+                'username' => 'required',
+                'password' => 'required'
+            ]);
+            if ($validated) {
+                $username = $validated['username'];
+                $password = $validated['password'];
+
+                $user = $this->userService->authenticate($username, $password);
+
+                // Đăng nhập thành công
+                $this->auth->login($user);
+                $_SESSION['success'] = 'Đăng nhập thành công!';
+
+                // Redirect về trang trước đó hoặc trang chủ
+                $redirectUrl = $this->auth->getRedirectAfterLogin();
+                $this->redirect($redirectUrl);
             }
-
-            // Đăng nhập thành công
-            $this->auth->login($user);
-            $_SESSION['login_success'] = 'Đăng nhập thành công!';
-
-            // Redirect về trang trước đó hoặc trang chủ
-            $redirectUrl = $this->auth->getRedirectAfterLogin();
-            $this->redirect($redirectUrl);
-
         } catch (Exception $e) {
-            $_SESSION['login_error'] = $e->getMessage();
+            $_SESSION['error'] = $e->getMessage();
             $this->redirect('/auth/login');
         }
     }
@@ -80,12 +73,9 @@ class AuthController extends Controller
 
         echo $this->renderPartial('auth/register', [
             'title' => 'Đăng Ký',
-            'error' => $_SESSION['register_error'] ?? null,
-            'success' => $_SESSION['register_success'] ?? null
+            'errors' => $_SESSION['errors'] ?? null,
+            'success' => $_SESSION['success'] ?? null
         ]);
-
-        // Xóa messages sau khi hiển thị
-        unset($_SESSION['register_error'], $_SESSION['register_success']);
     }
 
     /**
@@ -93,87 +83,46 @@ class AuthController extends Controller
      */
     public function doRegister()
     {
-        $username = $_POST['username'] ?? '';
-        $email = $_POST['email'] ?? '';
-        $password = $_POST['password'] ?? '';
-        $fullName = $_POST['full_name'] ?? '';
-
-        // Validation
-        $errors = $this->validateRegister($_POST);
-
-        if (!empty($errors)) {
-            $_SESSION['register_error'] = implode('<br>', $errors);
-            $this->redirect('/auth/register');
-        }
-
         try {
+            $validated = $this->validate($_POST, [
+                'username' => 'required|min:3|max:50',
+                'email' => 'required|email',
+                'password' => 'required|min:6|confirmed',
+                'full_name' => 'required|min:5|max:50'
+            ]);
 
-            // Tạo user mới
-            $userData = [
-                'username' => $username,
-                'email' => $email,
-                'password' => $password,
-                'full_name' => $fullName,
-                'avatar_url' => 'avatar-default.jpg',
-                'is_admin' => 0,
-                'total_points' => 0,
-                'games_played' => 0,
-                'created_at' => date('Y-m-d H:i:s')
-            ];
+            if ($validated) {
+                $username = $validated['username'];
+                $email = $validated['email'];
+                $password = $validated['password'];
+                $fullName = $validated['full_name'];
 
-            $user = $this->userService->create($userData);
+                $userData = [
+                    'username' => $username,
+                    'email' => $email,
+                    'password' => $password,
+                    'full_name' => $fullName,
+                    'avatar_url' => 'avatar-default.jpg',
+                    'is_admin' => 0,
+                    'total_points' => 0,
+                    'games_played' => 0,
+                    'created_at' => date('Y-m-d H:i:s')
+                ];
 
-            if ($user) {
-                $_SESSION['register_success'] = 'Đăng ký thành công!';
-                $this->redirect('/auth/login');
-            } else {
-                $_SESSION['register_error'] = 'Có lỗi xảy ra khi tạo tài khoản';
-                $this->redirect('/auth/register');
+                $user = $this->userService->create($userData);
+
+                if ($user) {
+                    $_SESSION['success'] = 'Đăng ký thành công!';
+                    $this->redirect('/auth/login');
+                } else {
+                    $_SESSION['errors'] = 'Có lỗi xảy ra khi tạo tài khoản';
+                    $this->redirect('/auth/register');
+                }
             }
-
         } catch (Exception $e) {
-            $_SESSION['register_error'] = $e->getMessage();
+            $_SESSION['errors'] = $e->getMessage();
             $this->redirect('/auth/register');
         }
-    }
-
-    private function validateRegister($_DATA) {
-
-        $username = $_DATA['username'] ?? '';
-        $email = $_DATA['email'] ?? '';
-        $password = $_DATA['password'] ?? '';
-        $confirmPassword = $_DATA['confirm_password'] ?? '';
-        $fullName = $_DATA['full_name'] ?? '';
-        // Validation
-        $errors = [];
-
-        if (empty($username)) {
-            $errors[] = 'Tên đăng nhập không được để trống';
-        } elseif (strlen($username) < 3) {
-            $errors[] = 'Tên đăng nhập phải có ít nhất 3 ký tự';
-        }
-
-        if (empty($email)) {
-            $errors[] = 'Email không được để trống';
-        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = 'Email không hợp lệ';
-        }
-
-        if (empty($fullName)) {
-            $errors[] = 'Họ và tên không được để trống';
-        }
-
-        if (empty($password)) {
-            $errors[] = 'Mật khẩu không được để trống';
-        } elseif (strlen($password) < 6) {
-            $errors[] = 'Mật khẩu phải có ít nhất 6 ký tự';
-        }
-
-        if ($password !== $confirmPassword) {
-            $errors[] = 'Mật khẩu xác nhận không khớp';
-        }
-
-        return $errors;
     }
 
     /**
@@ -197,33 +146,26 @@ class AuthController extends Controller
 
     public function doLoginAdmin()
     {
-        $username = $_POST['username'] ?? '';
-        $password = $_POST['password'] ?? '';
-
-        // Validation
-        if (empty($username) || empty($password)) {
-            $_SESSION['login_error'] = 'Vui lòng nhập đầy đủ thông tin';
-            $this->redirect('/auth/login-admin');
-        }
-
         try {
-            // Sử dụng UserService để authenticate
-            $user = $this->userService->authenticate($username, $password);
-            
-            if (!$user || $user->isAdmin() != 1) {
-                $_SESSION['login_error'] = 'Tên đăng nhập hoặc mật khẩu không đúng';
-                $this->redirect('/auth/login-admin');
+            $validated = $this->validate($_POST, [
+                'username' => 'required',
+                'password' => 'required'
+            ]);
+            if ($validated) {
+                $username = $validated['username'];
+                $password = $validated['password'];
+                // Sử dụng UserService để authenticate
+                $user = $this->userService->authenticate($username, $password);
+
+                // Đăng nhập thành công
+                $this->auth->login($user);
+                $_SESSION['success'] = 'Đăng nhập thành công!';
+
+                // Redirect về trang admin
+                $this->redirect('/admin/dashboard');
             }
-
-            // Đăng nhập thành công
-            $this->auth->login($user);
-            $_SESSION['login_success'] = 'Đăng nhập thành công!';
-
-            // Redirect về trang admin
-            $this->redirect('/admin/dashboard');
-
         } catch (Exception $e) {
-            $_SESSION['login_error'] = $e->getMessage();
+            $_SESSION['errors'] = $e->getMessage();
             $this->redirect('/auth/login-admin');
         }
     }

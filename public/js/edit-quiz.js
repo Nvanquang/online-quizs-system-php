@@ -170,18 +170,23 @@ $(document).ready(() => {
       contentType: false,
       headers: { 'X-CSRF-Token': csrfToken },
       success: (res) => {
-        // Close modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('questionEditorModal'))
-        if (modal) modal.hide()
-        toastr.options = { "timeout": 2000 }
-        toastr.success(res.message);
-        setTimeout(() => {
-          location.reload()
-        }, 2000)
+        if (res.success) {
+          const modal = bootstrap.Modal.getInstance(document.getElementById('questionEditorModal'))
+          if (modal) modal.hide()
+          toastr.options = { "timeout": 2000 }
+          toastr.success(res.message);
+          setTimeout(() => {
+            location.reload()
+          }, 2000)
+        }
+        else {
+          toastr.options = { "timeout": 2000 }
+          toastr.error(res.message)
+        }
       },
       error: (res) => {
         toastr.options = { "timeout": 2000 }
-        toastr.error(res.message)
+        toastr.error(res.message || 'Có lỗi xảy ra')
       }
     })
   })
@@ -194,15 +199,22 @@ $(document).ready(() => {
       method: 'POST',
       headers: { 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content') },
       success: (res) => {
-        toastr.options = { "timeout": 2000 }
-        toastr.success(res.message);
-        setTimeout(() => {
-          location.reload()
-        }, 2000)
+        if (res.success) {
+          toastr.options = { "timeout": 2000 }
+          toastr.success(res.message);
+          setTimeout(() => {
+            location.reload()
+          }, 2000)
+        }
+        else {
+          toastr.options = { "timeout": 2000 }
+          toastr.error(res.message)
+        }
       },
-      error: (res) => {
+      error: (xhr) => {
         toastr.options = { "timeout": 2000 }
-        toastr.error(res.message)
+        const response = xhr.responseJSON;
+        toastr.error(response?.message || 'Có lỗi xảy ra');
       }
     })
   })

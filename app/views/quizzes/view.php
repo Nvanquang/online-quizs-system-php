@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz Detail - Quiz.com</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link href="../../../public/css/toastr-override.css" rel="stylesheet">
     <style>
         @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap");
 
@@ -130,7 +133,8 @@
             gap: 12px;
         }
 
-        .btn-play-solo, .btn-assign-hw {
+        .btn-play-solo,
+        .btn-assign-hw {
             flex: 1;
             background: #9333ea;
             color: white;
@@ -142,7 +146,8 @@
             transition: all 0.2s;
         }
 
-        .btn-play-solo:hover, .btn-assign-hw:hover {
+        .btn-play-solo:hover,
+        .btn-assign-hw:hover {
             background: #7e22ce;
         }
 
@@ -150,7 +155,8 @@
         .main-content {
             margin-left: 350px;
             padding: 32px;
-            padding-top: 64px; /* offset for fixed header */
+            padding-top: 64px;
+            /* offset for fixed header */
         }
 
         .user-badge {
@@ -343,6 +349,7 @@
         }
     </style>
 </head>
+
 <body>
     <?php include __DIR__ . '/../layouts/header.php'; ?>
 
@@ -393,130 +400,142 @@
             Show all answers
         </button>
 
-        <?php $i = 1; foreach ($questions as $question) : ?>
-        <!-- Question 1 - Simple View -->
-        <div class="question-card question-simple" data-question="<?php echo $i; ?>">
-            <div class="question-header">
-                <div>
-                    <div class="question-label">Question <?php echo $i; ?></div>
-                    <p class="question-text"><?php echo htmlspecialchars($question->content); ?></p>
-                </div>
-                <div class="question-actions">
-                    <button class="btn question-action-btn" data-action="show" data-bs-toggle="tooltip" data-bs-placement="top" title="Xem chi tiết">
-                        <i class="bi bi-eye"></i>
-                    </button>
-                    <span class="time-badge">
-                        <i class="bi bi-stopwatch"></i>
-                        <?php echo $question->time_limit; ?> sec
-                    </span>
+        <?php $i = 1;
+        foreach ($questions as $question) : ?>
+            <!-- Question 1 - Simple View -->
+            <div class="question-card question-simple" data-question="<?php echo $i; ?>">
+                <div class="question-header">
+                    <div>
+                        <div class="question-label">Question <?php echo $i; ?></div>
+                        <p class="question-text"><?php echo htmlspecialchars($question->content); ?></p>
+                    </div>
+                    <div class="question-actions">
+                        <button class="btn question-action-btn" data-action="show" data-bs-toggle="tooltip" data-bs-placement="top" title="Xem chi tiết">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                        <span class="time-badge">
+                            <i class="bi bi-stopwatch"></i>
+                            <?php echo $question->time_limit; ?> sec
+                        </span>
+                    </div>
                 </div>
             </div>
+
+            <!-- Question 1 - Full View with Answers (Hidden by default) -->
+
+            <div class="question-card question-full d-none" data-question="<?php echo $i; ?>" data-correct="<?php echo htmlspecialchars($question->correct_answer); ?>">
+                <div class="question-header">
+                    <div>
+                        <div class="question-label">Question <?php echo $i; ?></div>
+                        <p class="question-text"><?php echo htmlspecialchars($question->content); ?></p>
+                    </div>
+                    <div class="question-actions">
+                        <button class="btn question-action-btn" data-action="hide" data-bs-toggle="tooltip" data-bs-placement="top" title="Ẩn">
+                            <i class="bi bi-eye-slash"></i>
+                        </button>
+                        <span class="time-badge">
+                            <i class="bi bi-stopwatch"></i>
+                            <?php echo $question->time_limit; ?> sec
+                        </span>
+                    </div>
+                </div>
+
+                <div class="answers-grid">
+                    <div class="answer-option" data-option="A">
+                        A. <?php echo htmlspecialchars($question->answer_a); ?>
+                    </div>
+                    <div class="answer-option" data-option="B">
+                        B. <?php echo htmlspecialchars($question->answer_b); ?>
+                    </div>
+                    <div class="answer-option" data-option="C">
+                        C. <?php echo htmlspecialchars($question->answer_c); ?>
+                    </div>
+                    <div class="answer-option" data-option="D">
+                        D. <?php echo htmlspecialchars($question->answer_d); ?>
+                    </div>
+                </div>
+            </div>
+        <?php $i++;
+        endforeach; ?>
+        <!-- Watermark -->
+        <div class="watermark">
+            <div class="watermark-title">Activate Windows</div>
+            <div class="watermark-text">Go to Settings to activate Windows.</div>
         </div>
 
-        <!-- Question 1 - Full View with Answers (Hidden by default) -->
-        
-        <div class="question-card question-full d-none" data-question="<?php echo $i; ?>" data-correct="<?php echo htmlspecialchars($question->correct_answer); ?>">
-            <div class="question-header">
-                <div>
-                    <div class="question-label">Question <?php echo $i; ?></div>
-                    <p class="question-text"><?php echo htmlspecialchars($question->content); ?></p>
-                </div>
-                <div class="question-actions">
-                    <button class="btn question-action-btn" data-action="hide" data-bs-toggle="tooltip" data-bs-placement="top" title="Ẩn">
-                        <i class="bi bi-eye-slash"></i>
-                    </button>
-                    <span class="time-badge">
-                        <i class="bi bi-stopwatch"></i>
-                        <?php echo $question->time_limit; ?> sec
-                    </span>
-                </div>
-            </div>
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-            <div class="answers-grid">
-                <div class="answer-option" data-option="A">
-                    A. <?php echo htmlspecialchars($question->answer_a); ?>
-                </div>
-                <div class="answer-option" data-option="B">
-                    B. <?php echo htmlspecialchars($question->answer_b); ?>
-                </div>
-                <div class="answer-option" data-option="C">
-                    C. <?php echo htmlspecialchars($question->answer_c); ?>
-                </div>
-                <div class="answer-option" data-option="D">
-                    D. <?php echo htmlspecialchars($question->answer_d); ?>
-                </div>
-            </div>
-        </div>
-        <?php $i++; endforeach; ?>
-    <!-- Watermark -->
-    <div class="watermark">
-        <div class="watermark-title">Activate Windows</div>
-        <div class="watermark-text">Go to Settings to activate Windows.</div>
-    </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            <?php if (!empty($_SESSION['errors'])) : ?>
+                toastr.error(<?= json_encode($_SESSION['errors'], JSON_UNESCAPED_UNICODE); ?>);
+                <?php unset($_SESSION['errors']); ?>
+            <?php endif; ?>
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
-            
-            const jgs = document.querySelector('.join-game-section');
-            if (jgs) jgs.classList.add('hide');
-            const bs = document.querySelector('.btn-search');
-            if (bs) bs.classList.add('hide');
 
-            let isShowingAnswers = false;
-            function highlightCorrect() {
-                $('.question-full').each(function() {
-                    const correct = String($(this).data('correct') || '').trim().toUpperCase();
-                    const $options = $(this).find('.answer-option');
-                    $options.removeClass('correct');
-                    const $opt = $options.filter('[data-option="' + correct + '"]');
-                    if ($opt.length) {
-                        if ($opt.find('i.bi-check-lg').length === 0) {
-                            $opt.prepend('<i class="bi bi-check-lg"></i>');
+            $(document).ready(function() {
+                const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
+
+                const jgs = document.querySelector('.join-game-section');
+                if (jgs) jgs.classList.add('hide');
+                const bs = document.querySelector('.btn-search');
+                if (bs) bs.classList.add('hide');
+
+                let isShowingAnswers = false;
+
+                function highlightCorrect() {
+                    $('.question-full').each(function() {
+                        const correct = String($(this).data('correct') || '').trim().toUpperCase();
+                        const $options = $(this).find('.answer-option');
+                        $options.removeClass('correct');
+                        const $opt = $options.filter('[data-option="' + correct + '"]');
+                        if ($opt.length) {
+                            if ($opt.find('i.bi-check-lg').length === 0) {
+                                $opt.prepend('<i class="bi bi-check-lg"></i>');
+                            }
+                            $opt.addClass('correct');
                         }
-                        $opt.addClass('correct');
+                    });
+                }
+                highlightCorrect();
+
+                // Show/Hide all answers
+                $('#btnShowAnswers').on('click', function() {
+                    isShowingAnswers = !isShowingAnswers;
+
+                    if (isShowingAnswers) {
+                        // Hide simple views, show full views
+                        $('.question-simple').addClass('d-none');
+                        $('.question-full').removeClass('d-none');
+                        $(this).text('Hide all answers');
+                    } else {
+                        // Show simple views, hide full views
+                        $('.question-simple').removeClass('d-none');
+                        $('.question-full').addClass('d-none');
+                        $(this).text('Show all answers');
                     }
                 });
-            }
-            highlightCorrect();
 
-            // Show/Hide all answers
-            $('#btnShowAnswers').on('click', function() {
-                isShowingAnswers = !isShowingAnswers;
+                // Question action buttons: toggle details for that question
+                $('.question-action-btn').on('click', function(e) {
+                    e.stopPropagation();
+                    const $card = $(this).closest('.question-card');
+                    const qn = $card.data('question');
+                    const $simple = $('.question-simple[data-question="' + qn + '"]');
+                    const $full = $('.question-full[data-question="' + qn + '"]');
 
-                if (isShowingAnswers) {
-                    // Hide simple views, show full views
-                    $('.question-simple').addClass('d-none');
-                    $('.question-full').removeClass('d-none');
-                    $(this).text('Hide all answers');
-                } else {
-                    // Show simple views, hide full views
-                    $('.question-simple').removeClass('d-none');
-                    $('.question-full').addClass('d-none');
-                    $(this).text('Show all answers');
-                }
+                    if ($card.hasClass('question-simple')) {
+                        $simple.addClass('d-none');
+                        $full.removeClass('d-none');
+                    } else if ($card.hasClass('question-full')) {
+                        $full.addClass('d-none');
+                        $simple.removeClass('d-none');
+                    }
+                });
             });
-
-            // Question action buttons: toggle details for that question
-            $('.question-action-btn').on('click', function(e) {
-                e.stopPropagation();
-                const $card = $(this).closest('.question-card');
-                const qn = $card.data('question');
-                const $simple = $('.question-simple[data-question="' + qn + '"]');
-                const $full = $('.question-full[data-question="' + qn + '"]');
-
-                if ($card.hasClass('question-simple')) {
-                    $simple.addClass('d-none');
-                    $full.removeClass('d-none');
-                } else if ($card.hasClass('question-full')) {
-                    $full.addClass('d-none');
-                    $simple.removeClass('d-none');
-                }
-            });
-        });
-    </script>
+        </script>
 </body>
+
 </html>

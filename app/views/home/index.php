@@ -310,13 +310,17 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JS -->
     <script src="../../../public/js/main.js"></script>
+    <script>
+         <?php if (!empty($_SESSION['success'])) : ?>
+            toastr.success(<?= json_encode($_SESSION['success'], JSON_UNESCAPED_UNICODE); ?>);
+            <?php unset($_SESSION['success']); ?>
+        <?php endif; ?>
 
-    <?php if (isset($login_success) && $login_success): ?>
-        <script>
-            toastr.options = {"timneout": 2000}
-            toastr.success(<?php echo json_encode($login_success ?? ''); ?>);
-        </script>
-    <?php endif; ?>
+        <?php if (!empty($_SESSION['errors'])) : ?>
+            toastr.error(<?= json_encode($_SESSION['errors'], JSON_UNESCAPED_UNICODE); ?>);
+            <?php unset($_SESSION['errors']); ?>
+        <?php endif; ?>
+    </script>
 
 </body>
 

@@ -9,6 +9,8 @@
     <meta name="csrf-token" content="<?= CSRFMiddleware::getToken() ?>">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="../../../public/css/toastr-override.css">
     <link rel="stylesheet" href="../../../public/css/my-quizzes.css">
 
 </head>
@@ -151,6 +153,7 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         $(document).ready(function() {
@@ -189,8 +192,22 @@
                         headers: csrf ? {
                             'X-CSRF-Token': csrf
                         } : {},
-                        success: () => {
-                            location.reload();
+                        success: (res) => {
+                            if (res.success) {
+                                modal.hide();
+                                toastr.options = {
+                                    "timeout": 2000
+                                }
+                                toastr.success(res.message);
+                                setTimeout(() => {
+                                    location.reload()
+                                }, 2000)
+                            } else {
+                                toastr.options = {
+                                    "timeout": 2000
+                                }
+                                toastr.error(res.message)
+                            }
                         },
                         error: (xhr) => {
                             const msg = xhr?.responseText || 'Failed to delete quiz';
