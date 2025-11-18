@@ -357,7 +357,7 @@
     <div class="sidebar">
         <div class="quiz-thumbnail">
             <img src="/public/uploads/quizzes/<?php echo htmlspecialchars($quiz->getImage()); ?>" alt="<?php echo htmlspecialchars($quiz->getTitle()); ?>">
-            <div class="quiz-questions-badge"><?php echo $quiz->getTotalQuestions(); ?> Questions</div>
+            <div class="quiz-questions-badge"><?php echo $quiz->getTotalQuestions(); ?> Câu hỏi</div>
         </div>
 
         <h2 class="quiz-title"><?php echo htmlspecialchars($quiz->getTitle()); ?></h2>
@@ -371,7 +371,7 @@
             <button class="btn action-icon-btn" data-action="favorite" data-bs-toggle="tooltip" data-bs-placement="top" title="Yêu thích">
                 <i class="bi bi-star"></i>
             </button>
-            <button class="btn action-icon-btn" data-action="files" data-bs-toggle="tooltip" data-bs-placement="top" title="Files">
+            <button class="btn action-icon-btn" data-action="files" data-bs-toggle="tooltip" data-bs-placement="top" title="Tệp">
                 <i class="bi bi-files"></i>
             </button>
             <button class="btn action-icon-btn" data-action="edit" data-bs-toggle="tooltip" data-bs-placement="top" title="Sửa">
@@ -384,20 +384,20 @@
         <form action="/game/lobby/<?php echo $quiz->getId(); ?>" method="post" style="text-decoration: none;color:inherit">
             <button type="submit" class="btn btn-host-game">
                 <i class="bi bi-play-fill"></i>
-                Host Game
+                Chủ trì Trò chơi
             </button>
         </form>
 
         <div class="sidebar-buttons">
-            <button class="btn btn-play-solo">Play Solo</button>
-            <button class="btn btn-assign-hw">Assign HW</button>
+            <button class="btn btn-play-solo">Chơi Một Mình</button>
+            <button class="btn btn-assign-hw">Giao Bài Tập</button>
         </div>
     </div>
 
     <!-- Main Content -->
     <div class="main-content">
         <button class="btn btn-show-answers" id="btnShowAnswers">
-            Show all answers
+            Hiển thị tất cả đáp án
         </button>
 
         <?php $i = 1;
@@ -406,7 +406,7 @@
             <div class="question-card question-simple" data-question="<?php echo $i; ?>">
                 <div class="question-header">
                     <div>
-                        <div class="question-label">Question <?php echo $i; ?></div>
+                        <div class="question-label">Câu hỏi <?php echo $i; ?></div>
                         <p class="question-text"><?php echo htmlspecialchars($question->content); ?></p>
                     </div>
                     <div class="question-actions">
@@ -415,7 +415,7 @@
                         </button>
                         <span class="time-badge">
                             <i class="bi bi-stopwatch"></i>
-                            <?php echo $question->time_limit; ?> sec
+                            <?php echo $question->time_limit; ?> giây
                         </span>
                     </div>
                 </div>
@@ -426,7 +426,7 @@
             <div class="question-card question-full d-none" data-question="<?php echo $i; ?>" data-correct="<?php echo htmlspecialchars($question->correct_answer); ?>">
                 <div class="question-header">
                     <div>
-                        <div class="question-label">Question <?php echo $i; ?></div>
+                        <div class="question-label">Câu hỏi <?php echo $i; ?></div>
                         <p class="question-text"><?php echo htmlspecialchars($question->content); ?></p>
                     </div>
                     <div class="question-actions">
@@ -435,7 +435,7 @@
                         </button>
                         <span class="time-badge">
                             <i class="bi bi-stopwatch"></i>
-                            <?php echo $question->time_limit; ?> sec
+                            <?php echo $question->time_limit; ?> giây
                         </span>
                     </div>
                 </div>
@@ -509,12 +509,12 @@
                         // Hide simple views, show full views
                         $('.question-simple').addClass('d-none');
                         $('.question-full').removeClass('d-none');
-                        $(this).text('Hide all answers');
+                        $(this).text('Ẩn tất cả đáp án');
                     } else {
                         // Show simple views, hide full views
                         $('.question-simple').removeClass('d-none');
                         $('.question-full').addClass('d-none');
-                        $(this).text('Show all answers');
+                        $(this).text('Hiển thị tất cả đáp án');
                     }
                 });
 

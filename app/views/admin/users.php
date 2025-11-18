@@ -35,7 +35,7 @@
         <!-- Spinner Start -->
         <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
             <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                <span class="sr-only">Loading...</span>
+                <span class="sr-only">Đang tải...</span>
             </div>
         </div>
         <!-- Spinner End -->
@@ -54,9 +54,9 @@
             <div class="container-fluid pt-4 px-4">
                 <div class="bg-light text-center rounded p-4">
                     <div class="d-flex align-items-center justify-content-between mb-4">
-                        <h6 class="mb-0">Danh sách users</h6>
+                        <h6 class="mb-0">Danh sách người dùng</h6>
                         <button type="button" class="btn btn-sm btn-primary" onclick="openCreateModal()">
-                            <i class="bi bi-plus-circle me-2"></i>Tạo mới user
+                            <i class="bi bi-plus-circle me-2"></i>Tạo mới người dùng
                         </button>
                     </div>
                     <div class="table-responsive">
@@ -64,12 +64,12 @@
                             <thead>
                                 <tr class="text-dark">
                                     <th scope="col">ID</th>
-                                    <th scope="col">User Name</th>
+                                    <th scope="col">Tên đăng nhập</th>
                                     <th scope="col">Email</th>
-                                    <th scope="col">Full Name</th>
-                                    <th scope="col">Created At</th>
-                                    <th scope="col">Updated At</th>
-                                    <th scope="col">Action</th>
+                                    <th scope="col">Họ và tên</th>
+                                    <th scope="col">Ngày tạo</th>
+                                    <th scope="col">Ngày cập nhật</th>
+                                    <th scope="col">Hành động</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -83,7 +83,7 @@
                                         <td><?php echo $user->getUpdatedAt() ?></td>
                                         <td>
                                             <a class="update-btn"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Update user"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Cập nhật người dùng"
                                                 data-user='<?php
                                                             $userData = [
                                                                 'id' => $user->getId(),
@@ -98,7 +98,7 @@
                                             </a>
                                             <a class="delete-btn"
                                                 style="color: red"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Delete user"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Xóa người dùng"
                                                 data-user-id="<?php echo $user->getId(); ?>"
                                                 data-username="<?php echo htmlspecialchars($user->getUserName()); ?>">
                                                 <i class="bi bi-trash3-fill me-2"></i>
@@ -116,7 +116,7 @@
                 <ul class="pagination justify-content-center mt-3">
                     <?php if ($page > 1): ?>
                         <li class="page-item">
-                            <a class="page-link" href="?page=<?php echo $page - 1; ?>&per_page=<?php echo $per_page; ?>">Previous</a>
+                            <a class="page-link" href="?page=<?php echo $page - 1; ?>&per_page=<?php echo $per_page; ?>">Trước</a>
                         </li>
                     <?php endif; ?>
                     <?php for ($i = 1; $i <= $total_pages; $i++): ?>
@@ -126,7 +126,7 @@
                     <?php endfor; ?>
                     <?php if ($page < $total_pages): ?>
                         <li class="page-item">
-                            <a class="page-link" href="?page=<?php echo $page + 1; ?>&per_page=<?php echo $per_page; ?>">Next</a>
+                            <a class="page-link" href="?page=<?php echo $page + 1; ?>&per_page=<?php echo $per_page; ?>">Sau</a>
                         </li>
                     <?php endif; ?>
                 </ul>

@@ -39,6 +39,9 @@
                         <img src="../../../public/uploads/avatars/<?= $user->getAvatarUrl() ?>" alt="Avatar" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
+                        <?php if ($user->isAdmin()): ?>
+                            <li><a class="dropdown-item" href="/admin/dashboard">Admin</a></li>
+                        <?php endif; ?>
                         <li><a class="dropdown-item" href="/user/profile">Hồ sơ</a></li>
                         <li><a class="dropdown-item" href="/user/my-quizzes">Quiz của tôi</a></li>
                         <li><a class="dropdown-item" href="/user/history">Lịch sử</a></li>
@@ -77,7 +80,7 @@
                         <img id="coverImage" src="../../../public/uploads/quizzes/<?= $quiz->getImage() ?>" alt="Quiz Cover" class="cover-image">
                         <div class="cover-overlay">
                             <button class="btn btn-sm btn-light" id="changeCoverBtn" onclick="document.getElementById('coverInput').click()">
-                                <i class="fas fa-image"></i> Change Cover
+                                <i class="fas fa-image"></i> Thay đổi bìa
                             </button>
                             <input type="file" id="coverInput" accept="image/*" style="display: none;">
                         </div>
@@ -88,13 +91,13 @@
                         <h3 id="quizTitle" class="quiz-title"><?= $quiz->getTitle() ?></h3>
                         <div class="privacy-setting d-flex align-items-center gap-2 mb-3">
                             <i class="fas fa-lock"></i>
-                            <span id="privacyText"><?= $quiz->isPublic() ? 'Public' : 'Private' ?></span>
+                            <span id="privacyText"><?= $quiz->isPublic() ? 'Công khai' : 'Riêng tư' ?></span>
                         </div>
                     </div>
 
                     <!-- Save Button -->
                     <button class="btn btn-teal btn-lg w-100 mb-3">
-                        <i class="fas fa-save"></i> Save Set
+                        <i class="fas fa-save"></i> Lưu
                     </button>
 
                     <!-- Action Buttons -->
@@ -102,13 +105,13 @@
                         <div class="col-6">
                             <button class="btn btn-sm btn-light w-100">
                                 <a href="<?= '/quiz/edit-quiz/' . $quizId ?>" style="text-decoration: none; color: inherit;">
-                                    <i class="fas fa-edit"></i> Edit Info
+                                    <i class="fas fa-edit"></i> Chỉnh sửa
                                 </a>
                             </button>
                         </div>
                         <div class="col-6">
                             <button class="btn btn-sm btn-light w-100" id="btnTimeLimit">
-                                <i class="fas fa-hourglass"></i> Time Limit
+                                <i class="fas fa-hourglass"></i> Giới hạn time
                             </button>
                         </div>
                     </div>
@@ -119,31 +122,31 @@
                     <div class="row g-2">
                         <div class="col-6">
                             <button class="btn btn-action btn-purple w-100">
-                                <i class="fas fa-plus"></i><br>Add<br>Question
+                                <i class="fas fa-plus"></i><br>Thêm<br>Câu hỏi
                             </button>
                         </div>
                         <div class="col-6">
                             <button class="btn btn-action btn-blue w-100">
-                                <i class="fas fa-book"></i><br>Quizlet<br>Import
+                                <i class="fas fa-book"></i><br>Nhập từ<br>Quizlet
                             </button>
                         </div>
                     </div>
                     <div class="row g-2 mt-2">
                         <div class="col-6">
                             <button class="btn btn-action btn-green w-100">
-                                <i class="fas fa-table"></i><br>Spreadsheet<br>Import
+                                <i class="fas fa-table"></i><br>Nhập từ<br>Bảng tính
                             </button>
                         </div>
                         <div class="col-6">
                             <button class="btn btn-action btn-info w-100">
-                                <i class="fas fa-building"></i><br>Question<br>Bank
+                                <i class="fas fa-building"></i><br>Ngân hàng<br>Câu hỏi
                             </button>
                         </div>
                     </div>
                     <div class="row g-2 mt-2">
                         <div class="col-8 mx-auto">
                             <button class="btn btn-action btn-teal w-100">
-                                <i class="fas fa-eye-slash"></i> Hide Answers
+                                <i class="fas fa-eye-slash"></i> Ẩn đáp án
                             </button>
                         </div>
                     </div>
@@ -155,10 +158,10 @@
                 <div class="content-area">
                     <div class="d-flex justify-content-between align-items-center mb-5">
                         <div class="questions-count">
-                            <span class="text-muted" style="font-size: 18px;"><?= count($questions) ?> Questions</span>
+                            <span class="text-muted" style="font-size: 18px;"><?= count($questions) ?> Câu hỏi</span>
                         </div>
                         <button class="btn btn-add-question">
-                            <i class="fas fa-plus"></i> Add Question
+                            <i class="fas fa-plus"></i> Thêm câu hỏi
                         </button>
                     </div>
 
@@ -187,18 +190,18 @@
                                                     data-ans4="<?= htmlspecialchars($question->answer_d) ?>"
                                                     data-correct="<?= htmlspecialchars($question->correct_answer) ?>"
                                                     data-question-id="<?= (int)$question->question_id ?>">
-                                                    <i class="fas fa-pen"></i> Edit
+                                                    <i class="fas fa-pen"></i> Chỉnh sửa
                                                 </button>
-                                                <h6 class="mb-0">Question <?php echo $index; ?></h6>
+                                                <h6 class="mb-0">Câu hỏi <?php echo $index; ?></h6>
                                             </div>
                                             <div class="d-flex align-items-center gap-2">
                                                 <button class="btn btn-light btn-sm"><i class="fas fa-random"></i></button>
-                                                <span class="badge bg-secondary"><?php echo (int)$question->time_limit; ?> sec</span>
+                                                <span class="badge bg-secondary"><?php echo (int)$question->time_limit; ?> giây</span>
                                             </div>
                                         </div>
                                         <div class="mt-2"><?php echo htmlspecialchars($question->content); ?></div>
                                         <div class="mt-2 d-flex gap-2">
-                                            <button class="btn btn-light btn-sm btn-delete-question" data-action="delete" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" data-question-id="<?= (int)$question->question_id ?>"><i class="fas fa-trash"></i></button>
+                                            <button class="btn btn-light btn-sm btn-delete-question" data-action="delete" data-bs-toggle="tooltip" data-bs-placement="top" title="Xóa" data-question-id="<?= (int)$question->question_id ?>"><i class="fas fa-trash"></i></button>
                                             <button class="btn btn-light btn-sm"><i class="fas fa-copy"></i></button>
                                         </div>
                                     </div>
@@ -219,39 +222,39 @@
                 <div class="modal-header" style="background:#7c3aed;color:#fff;">
                     <div class="d-flex align-items-center gap-2 flex-wrap">
                         <button type="button" class="btn btn-sm btn-light" id="qeTimeBtn">
-                            <i class="fas fa-clock me-1"></i> <span>Time Limit</span>
+                            <i class="fas fa-clock me-1"></i> <span>Giới hạn thời gian</span>
                             <input type="number" class="form-control text-center" id="qeTimeInput" min="1" value="10">
                         </button>
                         <div class="form-check form-check-inline text-white">
                             <input class="form-check-input" type="checkbox" id="qeRandomOrder">
-                            <label class="form-check-label" for="qeRandomOrder">Random Order</label>
+                            <label class="form-check-label" for="qeRandomOrder">Thứ tự ngẫu nhiên</label>
                         </div>
                         <div class="ms-2">
                             <select id="qeType" class="form-select form-select-sm">
-                                <option value="multiple" selected>Multiple Choice</option>
-                                <option value="truefalse">True / False</option>
+                                <option value="multiple" selected>Trắc nghiệm</option>
+                                <option value="truefalse">Đúng / Sai</option>
                             </select>
                         </div>
                     </div>
                     <div class="d-flex align-items-center gap-2">
-                        <button type="button" class="btn btn-outline-light btn-sm" id="qeCancelBtn" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Cancel</button>
-                        <button type="button" class="btn btn-light btn-sm" id="qeSaveBtn"><i class="fas fa-save me-1"></i>Save</button>
+                        <button type="button" class="btn btn-outline-light btn-sm" id="qeCancelBtn" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Hủy</button>
+                        <button type="button" class="btn btn-light btn-sm" id="qeSaveBtn"><i class="fas fa-save me-1"></i>Lưu</button>
                     </div>
                 </div>
                 <div class="modal-body p-3 p-md-4 qe-modal-body">
                     <div class="d-flex gap-3">
                         <div class="d-flex flex-column gap-2 qe-side-tools">
-                            <button id="qeImageBtn" class="btn btn-primary btn-sm w-100"><i class="fas fa-image me-1"></i>Image</button>
-                            <button class="btn btn-primary btn-sm w-100"><i class="fas fa-superscript me-1"></i>Math</button>
-                            <button class="btn btn-primary btn-sm w-100"><i class="fas fa-microphone me-1"></i>Audio</button>
+                            <button id="qeImageBtn" class="btn btn-primary btn-sm w-100"><i class="fas fa-image me-1"></i>Hình ảnh</button>
+                            <button class="btn btn-primary btn-sm w-100"><i class="fas fa-superscript me-1"></i>Toán học</button>
+                            <button class="btn btn-primary btn-sm w-100"><i class="fas fa-microphone me-1"></i>Âm thanh</button>
                         </div>
                         <div class="flex-grow-1">
                             <div class="d-flex gap-3 align-items-start">
                                 <div id="qeImageContainer" style="display:none;">
                                     <img id="qeImagePreview" src="" alt="" style="max-width:220px;max-height:140px;object-fit:cover;border-radius:4px;display:block;">
-                                    <button type="button" class="btn btn-light btn-sm mt-2" id="qeImageRemove">Remove</button>
+                                    <button type="button" class="btn btn-light btn-sm mt-2" id="qeImageRemove">Xóa</button>
                                 </div>
-                                <textarea id="qeQuestionText" class="form-control" rows="4" placeholder="Question Text"></textarea>
+                                <textarea id="qeQuestionText" class="form-control" rows="4" placeholder="Nội dung câu hỏi"></textarea>
                             </div>
                             <input type="file" id="qeImageInput" accept="image/*" style="display:none;">
                         </div>
@@ -261,32 +264,32 @@
                         <div class="col-md-6">
                             <div class="qe-answer card qe-answer-a">
                                 <div class="card-body d-flex align-items-center gap-3">
-                                    <input class="form-check-input" type="radio" name="qeCorrect" value="A" aria-label="Correct answer 1">
-                                    <textarea class="form-control form-control-lg qe-answer-input" id="qeAns1" rows="2" placeholder="Answer 1"></textarea>
+                                    <input class="form-check-input" type="radio" name="qeCorrect" value="A" aria-label="Đáp án đúng 1">
+                                    <textarea class="form-control form-control-lg qe-answer-input" id="qeAns1" rows="2" placeholder="Đáp án 1"></textarea>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="qe-answer card qe-answer-b">
                                 <div class="card-body d-flex align-items-center gap-3">
-                                    <input class="form-check-input" type="radio" name="qeCorrect" value="B" aria-label="Correct answer 2">
-                                    <textarea class="form-control form-control-lg qe-answer-input" id="qeAns2" rows="2" placeholder="Answer 2"></textarea>
+                                    <input class="form-check-input" type="radio" name="qeCorrect" value="B" aria-label="Đáp án đúng 2">
+                                    <textarea class="form-control form-control-lg qe-answer-input" id="qeAns2" rows="2" placeholder="Đáp án 2"></textarea>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="qe-answer card qe-answer-c">
                                 <div class="card-body d-flex align-items-center gap-3">
-                                    <input class="form-check-input" type="radio" name="qeCorrect" value="C" aria-label="Correct answer 3">
-                                    <textarea class="form-control form-control-lg qe-answer-input" id="qeAns3" rows="2" placeholder="Answer 3"></textarea>
+                                    <input class="form-check-input" type="radio" name="qeCorrect" value="C" aria-label="Đáp án đúng 3">
+                                    <textarea class="form-control form-control-lg qe-answer-input" id="qeAns3" rows="2" placeholder="Đáp án 3"></textarea>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="qe-answer card qe-answer-d">
                                 <div class="card-body d-flex align-items-center gap-3">
-                                    <input class="form-check-input" type="radio" name="qeCorrect" value="D" aria-label="Correct answer 4">
-                                    <textarea class="form-control form-control-lg qe-answer-input" id="qeAns4" rows="2" placeholder="Answer 4"></textarea>
+                                    <input class="form-check-input" type="radio" name="qeCorrect" value="D" aria-label="Đáp án đúng 4">
+                                    <textarea class="form-control form-control-lg qe-answer-input" id="qeAns4" rows="2" placeholder="Đáp án 4"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -301,14 +304,14 @@
         <div class="modal-dialog modal-dialog-centered modal-sm">
             <div class="modal-content border-0">
                 <div class="modal-body text-center p-4">
-                    <h6 class="mb-3">Set the time limit for all questions (in seconds):</h6>
+                    <h6 class="mb-3">Đặt giới hạn thời gian cho tất cả câu hỏi (tính bằng giây):</h6>
                     <div class="input-group justify-content-center mb-3" style="max-width: 200px; margin: 0 auto;">
                         <input type="number" id="timeLimitInput" class="form-control text-center" min="1" value="10">
                         <span class="input-group-text"><i class="fas fa-clock"></i></span>
                     </div>
                     <div class="d-flex justify-content-between gap-2">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
-                        <button type="button" class="btn btn-teal" id="confirmTimeLimitBtn">Confirm</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Quay lại</button>
+                        <button type="button" class="btn btn-teal" id="confirmTimeLimitBtn">Xác nhận</button>
                     </div>
                 </div>
             </div>
@@ -322,7 +325,7 @@
     <script src="../../../public/js/edit-quiz.js"></script>
 
     <script>
-         <?php if (!empty($_SESSION['success'])) : ?>
+        <?php if (!empty($_SESSION['success'])) : ?>
             toastr.success(<?= json_encode($_SESSION['success'], JSON_UNESCAPED_UNICODE); ?>);
             <?php unset($_SESSION['success']); ?>
         <?php endif; ?>

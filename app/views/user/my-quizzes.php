@@ -24,7 +24,7 @@
                     <img src="../../../public/images/logo/quiz-multicolor.svg" alt="Quiz.com" />
                 </a>
                 <div class="col-auto">
-                    <button class="btn btn-create" data-action="create" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Create quiz">
+                    <button class="btn btn-create" data-action="create" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tạo quiz">
                         <a href="/quiz/create" style="text-decoration: none;color:inherit">
                             <i class="bi bi-plus-lg"></i>
                         </a>
@@ -33,7 +33,7 @@
                 <div class="col">
                     <div class="search-wrapper">
                         <i class="bi bi-search search-icon"></i>
-                        <input type="text" class="form-control search-input" placeholder="Search your sets...">
+                        <input type="text" class="form-control search-input" placeholder="Tìm kiếm các bộ quiz của bạn...">
                     </div>
                 </div>
                 <div class="col-auto">
@@ -46,7 +46,7 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <?php if ($user->isAdmin()): ?>
-                                    <li><a class="dropdown-item" href="/admin/dashboard">Admin</a></li>
+                                    <li><a class="dropdown-item" href="/admin/dashboard">Quản trị</a></li>
                                 <?php endif; ?>
                                 <li><a class="dropdown-item" href="/user/profile">Hồ sơ</a></li>
                                 <li><a class="dropdown-item" href="/user/my-quizzes">Quiz của tôi</a></li>
@@ -85,25 +85,25 @@
                     <div class="quiz-card card-blooket">
                         <div class="card-image-wrapper">
                             <img src="<?php echo htmlspecialchars('../../../public/uploads/quizzes/' . $quiz->getImage()); ?>" alt="<?php echo htmlspecialchars($quiz->getTitle()); ?>">
-                            <div class="card-views-badge" data-bs-toggle="tooltip" data-bs-placement="top" title="View Set">
+                            <div class="card-views-badge" data-bs-toggle="tooltip" data-bs-placement="top" title="Xem Quiz">
                                 <a href="/quiz/view/<?= $quiz->getId() ?>" style="text-decoration: none;color:inherit">
                                     <i class="bi bi-eye-fill"></i>
                                 </a>
                             </div>
-                            <div class="card-questions-badge"><?php echo $quiz->getTotalQuestions(); ?> Questions</div>
+                            <div class="card-questions-badge"><?php echo $quiz->getTotalQuestions(); ?> Câu hỏi</div>
                         </div>
                         <div class="card-body">
                             <h3 class="card-title"><?php echo $quiz->getTitle(); ?></h3>
-                            <div class="card-edited">Edited <?php echo DateUtils::daysFromNow($quiz->getUpdatedAt()); ?> days ago</div>
+                            <div class="card-edited">Đã chỉnh sửa <?php echo DateUtils::daysFromNow($quiz->getUpdatedAt()); ?> ngày trước</div>
 
                             <div class="card-actions">
-                                <a href="/quiz/edit/<?= $quiz->getId() ?>" class="btn action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
+                                <a href="/quiz/edit/<?= $quiz->getId() ?>" class="btn action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Chỉnh sửa">
                                     <i class="bi bi-pencil-fill"></i>
                                 </a>
-                                <button class="btn action-btn openModalDelete" data-action="delete" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" data-quiz-id="<?= (int)$quiz->getId() ?>">
+                                <button class="btn action-btn openModalDelete" data-action="delete" data-bs-toggle="tooltip" data-bs-placement="top" title="Xóa" data-quiz-id="<?= (int)$quiz->getId() ?>">
                                     <i class="bi bi-trash-fill"></i>
                                 </button>
-                                <button class="btn action-btn" data-action="settings" data-bs-toggle="tooltip" data-bs-placement="top" title="Settings">
+                                <button class="btn action-btn" data-action="settings" data-bs-toggle="tooltip" data-bs-placement="top" title="Cài đặt">
                                     <i class="bi bi-gear-fill"></i>
                                 </button>
                             </div>
@@ -111,12 +111,12 @@
                             <div class="assign-host-group mt-0">
                                 <span class="btn btn-assign flex-fill d-flex justify-content-center align-items-center gap-2" role="button" tabindex="0">
                                     <i class="bi bi-clipboard"></i>
-                                    <span>Assign</span>
+                                    <span>Chia</span>
                                 </span>
                                 <form action="/game/lobby/<?= $quiz->getId() ?>" method="post" class="flex-fill" style="margin:0;">
                                     <button type="submit" class="btn btn-host d-flex justify-content-center align-items-center gap-2 w-100">
                                         <i class="bi bi-play-fill"></i>
-                                        <span>Host</span>
+                                        <span>Chơi</span>
                                     </button>
                                 </form>
                             </div>
@@ -132,15 +132,15 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold">Confirm delete</h5>
+                    <h5 class="modal-title fw-bold">Xác nhận xóa</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body pt-2">
-                    <p class="mb-0">Do you really want to delete this set?</p>
+                    <p class="mb-0">Bạn có thực sự muốn xóa bộ quiz này không?</p>
                 </div>
                 <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Yes</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Không</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Có</button>
                 </div>
             </div>
         </div>
@@ -166,9 +166,9 @@
                 $('.quiz-card').each(function() {
                     const title = $(this).find('.card-title').text().toLowerCase();
                     if (title.includes(searchTerm)) {
-                        $(this).closest('.col-lg-4').show();
+                        $(this).closest('.col').show();
                     } else {
-                        $(this).closest('.col-lg-4').hide();
+                        $(this).closest('.col').hide();
                     }
                 });
             });
@@ -210,7 +210,7 @@
                             }
                         },
                         error: (xhr) => {
-                            const msg = xhr?.responseText || 'Failed to delete quiz';
+                            const msg = xhr?.responseText || 'Không thể xóa quiz';
                             alert(msg);
                             $confirm.prop('disabled', false);
                         }

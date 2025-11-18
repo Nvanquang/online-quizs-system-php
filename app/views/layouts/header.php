@@ -9,7 +9,7 @@
 
             <!-- Join Game Section (giữa, flex-grow để chiếm space, shrink khi hẹp) -->
             <div class="join-game-section d-flex justify-content-center align-items-center mx-auto flex-grow-1">
-                <span class="join-text">Join Game? Enter PIN:</span>
+                <span class="join-text">Tham gia Game? Nhập PIN:</span>
                 <input type="text" class="form-control join-input" placeholder="123 456" maxlength="7">
             </div>
 

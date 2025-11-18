@@ -346,31 +346,31 @@
                 <li>
                     <a href="#profile" class="active">
                         <i class="bi bi-person-fill"></i>
-                        <span>Profile</span>
+                        <span>Hồ sơ</span>
                     </a>
                 </li>
                 <li>
                     <a href="#edit-info">
                         <i class="bi bi-pencil-square"></i>
-                        <span>Edit Info</span>
+                        <span>Chỉnh sửa thông tin</span>
                     </a>
                 </li>
                 <li>
                     <a href="#social">
                         <i class="bi bi-chat-dots"></i>
-                        <span>Social</span>
+                        <span>Mạng xã hội</span>
                     </a>
                 </li>
                 <li>
                     <a href="#support">
                         <i class="bi bi-question-circle"></i>
-                        <span>Support</span>
+                        <span>Hỗ trợ</span>
                     </a>
                 </li>
                 <li>
                     <a href="#privacy">
                         <i class="bi bi-lock"></i>
-                        <span>Privacy</span>
+                        <span>Quyền riêng tư</span>
                     </a>
                 </li>
             </ul>
@@ -383,8 +383,8 @@
                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
                     <nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>';">
                         <ol class="breadcrumb mb-0 small">
-                            <li class="breadcrumb-item"><a class="text-decoration-none" href="/">Home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Profile</li>
+                            <li class="breadcrumb-item"><a class="text-decoration-none" href="/">Trang chủ</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Hồ sơ</li>
                         </ol>
                     </nav>
                 </div>
@@ -393,12 +393,12 @@
             <section id="profile" class="section-card">
                 <h2 class="section-title">
                     <i class="bi bi-person-fill"></i>
-                    Profile
+                    Hồ sơ
                 </h2>
                 <div class="profile-info">
                     <?php $user = Auth::getInstance()->user(); ?>
                     <div class="profile-item">
-                        <span class="profile-label">Username:</span>
+                        <span class="profile-label">Tên người dùng:</span>
                         <span class="profile-value"><?= $user->getUsername() ?></span>
                     </div>
                     <div class="profile-item">
@@ -406,11 +406,11 @@
                         <span class="profile-value"><?= $user->getEmail() ?></span>
                     </div>
                     <div class="profile-item">
-                        <span class="profile-label">Dashboard Layout:</span>
+                        <span class="profile-label">Bố cục bảng điều khiển:</span>
                         <span class="profile-value">Teacher</span>
                     </div>
                     <div class="profile-item">
-                        <span class="profile-label">Joined:</span>
+                        <span class="profile-label">Tham gia:</span>
                         <span class="profile-value"><?= DateUtils::formatPrettyDate((string)$user->getCreatedAt()) ?></span>
                     </div>
                 </div>
@@ -420,12 +420,12 @@
             <section id="edit-info" class="section-card">
                 <h2 class="section-title">
                     <i class="bi bi-pencil-square"></i>
-                    Edit Info
+                    Chỉnh sửa thông tin
                 </h2>
                 <div class="edit-links">
-                    <a href="#change-name" class="edit-link" data-action="change_name">Change Name</a>
-                    <a href="#reset-password" class="edit-link" data-action="reset_password">Request Password Reset</a>
-                    <a href="#change-email" class="edit-link" data-action="change_email">Change Email</a>
+                    <a href="#change-name" class="edit-link" data-action="change_name">Thay đổi tên</a>
+                    <a href="#reset-password" class="edit-link" data-action="reset_password">Yêu cầu đặt lại mật khẩu</a>
+                    <a href="#change-email" class="edit-link" data-action="change_email">Thay đổi email</a>
                 </div>
             </section>
 
@@ -433,7 +433,7 @@
             <section id="social" class="section-card">
                 <h2 class="section-title">
                     <i class="bi bi-chat-dots"></i>
-                    Social
+                    Mạng xã hội
                 </h2>
                 <div class="social-links">
                     <a href="https://twitter.com/PlayQuiz" target="_blank" class="social-link">
@@ -455,14 +455,14 @@
             <section id="support" class="section-card">
                 <h2 class="section-title">
                     <i class="bi bi-question-circle"></i>
-                    Support
+                    Hỗ trợ
                 </h2>
                 <div class="support-links">
-                    <a href="#help-center" class="support-link">View Our Help Center</a>
-                    <a href="#faq" class="support-link">Frequently Asked Questions</a>
+                    <a href="#help-center" class="support-link">Xem Trung tâm trợ giúp của chúng tôi</a>
+                    <a href="#faq" class="support-link">Câu hỏi thường gặp</a>
                 </div>
                 <div class="contact-info">
-                    Contact us at: <a href="mailto:contact-us@quiz.com">contact-us@quiz.com</a>
+                    Liên hệ với chúng tôi tại: <a href="mailto:contact-us@quiz.com">contact-us@quiz.com</a>
                 </div>
             </section>
 
@@ -470,11 +470,11 @@
             <section id="privacy" class="section-card">
                 <h2 class="section-title">
                     <i class="bi bi-lock"></i>
-                    Privacy
+                    Quyền riêng tư
                 </h2>
                 <div class="privacy-links">
-                    <a href="#privacy-policy" class="privacy-link">Privacy Policy</a>
-                    <a href="#terms" class="privacy-link">Terms of Service</a>
+                    <a href="#privacy-policy" class="privacy-link">Chính sách quyền riêng tư</a>
+                    <a href="#terms" class="privacy-link">Điều khoản dịch vụ</a>
                 </div>
             </section>
         </main>
@@ -507,7 +507,11 @@
                     const $target = $(hash);
                     if ($target.length) {
                         // Instant jump (no animation)
-                        window.scrollTo({ top: $target.offset().top - 20, left: 0, behavior: 'auto' });
+                        window.scrollTo({
+                            top: $target.offset().top - 20,
+                            left: 0,
+                            behavior: 'auto'
+                        });
                         // Update active menu item immediately
                         $('.sidebar-menu a').removeClass('active');
                         $('.sidebar-menu a[href="' + hash + '"]').addClass('active');
@@ -533,11 +537,11 @@
 
             // Upgrade button animation
             $('.upgrade-btn').on('click', function() {
-                $(this).html('<i class="bi bi-check-circle me-2"></i>Processing...');
+                $(this).html('<i class="bi bi-check-circle me-2"></i>Đang xử lý...');
 
                 setTimeout(() => {
-                    alert('Upgrade feature coming soon!');
-                    $(this).html('Upgrade Now!');
+                    alert('Tính năng nâng cấp sắp ra mắt!');
+                    $(this).html('Nâng cấp ngay!');
                 }, 1000);
             });
 
@@ -557,7 +561,7 @@
                     e.preventDefault();
 
                     const linkText = $(this).text();
-                    alert('Navigating to: ' + linkText);
+                    alert('Đang điều hướng đến: ' + linkText);
                 }
             });
 
@@ -594,27 +598,33 @@
 
                 // Default state
                 submitBtn.disabled = true;
-                submitBtn.textContent = 'Submit';
+                submitBtn.textContent = 'Gửi';
 
                 if (action === 'change_name') {
-                    modalTitle.textContent = 'Change Name';
-                    modalDesc.textContent = 'Enter your new username';
-                    modalBody.innerHTML = '<input type="text" name="username" class="form-control form-control-lg" placeholder="Username">';
+                    modalTitle.textContent = 'Thay đổi tên';
+                    modalDesc.textContent = 'Nhập tên người dùng mới của bạn';
+                    modalBody.innerHTML = '<input type="text" name="username" class="form-control form-control-lg" placeholder="Tên người dùng">';
                     const inp = modalBody.querySelector('input[name="username"]');
-                    inp.addEventListener('input', function() { submitBtn.disabled = this.value.trim().length === 0; });
+                    inp.addEventListener('input', function() {
+                        submitBtn.disabled = this.value.trim().length === 0;
+                    });
                 } else if (action === 'reset_password') {
-                    modalTitle.textContent = 'Request Password Reset';
-                    modalDesc.textContent = 'Enter your email to receive reset instructions';
+                    modalTitle.textContent = 'Yêu cầu đặt lại mật khẩu';
+                    modalDesc.textContent = 'Nhập email của bạn để nhận hướng dẫn đặt lại';
                     modalBody.innerHTML = '<input type="email" name="email" class="form-control form-control-lg" placeholder="Email">';
                     const inp = modalBody.querySelector('input[name="email"]');
-                    inp.addEventListener('input', function() { submitBtn.disabled = this.value.trim().length === 0; });
-                    submitBtn.textContent = 'Send';
+                    inp.addEventListener('input', function() {
+                        submitBtn.disabled = this.value.trim().length === 0;
+                    });
+                    submitBtn.textContent = 'Gửi';
                 } else if (action === 'change_email') {
-                    modalTitle.textContent = 'Change Email';
-                    modalDesc.textContent = 'Enter your new email';
+                    modalTitle.textContent = 'Thay đổi email';
+                    modalDesc.textContent = 'Nhập email mới của bạn';
                     modalBody.innerHTML = '<input type="email" name="new_email" class="form-control form-control-lg" placeholder="Email">';
                     const inp = modalBody.querySelector('input[name="new_email"]');
-                    inp.addEventListener('input', function() { submitBtn.disabled = this.value.trim().length === 0; });
+                    inp.addEventListener('input', function() {
+                        submitBtn.disabled = this.value.trim().length === 0;
+                    });
                 }
 
                 const bsModal = new bootstrap.Modal(modalEl);

@@ -28,39 +28,39 @@
             <div class="d-flex justify-content-between align-items-center py-3">
                 <div class="category-item active">
                     <img src="../../../public/images/navigation/start.svg" alt="Home" style="width:24px;height:24px;object-fit:contain;">
-                    <span>Start</span>
+                    <span>Bắt đầu</span>
                 </div>
                 <div class="category-item">
                     <img src="../../../public/images/navigation/art-and-literature.svg" alt="Art & Literature" style="width:24px;height:24px;object-fit:contain;">
-                    <span>Art & Literature</span>
+                    <span>Nghệ thuật & Văn học</span>
                 </div>
                 <div class="category-item">
                     <img src="../../../public/images/navigation/entertainment.svg" alt="Entertainment" style="width:24px;height:24px;object-fit:contain;">
-                    <span>Entertainment</span>
+                    <span>Giải trí</span>
                 </div>
                 <div class="category-item">
                     <img src="../../../public/images/navigation/geography.svg" alt="Geography" style="width:24px;height:24px;object-fit:contain;">
-                    <span>Geography</span>
+                    <span>Địa lý</span>
                 </div>
                 <div class="category-item">
                     <img src="../../../public/images/navigation/history.svg" alt="History" style="width:24px;height:24px;object-fit:contain;">
-                    <span>History</span>
+                    <span>Lịch sử</span>
                 </div>
                 <div class="category-item">
                     <img src="../../../public/images/navigation/languages.svg" alt="Languages" style="width:24px;height:24px;object-fit:contain;">
-                    <span>Languages</span>
+                    <span>Ngôn ngữ</span>
                 </div>
                 <div class="category-item">
                     <img src="../../../public/images/navigation/science-and-nature.svg" alt="Science & Nature" style="width:24px;height:24px;object-fit:contain;">
-                    <span>Science & Nature</span>
+                    <span>Khoa học & Tự nhiên</span>
                 </div>
                 <div class="category-item">
                     <img src="../../../public/images/navigation/sports.svg" alt="Sports" style="width:24px;height:24px;object-fit:contain;">
-                    <span>Sports</span>
+                    <span>Thể thao</span>
                 </div>
                 <div class="category-item">
                     <img src="../../../public/images/navigation/trivia.svg" alt="Trivia" style="width:24px;height:24px;object-fit:contain;">
-                    <span>Trivia</span>
+                    <span>Thú vị</span>
                 </div>
             </div>
         </div>
@@ -95,8 +95,8 @@
             <div class="container-fluid px-4">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <div class="d-flex align-items-center gap-2">
-                        <h3 class="section-title mb-0 me-2">Recently published</h3>
-                        <a href="#" class="see-all-link text-decoration-none">See all (<?php echo count($quizzes); ?>)</a>
+                        <h3 class="section-title mb-0 me-2">Mới tạo</h3>
+                        <a href="#" class="see-all-link text-decoration-none">Xem tất cả (<?php echo count($quizzes); ?>)</a>
                     </div>
                     <div class="d-flex align-items-center gap-2">
                         <button class="btn btn-outline-secondary btn-sm" id="quizPrevBtn" aria-label="Previous quizzes">‹</button>
@@ -131,7 +131,7 @@
                                                 <span class="quiz-rating">
                                                     <i class="fas fa-star"></i>
                                                 </span>
-                                                <span class="quiz-author">By <?= $quiz->getAuthor() ?></span>
+                                                <span class="quiz-author">Bởi <?= $quiz->getAuthor() ?></span>
                                             </div>
                                         </div>
                                     </div>
@@ -142,7 +142,7 @@
                 </div>
 
                 <div id="quizEmptyAlert" class="alert alert-warning mt-3 d-none" role="alert">
-                    No quizzes available.
+                    Không có quiz nào để hiển thị.
                 </div>
             </div>
         </section>
@@ -151,8 +151,8 @@
         <section class="quiz-section py-5">
             <div class="container-fluid px-4">
                 <div class="d-flex align-items-center gap-2 mb-4">
-                    <h3 class="section-title mb-0" style="margin-right:10px;">Best rating right now</h3>
-                    <a href="#" class="see-all-link">See all (23)</a>
+                    <h3 class="section-title mb-0" style="margin-right:10px;">Đánh giá cao</h3>
+                    <a href="#" class="see-all-link">Xem tất cả (23)</a>
                 </div>
                 <div class="row g-4">
                     <?php
@@ -187,7 +187,7 @@
                                     <h5 class="quiz-title"><?= $quiz['title'] ?></h5>
                                     <div class="quiz-meta">
                                         <span class="quiz-rating"><?= $quiz['rating'] ?> <i class="fas fa-star"></i></span>
-                                        <span class="quiz-author">By <?= $quiz['author'] ?></span>
+                                        <span class="quiz-author">Bởi <?= $quiz['author'] ?></span>
                                     </div>
                                 </div>
                             </div>
@@ -201,8 +201,8 @@
         <section class="quiz-section py-5 bg-light">
             <div class="container-fluid px-4">
                 <div class="d-flex align-items-center gap-2 mb-4">
-                    <h3 class="section-title mb-0" style="margin-right:10px;">Popular right now</h3>
-                    <a href="#" class="see-all-link">See all (55)</a>
+                    <h3 class="section-title mb-0" style="margin-right:10px;">Phổ biến</h3>
+                    <a href="#" class="see-all-link">Xem tất cả (55)</a>
                 </div>
                 <div class="row g-4">
                     <?php
@@ -237,7 +237,7 @@
                                     <h5 class="quiz-title"><?= $quiz['title'] ?></h5>
                                     <div class="quiz-meta">
                                         <span class="quiz-rating"><?= $quiz['rating'] ?> <i class="fas fa-star"></i></span>
-                                        <span class="quiz-author">By <?= $quiz['author'] ?></span>
+                                        <span class="quiz-author">Bởi <?= $quiz['author'] ?></span>
                                     </div>
                                 </div>
                             </div>
@@ -251,8 +251,8 @@
         <section class="quiz-section py-5">
             <div class="container-fluid px-4">
                 <div class="d-flex align-items-center gap-2 mb-4">
-                    <h3 class="section-title mb-0" style="margin-right:10px;">Trivia</h3>
-                    <a href="#" class="see-all-link">See all (67)</a>
+                    <h3 class="section-title mb-0" style="margin-right:10px;">Thú vị</h3>
+                    <a href="#" class="see-all-link">Xem tất cả (67)</a>
                 </div>
                 <div class="row g-4">
                     <?php
@@ -290,7 +290,7 @@
                                     <h5 class="quiz-title"><?= $quiz['title'] ?></h5>
                                     <div class="quiz-meta">
                                         <span class="quiz-rating"><?= $quiz['rating'] ?> <i class="fas fa-star"></i></span>
-                                        <span class="quiz-author">By <?= $quiz['author'] ?></span>
+                                        <span class="quiz-author">Bởi <?= $quiz['author'] ?></span>
                                     </div>
                                 </div>
                             </div>

@@ -64,7 +64,7 @@
                                     <th scope="col">Câu hỏi</th>
                                     <th scope="col">Tạo lúc</th>
                                     <th scope="col">Cập nhật lúc</th>
-                                    <th scope="col">Action</th>
+                                    <th scope="col">Hành động</th>
                                 </tr>
                             </thead>
                             <tbody>

@@ -79,16 +79,16 @@
                                 <img id="previewImage" src="<?= (isset($quiz) && $quiz->getImage()) ? ('../../../public/uploads/quizzes/' . htmlspecialchars($quiz->getImage())) : '/placeholder.svg' ?>" alt="Cover Preview" class="img-fluid rounded-3 <?= (isset($quiz) && $quiz->getImage()) ? '' : 'd-none' ?>">
                                 <div class="remove-overlay">
                                     <button type="button" class="btn btn-danger btn-sm" id="removeImageBtn">
-                                        <i class="fas fa-trash me-1"></i>Remove image
+                                        <i class="fas fa-trash me-1"></i>Xóa hình ảnh
                                     </button>
                                 </div>
                                 <div id="uploadContent" class="<?= (isset($quiz) && $quiz->getImage()) ? 'd-none' : '' ?>">
-                                    <h5 class="text-dark fw-bold mb-3">Cover Image</h5>
-                                    <p class="text-muted mb-4">Drag and Drop or</p>
+                                    <h5 class="text-dark fw-bold mb-3">Hình ảnh bìa</h5>
+                                    <p class="text-muted mb-4">Kéo và thả hoặc</p>
 
                                     <div class="d-flex flex-column gap-2">
                                         <button class="btn btn-light btn-upload" onclick="document.getElementById('fileUpload').click()">
-                                            <i class="fas fa-file me-2"></i>Upload a File
+                                            <i class="fas fa-file me-2"></i>Tải lên tệp
                                         </button>
                                     </div>
                                 </div>
@@ -107,26 +107,26 @@
                 <div class="card shadow-sm border-0 mb-4">
                     <div class="card-body p-4">
                         <label for="titleInput" class="form-label fw-bold text-dark">
-                            Title <span class="text-danger">(required)</span>
+                            Tiêu đề <span class="text-danger">(bắt buộc)</span>
                         </label>
                         <input type="text" class="form-control form-control-lg border-0 bg-light-input"
-                            id="titleInput" placeholder="Add a descriptive title" value="<?= isset($quiz) && $quiz->getTitle() ? htmlspecialchars($quiz->getTitle()) : '' ?>">
+                            id="titleInput" placeholder="Thêm tiêu đề mô tả" value="<?= isset($quiz) && $quiz->getTitle() ? htmlspecialchars($quiz->getTitle()) : '' ?>">
                     </div>
                 </div>
 
                 <!-- Privacy Setting Section -->
                 <div class="card shadow-sm border-0">
                     <div class="card-body p-4">
-                        <h6 class="text-dark fw-bold mb-2">Privacy Setting</h6>
-                        <p class="text-muted small mb-3">This decides who can find and play your question set</p>
+                        <h6 class="text-dark fw-bold mb-2">Cài đặt quyền riêng tư</h6>
+                        <p class="text-muted small mb-3">Điều này quyết định ai có thể tìm và chơi bộ câu hỏi của bạn</p>
 
                         <div class="d-flex align-items-center gap-3">
                             <div class="form-check form-switch">
                                 <input class="form-check-input toggle-switch" type="checkbox" id="privacyToggle" <?= isset($quiz) && $quiz->isPublic() ? 'checked' : '' ?>>
                             </div>
                             <div>
-                                <label for="privacyToggle" class="text-dark fw-bold mb-0">Public</label>
-                                <p class="text-muted small mb-0">Playable by Everyone</p>
+                                <label for="privacyToggle" class="text-dark fw-bold mb-0">Công khai</label>
+                                <p class="text-muted small mb-0">Có thể chơi bởi mọi người</p>
                             </div>
                         </div>
                     </div>
@@ -135,7 +135,7 @@
                 <!-- Create Button -->
                 <div class="d-flex justify-content-end mt-5">
                     <button class="btn btn-create btn-lg" id="createBtn">
-                        <i class="fas fa-check me-2"></i>Save
+                        <i class="fas fa-check me-2"></i>Lưu
                     </button>
                 </div>
             </div>
@@ -147,15 +147,15 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title">Upload by URL</h5>
+                    <h5 class="modal-title">Tải lên bằng URL</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="url" class="form-control" id="urlInput" placeholder="Enter image URL">
+                    <input type="url" class="form-control" id="urlInput" placeholder="Nhập URL hình ảnh">
                 </div>
                 <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-create" onclick="loadImageFromUrl()">Upload</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-create" onclick="loadImageFromUrl()">Tải lên</button>
                 </div>
             </div>
         </div>
