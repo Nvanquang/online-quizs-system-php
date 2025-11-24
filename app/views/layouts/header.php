@@ -13,11 +13,21 @@
                 <input type="text" class="form-control join-input" placeholder="123 456" maxlength="7">
             </div>
 
-            <!-- Right Side (push phải) -->
-            <div class="d-flex align-items-center ms-auto">
-                <button class="btn btn-search me-3">
-                    <i class="fas fa-search"></i>
-                </button>
+            <!-- Right Side (push phải, chứa toggle search và search input, user dropdown) -->
+            <div class="right-section d-flex align-items-center ms-auto">
+                <div class="search-wrapper">
+                    <button class="btn btn-search-toggle me-3 d-block" id="searchToggle">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <div class="search-section d-none d-flex align-items-center me-3" id="searchSection">
+                        <div class="search-container position-relative">
+                            <input type="text" class="form-control search-input" placeholder="Tìm kiếm..." id="searchInput">
+                            <button class="btn btn-search-icon position-absolute" type="submit" id="searchSubmit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
                 <?php $auth = Auth::getInstance(); ?>
                 <?php if ($auth->check()): ?>
                     <?php $user = $auth->user(); ?>
@@ -27,7 +37,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <?php if ($user->isAdmin()): ?>
-                                <li><a class="dropdown-item" href="/admin/dashboard">Admin</a></li>
+                                <li><a class="dropdown-item" href="/admin/dashboard">Quản trị</a></li>
                             <?php endif; ?>
                             <li><a class="dropdown-item" href="/user/profile">Hồ sơ</a></li>
                             <li><a class="dropdown-item" href="/user/my-quizzes">Quiz của tôi</a></li>
@@ -44,6 +54,58 @@
             </div>
         </div>
     </nav>
-
-    
 </header>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchToggle = document.getElementById('searchToggle');
+    const searchSection = document.getElementById('searchSection');
+    const searchInput = document.getElementById('searchInput');
+
+    // Toggle search on button click
+    searchToggle.addEventListener('click', function() {
+        const isHidden = searchSection.classList.contains('d-none');
+        if (isHidden) {
+            // Show search: hide toggle, show search section
+            searchToggle.classList.add('d-none');
+            searchSection.classList.remove('d-none');
+            searchInput.focus(); // Auto-focus input
+        } else {
+            // Hide search: show toggle, hide search section
+            searchToggle.classList.remove('d-none');
+            searchSection.classList.add('d-none');
+        }
+    });
+
+    // Handle search submission (Enter key or icon click)
+    function handleSearch() {
+        const query = searchInput.value.trim();
+        if (query) {
+            // Redirect with GET to /search?q=query
+            window.location.href = `/search?query=${encodeURIComponent(query)}`;
+        }
+    }
+
+    // Enter key on input
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            handleSearch();
+        }
+    });
+
+    // Click on search icon
+    document.getElementById('searchSubmit').addEventListener('click', handleSearch);
+
+    // Optional: Hide search when clicking outside (but not on dropdown/user area)
+    document.addEventListener('click', function(e) {
+        const rightSection = document.querySelector('.right-section');
+        if (!rightSection.contains(e.target)) {
+            // If search is open and click outside right-section, close it
+            if (!searchSection.classList.contains('d-none')) {
+                searchToggle.classList.remove('d-none');
+                searchSection.classList.add('d-none');
+            }
+        }
+    });
+});
+</script>

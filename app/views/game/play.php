@@ -107,10 +107,10 @@
             <!-- Player Badge -->
             <div class="player-badge">
                 <div class="player-avatar-wrapper">
-                    <img id="result-avatar" 
-                         src="<?php echo $sessionPlayer->getAvatar(); ?>" 
-                         alt="<?php echo htmlspecialchars($sessionPlayer->getNickname()); ?>" 
-                         class="player-avatar">
+                    <img id="result-avatar"
+                        src="<?php echo $sessionPlayer->getAvatar(); ?>"
+                        alt="<?php echo htmlspecialchars($sessionPlayer->getNickname()); ?>"
+                        class="player-avatar">
                     <div class="rank-badge">
                         <span class="rank-number">1</span>
                         <span class="rank-label">HOST</span>
@@ -141,6 +141,48 @@
         </div>
     </div>
 
+    <!-- Rating Modal -->
+    <div class="rating-modal-overlay" id="rating-modal-overlay" style="display: none;">
+        <div class="rating-modal">
+            <h2 class="rating-title">How many stars do you give these questions?</h2>
+
+            <div class="rating-preview">
+                <div class="quiz-thumbnail">
+                    <div class="thumbnail-placeholder">
+                        <?php if ($quiz->getImage() && file_exists(__DIR__ . "/../../../public/uploads/quizzes/" . $quiz->getImage())): ?>
+                            <img src="../../../public/uploads/quizzes/<?= htmlspecialchars($quiz->getImage()) ?>"
+                                alt="<?= htmlspecialchars($quiz->getTitle()) ?>"
+                                style="width:100%;height:100%;object-fit:cover;border-radius:8px;">
+                        <?php else: ?>
+                            <i class="fas fa-question-circle"></i>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <h3 class="quiz-title-rating" id="quiz-title-rating"></h3>
+            </div>
+
+            <div class="stars-container" id="stars-container">
+                <button class="star-btn" data-rating="1">
+                    <i class="far fa-star"></i>
+                </button>
+                <button class="star-btn" data-rating="2">
+                    <i class="far fa-star"></i>
+                </button>
+                <button class="star-btn" data-rating="3">
+                    <i class="far fa-star"></i>
+                </button>
+                <button class="star-btn" data-rating="4">
+                    <i class="far fa-star"></i>
+                </button>
+                <button class="star-btn" data-rating="5">
+                    <i class="far fa-star"></i>
+                </button>
+            </div>
+
+            <button class="rating-cancel-btn" id="rating-cancel-btn">Cancel</button>
+        </div>
+    </div>
+
     <!-- Report Container (Hidden initially) -->
     <div class="report-container" id="report-container" style="display: none;">
         <div class="report-content">
@@ -161,7 +203,7 @@
                         </tbody>
                     </table>
                 </div>
-                
+
                 <!-- Action Links -->
                 <div class="report-actions">
                     <a href="#" class="report-action-link" id="download-csv">
@@ -187,30 +229,30 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         window.QUIZ_QUESTIONS = <?php
-            $jsQuestions = [];
-            if (!empty($questions)) {
-                foreach ($questions as $q) {
-                    $jsQuestions[] = [
-                        'id' => isset($q->question_id) ? (int)$q->question_id : null,
-                        'text' => isset($q->content) ? $q->content : '',
-                        'image' => isset($q->image_url) && $q->image_url !== '' ? ('../../../public/uploads/questions/' . $q->image_url) : '',
-                        'explanation' => isset($q->explanation) ? $q->explanation : '',
-                        'answers' => [
-                            isset($q->answer_a) ? $q->answer_a : '',
-                            isset($q->answer_b) ? $q->answer_b : '',
-                            isset($q->answer_c) ? $q->answer_c : '',
-                            isset($q->answer_d) ? $q->answer_d : '',
-                        ],
-                        'correctAnswer' => isset($q->correct_answer) ? $q->correct_answer : null,
-                        'timeLimit' => (method_exists($q, 'getTimeLimit') && is_numeric($q->getTimeLimit()))
-                            ? (int)$q->getTimeLimit()
-                            : (isset($q->time_limit) && is_numeric($q->time_limit) ? (int)$q->time_limit : null),
-                        'order' => isset($q->order_number) ? (int)$q->order_number : null,
-                    ];
-                }
-            }
-            echo json_encode($jsQuestions, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        ?>;
+                                $jsQuestions = [];
+                                if (!empty($questions)) {
+                                    foreach ($questions as $q) {
+                                        $jsQuestions[] = [
+                                            'id' => isset($q->question_id) ? (int)$q->question_id : null,
+                                            'text' => isset($q->content) ? $q->content : '',
+                                            'image' => isset($q->image_url) && $q->image_url !== '' ? ('../../../public/uploads/questions/' . $q->image_url) : '',
+                                            'explanation' => isset($q->explanation) ? $q->explanation : '',
+                                            'answers' => [
+                                                isset($q->answer_a) ? $q->answer_a : '',
+                                                isset($q->answer_b) ? $q->answer_b : '',
+                                                isset($q->answer_c) ? $q->answer_c : '',
+                                                isset($q->answer_d) ? $q->answer_d : '',
+                                            ],
+                                            'correctAnswer' => isset($q->correct_answer) ? $q->correct_answer : null,
+                                            'timeLimit' => (method_exists($q, 'getTimeLimit') && is_numeric($q->getTimeLimit()))
+                                                ? (int)$q->getTimeLimit()
+                                                : (isset($q->time_limit) && is_numeric($q->time_limit) ? (int)$q->time_limit : null),
+                                            'order' => isset($q->order_number) ? (int)$q->order_number : null,
+                                        ];
+                                    }
+                                }
+                                echo json_encode($jsQuestions, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                                ?>;
         window.SESSION_CODE = <?php echo json_encode($gameSession->getSessionCode()); ?>;
         window.CSRF_TOKEN = <?php echo json_encode(CSRFMiddleware::getToken()); ?>;
         window.SESSION_PLAYER_ID = <?php echo isset($sessionPlayer) && method_exists($sessionPlayer, 'getId') ? (int)$sessionPlayer->getId() : 'null'; ?>;

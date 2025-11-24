@@ -186,24 +186,6 @@ class Model
         // Lọc dữ liệu theo fillable
         $data = $this->filterFillable($data);
 
-        // Validate nếu có
-        // $errors = $this->validate($data, false);
-        if (!empty($errors)) {
-            throw new InvalidArgumentException('Validation thất bại: ' . json_encode($errors, JSON_UNESCAPED_UNICODE));
-        }
-
-        // Tự động thêm timestamp nếu có
-        $originalFillable = $this->fillable;
-        if ($this->timestamps) {
-            $now = date('Y-m-d H:i:s');
-            if (in_array('created_at', $originalFillable)) {
-                $data['created_at'] = $now;
-            }
-            if (in_array('updated_at', $originalFillable)) {
-                $data['updated_at'] = $now;
-            }
-        }
-
         if (empty($data)) {
             throw new InvalidArgumentException('Không có dữ liệu');
         }
@@ -247,17 +229,6 @@ class Model
     {
         // Filter data by fillable fields TRƯỚC
         $data = $this->filterFillable($data);
-
-        // Validate (partial update) dựa trên data đã filter
-        $errors = $this->validate($data, true);
-        if (!empty($errors)) {
-            throw new InvalidArgumentException('Validation thất bại: ' . json_encode($errors, JSON_UNESCAPED_UNICODE));
-        }
-
-        // Add updated timestamp AN TOÀN nếu có data để update
-        if (!empty($data) && $this->timestamps && in_array('updated_at', $this->fillable)) {
-            $data['updated_at'] = date('Y-m-d H:i:s');
-        }
 
         // Nếu không có field nào để update, skip
         if (empty($data)) {
@@ -335,6 +306,65 @@ class Model
             $sql .= " ORDER BY {$orderBy}";
         }
 
+        $sql .= " LIMIT {$perPage} OFFSET {$offset}";
+
+        $rows = $this->db->fetchAll($sql, $params);
+        $data = array_map(function ($row) {
+            return $this->mapRowToModel($row);
+        }, $rows);
+
+        return [
+            'data' => $data,
+            'total' => $total,
+            'page' => $page,
+            'per_page' => $perPage,
+            'total_pages' => ceil($total / $perPage)
+        ];
+    }
+
+    /**
+     * Paginate records with LIKE search
+     */
+    public function paginateWithSearch($searchField, $keyword, $page = 1, $perPage = 10, $extraConditions = [], $orderBy = null)
+    {
+        $offset = ($page - 1) * $perPage;
+        $params = [];
+        $where = [];
+
+        // Search condition
+        if ($searchField && $keyword !== '') {
+            $where[] = "{$searchField} LIKE ?";
+            $params[] = '%' . $keyword . '%';
+        }
+
+        // Extra conditions
+        if (!empty($extraConditions)) {
+            foreach ($extraConditions as $field => $value) {
+                $where[] = "{$field} = ?";
+                $params[] = $value;
+            }
+        }
+
+        $whereSql = $where ? (' WHERE ' . implode(' AND ', $where)) : '';
+
+        // Count total
+        $countSql = "SELECT COUNT(*) as count FROM {$this->table}{$whereSql}";
+        $total = $this->db->fetch($countSql, $params)['count'];
+
+        // Get records
+        $sql = "SELECT * FROM {$this->table}{$whereSql}";
+        if ($orderBy) {
+            if (is_array($orderBy)) {
+                // Handle $orderBy as associative array like ['column' => 'ASC']
+                $orderParts = [];
+                foreach ($orderBy as $column => $direction) {
+                    $orderParts[] = "{$column} {$direction}";
+                }
+                $sql .= " ORDER BY " . implode(', ', $orderParts);
+            } else {
+                $sql .= " ORDER BY {$orderBy}";
+            }
+        }
         $sql .= " LIMIT {$perPage} OFFSET {$offset}";
 
         $rows = $this->db->fetchAll($sql, $params);
@@ -455,97 +485,6 @@ class Model
         $model = new $className();
         $model->fromArray($row);
         return $model;
-    }
-
-    /**
-     * Validate data against $rules. If $partial is true, only validate provided fields.
-     * Supported rules: required, string, int, integer, float, boolean, email, enum:VAL1,VAL2, min:N, max:N, nullable, regex:/pattern/
-     * Returns array of errors [field => [messages...]]
-     */
-    public function validate(array $data, bool $partial = false): array
-    {
-        if (empty($this->rules)) {
-            return [];
-        }
-
-        $errors = [];
-
-        foreach ($this->rules as $field => $ruleString) {
-            $rules = is_array($ruleString) ? $ruleString : explode('|', (string)$ruleString);
-
-            $hasValue = array_key_exists($field, $data);
-            $value = $hasValue ? $data[$field] : null;
-
-            if ($partial && !$hasValue) {
-                continue; // skip fields not present in partial update
-            }
-
-            $ruleMap = [];
-            foreach ($rules as $r) {
-                $parts = explode(':', $r, 2);
-                $name = strtolower(trim($parts[0]));
-                $param = $parts[1] ?? null;
-                $ruleMap[$name] = $param;
-            }
-
-            // nullable
-            if (($ruleMap['nullable'] ?? null) !== null && ($value === null || $value === '')) {
-                continue;
-            }
-
-            // required
-            if (($ruleMap['required'] ?? null) !== null && ($value === null || $value === '')) {
-                $errors[$field][] = 'Trường bắt buộc';
-                continue;
-            }
-
-            if ($value === null) {
-                continue; // nothing else to validate
-            }
-
-            // type checks
-            if (isset($ruleMap['string']) && !is_string($value)) {
-                $errors[$field][] = 'Phải là chuỗi';
-            }
-            if ((isset($ruleMap['int']) || isset($ruleMap['integer'])) && filter_var($value, FILTER_VALIDATE_INT) === false) {
-                $errors[$field][] = 'Phải là số nguyên';
-            }
-            if (isset($ruleMap['float']) && filter_var($value, FILTER_VALIDATE_FLOAT) === false) {
-                $errors[$field][] = 'Phải là số thực';
-            }
-            if (isset($ruleMap['boolean']) && !in_array($value, [0, 1, true, false, '0', '1'], true)) {
-                $errors[$field][] = 'Phải là boolean';
-            }
-            if (isset($ruleMap['email']) && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                $errors[$field][] = 'Email không hợp lệ';
-            }
-            if (isset($ruleMap['enum'])) {
-                $allowed = array_map('trim', explode(',', (string)$ruleMap['enum']));
-                if (!in_array($value, $allowed, true)) {
-                    $errors[$field][] = 'Giá trị không hợp lệ';
-                }
-            }
-            if (isset($ruleMap['min'])) {
-                $min = (int)$ruleMap['min'];
-                if (is_string($value) && strlen($value) < $min) {
-                    $errors[$field][] = "Độ dài tối thiểu {$min}";
-                }
-            }
-            if (isset($ruleMap['max'])) {
-                $max = (int)$ruleMap['max'];
-                if (is_string($value) && strlen($value) > $max) {
-                    $errors[$field][] = "Độ dài tối đa {$max}";
-                }
-            }
-            if (isset($ruleMap['regex'])) {
-                $pattern = $ruleMap['regex'];
-                if (@preg_match($pattern, '') === false || preg_match($pattern, (string)$value) !== 1) {
-                    $errors[$field][] = 'Sai định dạng';
-                }
-            }
-        }
-
-        return $errors;
     }
 
     /**

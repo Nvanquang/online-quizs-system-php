@@ -112,11 +112,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (discordBtn) {
         discordBtn.addEventListener('mouseenter', function () {
-            this.innerHTML = '<i class="fab fa-discord"></i> JOIN NOW!';
+            this.innerHTML = '<i class="fab fa-discord"></i> THAM GIA NGAY!';
         });
 
         discordBtn.addEventListener('mouseleave', function () {
-            this.innerHTML = 'JOIN OUR DISCORD';
+            this.innerHTML = 'THAM GIA QUIZZ VỚI CHÚNG TÔI';
         });
     }
 
@@ -247,110 +247,177 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// ===== Enhanced Recently Published Carousel =====
-// ===== Enhanced Recently Published Carousel =====
+// ===== Reusable Quiz Carousel for Multiple Sections =====
 (function ($) {
-  // Guard: nếu không có carousel trên trang thì thoát
-  if (!$('#quizCarouselTrack').length || !$('#quizCarouselViewport').length) return;
-
-  const $track = $('#quizCarouselTrack');
-  const $viewport = $('#quizCarouselViewport');
-  const $prev = $('#quizPrevBtn');
-  const $next = $('#quizNextBtn');
-  const $pp = $('#quizPlayPauseBtn');
-  const $empty = $('#quizEmptyAlert');
-  const regionId = 'quizCarouselRegion';
-
-  const $items = $track.children('.quiz-col');
-  if ($items.length === 0) {
-    if ($empty.length) $empty.removeClass('d-none');
-    return; // hợp lệ vì đang ở trong IIFE
-  }
-
-  // Không auto-slide -> ẩn nút
-  if ($pp.length) $pp.addClass('d-none');
-
-  const getItemsPerSlide = () => {
-    const w = window.innerWidth;
-    if (w >= 1200) return 6;
-    if (w >= 768) return 4;
-    return 2;
-  };
-
-  let itemsPerSlide = getItemsPerSlide();
-  let currentIndex = 0;
-  let slideWidth = 0;
-
-  const totalSlides = () =>
-    Math.max(1, Math.ceil($track.children('.quiz-col').length / itemsPerSlide));
-
-  const updateNav = () => {
-    const max = totalSlides();
-    if ($prev.length) $prev.prop('disabled', currentIndex === 0);
-    if ($next.length) $next.prop('disabled', currentIndex >= max - 1);
-  };
-
-  const jumpToIndex = (slideIndex, animate = true) => {
-    const offsetCols = slideIndex * itemsPerSlide;
-    const tx = -(offsetCols * slideWidth);
-    $track.css('transition', animate ? 'transform 400ms ease' : 'none');
-    $track.css('transform', `translateX(${tx}px)`);
-    $('#' + regionId).attr('aria-live', 'polite');
-  };
-
-  const layout = () => {
-    itemsPerSlide = getItemsPerSlide();
-    const vpWidth = $viewport.innerWidth();
-    slideWidth = vpWidth / itemsPerSlide;
-    $track.find('.quiz-col').css('width', `${100 / itemsPerSlide}%`);
-    const max = totalSlides();
-    if (currentIndex > max - 1) currentIndex = Math.max(0, max - 1);
-    jumpToIndex(currentIndex, false);
-    updateNav();
-  };
-
-  const slideNext = () => {
-    const max = totalSlides();
-    if (currentIndex < max - 1) {
-      currentIndex++;
-      jumpToIndex(currentIndex, true);
-      updateNav();
+    
+    // Class để quản lý một carousel
+    class QuizCarousel {
+        constructor(container) {
+            this.$container = $(container);
+            this.$track = this.$container.find('.quiz-carousel-track');
+            this.$viewport = this.$container.find('.quiz-carousel-viewport');
+            this.$items = this.$track.children('.quiz-col');
+            this.$empty = this.$container.siblings('.quiz-empty-alert');
+            
+            // Tìm buttons trong cùng section
+            const $section = this.$container.closest('.quiz-section');
+            this.$prev = $section.find('.carousel-prev-btn');
+            this.$next = $section.find('.carousel-next-btn');
+            
+            this.currentIndex = 0;
+            this.slideWidth = 0;
+            this.touchStartX = null;
+            this.touchDX = 0;
+            
+            // Kiểm tra nếu không có items
+            if (this.$items.length === 0) {
+                if (this.$empty.length) {
+                    this.$empty.removeClass('d-none');
+                }
+                return;
+            }
+            
+            this.init();
+        }
+        
+        getItemsPerSlide() {
+            const w = window.innerWidth;
+            if (w >= 1200) return 6;
+            if (w >= 992) return 5;
+            if (w >= 768) return 4;
+            if (w >= 576) return 3;
+            return 2;
+        }
+        
+        getTotalSlides() {
+            return Math.max(1, Math.ceil(this.$items.length / this.itemsPerSlide));
+        }
+        
+        updateNav() {
+            const maxSlides = this.getTotalSlides();
+            this.$prev.prop('disabled', this.currentIndex === 0);
+            this.$next.prop('disabled', this.currentIndex >= maxSlides - 1);
+        }
+        
+        jumpToIndex(slideIndex, animate = true) {
+            const offsetCols = slideIndex * this.itemsPerSlide;
+            const tx = -(offsetCols * this.slideWidth);
+            
+            this.$track.css({
+                'transition': animate ? 'transform 400ms ease' : 'none',
+                'transform': `translateX(${tx}px)`
+            });
+            
+            this.$container.attr('aria-live', 'polite');
+        }
+        
+        layout() {
+            this.itemsPerSlide = this.getItemsPerSlide();
+            const vpWidth = this.$viewport.innerWidth();
+            this.slideWidth = vpWidth / this.itemsPerSlide;
+            
+            // Set width cho mỗi item
+            this.$items.css('width', `${100 / this.itemsPerSlide}%`);
+            
+            // Điều chỉnh currentIndex nếu cần
+            const maxSlides = this.getTotalSlides();
+            if (this.currentIndex >= maxSlides) {
+                this.currentIndex = Math.max(0, maxSlides - 1);
+            }
+            
+            this.jumpToIndex(this.currentIndex, false);
+            this.updateNav();
+        }
+        
+        slideNext() {
+            const maxSlides = this.getTotalSlides();
+            if (this.currentIndex < maxSlides - 1) {
+                this.currentIndex++;
+                this.jumpToIndex(this.currentIndex, true);
+                this.updateNav();
+            }
+        }
+        
+        slidePrev() {
+            if (this.currentIndex > 0) {
+                this.currentIndex--;
+                this.jumpToIndex(this.currentIndex, true);
+                this.updateNav();
+            }
+        }
+        
+        bindEvents() {
+            // Navigation buttons
+            this.$next.on('click', () => this.slideNext());
+            this.$prev.on('click', () => this.slidePrev());
+            
+            // Keyboard navigation
+            this.$container.on('keydown', (e) => {
+                if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    this.slideNext();
+                }
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    this.slidePrev();
+                }
+            });
+            
+            // Touch events
+            this.$viewport.on('touchstart', (e) => {
+                if (!e.originalEvent.touches || !e.originalEvent.touches[0]) return;
+                this.touchStartX = e.originalEvent.touches[0].clientX;
+                this.touchDX = 0;
+            });
+            
+            this.$viewport.on('touchmove', (e) => {
+                if (!this.touchStartX || !e.originalEvent.touches || !e.originalEvent.touches[0]) return;
+                const x = e.originalEvent.touches[0].clientX;
+                this.touchDX = x - this.touchStartX;
+            });
+            
+            this.$viewport.on('touchend', () => {
+                if (Math.abs(this.touchDX) > 40) {
+                    if (this.touchDX < 0) {
+                        this.slideNext();
+                    } else {
+                        this.slidePrev();
+                    }
+                }
+                this.touchStartX = null;
+                this.touchDX = 0;
+            });
+            
+            // Resize handling với debounce
+            let resizeTimer = null;
+            $(window).on('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(() => this.layout(), 150);
+            });
+        }
+        
+        init() {
+            this.layout();
+            this.bindEvents();
+        }
     }
-  };
-
-  const slidePrev = () => {
-    if (currentIndex > 0) {
-      currentIndex--;
-      jumpToIndex(currentIndex, true);
-      updateNav();
-    }
-  };
-
-  $next.on('click', slideNext);
-  $prev.on('click', slidePrev);
-
-  $(document).on('keydown', (e) => {
-    if (!$(e.target).closest('#quizCarouselRegion').length) return;
-    if (e.key === 'ArrowRight') { e.preventDefault(); slideNext(); }
-    if (e.key === 'ArrowLeft')  { e.preventDefault(); slidePrev(); }
-  });
-
-  let touchStartX = null, touchDX = 0;
-  $viewport.on('touchstart', (e) => {
-    if (!e.originalEvent.touches || !e.originalEvent.touches[0]) return;
-    touchStartX = e.originalEvent.touches[0].clientX; touchDX = 0;
-  });
-  $viewport.on('touchmove', (e) => {
-    if (!touchStartX || !e.originalEvent.touches || !e.originalEvent.touches[0]) return;
-    const x = e.originalEvent.touches[0].clientX; touchDX = x - touchStartX;
-  });
-  $viewport.on('touchend', () => {
-    if (Math.abs(touchDX) > 40) { if (touchDX < 0) slideNext(); else slidePrev(); }
-    touchStartX = null; touchDX = 0;
-  });
-
-  let resizeTimer = null;
-  $(window).on('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => layout(), 150); });
-
-  layout();
+    
+    // Khởi tạo tất cả carousels khi DOM ready
+    $(document).ready(function() {
+        const carousels = [];
+        
+        // Tìm tất cả carousel containers và khởi tạo
+        $('.quiz-carousel-container').each(function() {
+            const carousel = new QuizCarousel(this);
+            if (carousel.$items && carousel.$items.length > 0) {
+                carousels.push(carousel);
+            }
+        });
+        
+        // Optional: Expose ra global scope nếu cần
+        window.quizCarousels = carousels;
+        
+        console.log(`Đã khởi tạo ${carousels.length} carousel(s)`);
+    });
+    
 })(jQuery);

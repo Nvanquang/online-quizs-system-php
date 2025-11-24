@@ -39,7 +39,7 @@
                         </tr>
                         <tr>
                             <td class="fw-bold bg-light">Đánh giá</td>
-                            <td><?php echo $quiz->getRating(); ?></td>
+                            <td><?php echo round($quiz->getRatingSum() / $quiz->getRatingCount(), 2); ?></td>
                         </tr>
                         <tr>
                             <td class="fw-bold bg-light">Ngày tạo</td>

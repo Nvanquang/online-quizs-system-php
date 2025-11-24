@@ -154,8 +154,8 @@ class QuizController extends Controller
                 'is_public' => 'required|enum:0,1',
             ]);
             if ($validated) {
-                $title = $validated['title'];
-                $isPublic = (int)$validated['is_public'];
+                $title = $_POST['title'];
+                $isPublic = (int)$_POST['is_public'];
 
                 $savedImageName = null;
 
@@ -168,6 +168,7 @@ class QuizController extends Controller
                 $updated = $this->quizService->update((int)$quizId, [
                     'title' => $title,
                     'is_public' => $isPublic,
+                    'rating' => 0,
                     'image' => $savedImageName,
                     'total_questions' => null,
                     'updated_at' => date('Y-m-d H:i:s'),
@@ -256,6 +257,38 @@ class QuizController extends Controller
             echo json_encode(['message' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
             return;
         }
+    }
+
+    public function search()
+    {
+        $keyword = trim($_GET['query'] ?? '');
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $perPage = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 10;
+        $searchField = 'title'; 
+        $orderBy = ['created_at' => 'DESC']; 
+        $value = isset($_GET['value']) ? $_GET['value'] : '';
+
+        if($value === 'mostPopular'){
+            $orderBy = null;
+        }
+        else if($value === 'hightestRated'){
+            $orderBy = '(rating_sum / NULLIF(rating_count, 0)) DESC';
+        }
+        else if($value === 'newest'){
+            $orderBy = 'created_at DESC';
+        }
+        $result = $this->quizService->filterAllWithPagination($searchField, $keyword, $page, $perPage, [], $orderBy);
+
+        
+        echo $this->renderPartial('home/search', [
+            'quizzes' => $result['data'],
+            'total' => $result['total'] ?? 0,
+            'keyword' => $keyword === '' ? 'null' : $keyword,
+            'value' => $value === '' ? 'null' : $value,
+            'page' => $result['page'],
+            'per_page' => $result['per_page'],
+            'total_pages' => $result['total_pages']
+        ]);
     }
 
     private function isAjaxRequest()

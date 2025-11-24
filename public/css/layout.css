@@ -1,3 +1,13 @@
+
+:root {
+    --color-pink: #ef5f85;
+    --color-yellow: #FFE180;
+    --color-green: #B8E986;
+    --color-blue: #89CFF0;
+    --color-teal: #2D5F5D;
+    --color-dark: #1a1a1a;
+    --transition: all 0.3s ease;
+}
 /* ===== HEADER ===== */
 .header-main {
     z-index: 1000;
@@ -42,6 +52,9 @@
     align-items: center;
     gap: 1rem;
     animation: fadeInDown 0.6s ease;
+    transition: var(--transition); /* Smooth shrink effect via flex */
+    max-width: none; /* Allow full flex-grow */
+    margin-right: 25px !important;
 }
 
 .join-text {
@@ -66,18 +79,56 @@
     transform: scale(1.05);
 }
 
+/* Search Section */
+.search-section {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.search-container {
+    position: relative;
+    width: 300px; /* Fixed width to control shrink amount */
+}
+
+.search-input {
+    border: 2px solid #ddd;
+    border-radius: 25px;
+    padding: 0.5rem 3rem 0.5rem 1rem; /* Space for icon */
+    font-size: 16px;
+    width: 100%;
+    transition: var(--transition);
+}
+
+.search-input:focus {
+    border-color: var(--color-yellow);
+    box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.25);
+    outline: none;
+}
+
+.btn-search-icon {
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #666;
+    padding: 0.25rem;
+}
+
+.btn-search-icon:hover {
+    color: var(--color-yellow);
+}
+
 /* Header Buttons */
-.btn-search {
+.btn-search-toggle {
     background: transparent;
     border: 2px solid #ddd;
     border-radius: 50%;
     width: 45px;
     height: 45px;
     transition: var(--transition);
-    margin-left: 30px !important;
 }
 
-.btn-search:hover {
+.btn-search-toggle:hover {
     background: var(--color-yellow);
     border-color: var(--color-yellow);
     transform: rotate(90deg);
@@ -197,4 +248,24 @@
 
 .separator {
     color: #ccc;
+}
+
+/* Responsive adjustments (optional, for smaller screens) */
+@media (max-width: 768px) {
+    .search-container {
+        width: 200px;
+    }
+    
+    .join-game-section {
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+    }
+    
+    .join-text {
+        font-size: 16px;
+    }
+    
+    .join-input {
+        width: 120px;
+    }
 }

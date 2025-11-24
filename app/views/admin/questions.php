@@ -52,6 +52,22 @@
 
             <!-- Recent Sales Start -->
             <div class="container-fluid pt-4 px-4">
+                <div class="col mb-3">
+                    <div class="input-group">
+                        <input
+                            type="text"
+                            class="form-control"
+                            placeholder="Tìm kiếm câu hỏi..."
+                            id="searchInput"
+                            value="<?= $keyword ?? '' ?>">
+                        <button class="btn btn-primary" type="button" id="searchSubmit">
+                            <i class="bi bi-search"></i> Tìm kiếm
+                        </button>
+                        <a href="/admin/questions" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-clockwise"></i> Reset
+                        </a>
+                    </div>
+                </div>
                 <div class="bg-light text-center rounded p-4">
                     <div class="d-flex align-items-center justify-content-between mb-4">
                         <h6 class="mb-0">Danh sách questions</h6>
@@ -171,6 +187,40 @@
             toastr.error(<?= json_encode($_SESSION['errors'], JSON_UNESCAPED_UNICODE); ?>);
             <?php unset($_SESSION['errors']); ?>
         <?php endif; ?>
+        const searchInput = document.getElementById('searchInput');
+
+        // Handle search submission (Enter key or button click)
+        function handleSearch() {
+            const query = searchInput.value.trim();
+            if (query) {
+                // Redirect with GET to /search?q=query
+                window.location.href = `/admin/questions?query=${encodeURIComponent(query)}`;
+            }
+        }
+
+        // Initialize elements after DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const searchButton = document.getElementById('searchSubmit');
+
+            // Enter key on input
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        searchInput.focus();
+                        e.preventDefault(); // Prevent any default form submission if wrapped in form later
+                        handleSearch();
+                    }
+                });
+            }
+            
+            if(searchButton){
+                searchButton.addEventListener('click', function(e){
+                    e.preventDefault(); // Prevent default button behavior
+                    handleSearch();
+                });
+            }
+        });
     </script>
 
     <!-- Template Javascript -->

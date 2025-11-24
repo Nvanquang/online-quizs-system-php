@@ -72,8 +72,6 @@ class UserServiceImpl implements UserService
                 throw new Exception('Bạn không có đủ quyền hạn!');
             }
         }
-        $data['total_points'] = $data['total_points'] ?? 0;
-        $data['games_played'] = $data['games_played'] ?? 0;
         $data['created_at'] = $data['created_at'] ?? date('Y-m-d H:i:s');
         return $this->userRepository->create($data);
     }
@@ -137,6 +135,10 @@ class UserServiceImpl implements UserService
         if ($user->isAdmin()) {
             throw new Exception('Bạn không có đủ quyền hạn để xóa!');
         }
+    }
+    
+    public function filterAllWithPagination($searchField, $keyword, $page, $perPage, $extraConditions, $orderBy){
+        return $this->userRepository->filterAllWithPagination($searchField, $keyword, $page, $perPage, $extraConditions, $orderBy);
     }
 }
 

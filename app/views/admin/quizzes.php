@@ -52,6 +52,22 @@
 
             <!-- Recent Sales Start -->
             <div class="container-fluid pt-4 px-4">
+                <div class="col mb-3">
+                    <div class="input-group">
+                        <input
+                            type="text"
+                            class="form-control"
+                            placeholder="Tìm kiếm trò chơi..."
+                            id="searchInput"
+                            value="<?= $keyword ?? '' ?>">
+                        <button class="btn btn-primary" type="button" id="searchSubmit">
+                            <i class="bi bi-search"></i> Tìm kiếm
+                        </button>
+                        <a href="/admin/quizzes" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-clockwise"></i> Reset
+                        </a>
+                    </div>
+                </div>
                 <div class="bg-light text-center rounded p-4">
                     <div class="d-flex align-items-center justify-content-between mb-4">
                         <h6 class="mb-0">Danh sách trò chơi</h6>
@@ -81,7 +97,7 @@
                                         <td><?php echo $quiz->getTitle() ?></td>
                                         <td><?php echo $quiz->getAuthor() ?></td>
                                         <td><?php echo $quiz->getTotalQuestions() ?></td>
-                                        <td><?php echo $quiz->getRating() ?></td>
+                                        <td><?php echo round($quiz->getRatingSum() / $quiz->getRatingCount(), 2) ?></td>
                                         <td><?php echo $quiz->getCreatedBy() ?></td>
                                         <td><?php echo $quiz->getCreatedAt() ?></td>
                                         <td><?php echo $quiz->getUpdatedAt() ?></td>
@@ -176,6 +192,40 @@
             toastr.error(<?= json_encode($_SESSION['errors'], JSON_UNESCAPED_UNICODE); ?>);
             <?php unset($_SESSION['errors']); ?>
         <?php endif; ?>
+        const searchInput = document.getElementById('searchInput');
+
+        // Handle search submission (Enter key or button click)
+        function handleSearch() {
+            const query = searchInput.value.trim();
+            if (query) {
+                // Redirect with GET to /search?q=query
+                window.location.href = `/admin/quizzes?query=${encodeURIComponent(query)}`;
+            }
+        }
+
+        // Initialize elements after DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const searchButton = document.getElementById('searchSubmit');
+
+            // Enter key on input
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        searchInput.focus();
+                        e.preventDefault(); // Prevent any default form submission if wrapped in form later
+                        handleSearch();
+                    }
+                });
+            }
+            
+            if(searchButton){
+                searchButton.addEventListener('click', function(e){
+                    e.preventDefault(); // Prevent default button behavior
+                    handleSearch();
+                });
+            }
+        });
     </script>
 
     <!-- Template Javascript -->

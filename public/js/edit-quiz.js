@@ -184,14 +184,17 @@ $(document).ready(() => {
           toastr.error(res.message)
         }
       },
-      error: (res) => {
+      error: (xhr) => {
         toastr.options = { "timeout": 2000 }
-        toastr.error(res.message || 'Có lỗi xảy ra')
+        toastr.error(xhr.responseJSON?.message || 'Có lỗi xảy ra')
       }
     })
   })
 
   $('.btn-delete-question').click(function () {
+    if(!confirm(`Bạn có chắc chắn muốn xóa question này?`)){
+      return;
+    }
     const qid = $(this).data('question-id') || window.qeQuestionId
     if (!qid) return
     $.ajax({
@@ -213,8 +216,7 @@ $(document).ready(() => {
       },
       error: (xhr) => {
         toastr.options = { "timeout": 2000 }
-        const response = xhr.responseJSON;
-        toastr.error(response?.message || 'Có lỗi xảy ra');
+        toastr.error(xhr.responseJSON?.message || 'Có lỗi xảy ra');
       }
     })
   })

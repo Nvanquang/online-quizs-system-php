@@ -56,4 +56,7 @@ class QuestionRepository extends BaseRepository
     public function findAllWithPagination($page, $perPage){
         return $this->model->paginate($page, $perPage);
     }
+    public function filterAllWithPagination($searchField, $keyword, $page, $perPage, $extraConditions, $orderBy){
+        return $this->model->paginateWithSearch($searchField, $keyword, $page, $perPage, $extraConditions, $orderBy);
+    }
 }

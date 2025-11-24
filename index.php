@@ -49,6 +49,7 @@ $router = new Router();
 
 // Routes home
 $router->get('/', 'Home@index');
+$router->get('/search', 'Quiz@search');
 $router->get('/test', 'Home@test');
 
 // Routes auth
@@ -72,6 +73,7 @@ $router->post('/user/update-email', 'User@updateEmail', ['AuthMiddleware', 'CSRF
 $router->post('/user/create', 'User@createUser', ['AuthMiddleware', 'CSRFMiddleware', 'AdminMiddleware']);
 $router->post('/user/update', 'User@updateUser', ['AuthMiddleware', 'CSRFMiddleware', 'AdminMiddleware']);
 $router->post('/user/delete', 'User@deleteUser', ['AuthMiddleware', 'CSRFMiddleware', 'AdminMiddleware']);
+$router->get('/user/search', 'User@search', ['AuthMiddleware', 'AdminMiddleware']);
 
 
 // Routes game
@@ -90,11 +92,14 @@ $router->get('/quiz/edit-quiz/{quizId}', 'Quiz@editQuiz', ['AuthMiddleware']);
 $router->post('/quiz/edit-quiz/{quizId}', 'Quiz@doEditQuiz', ['AuthMiddleware', 'CSRFMiddleware']);
 $router->get('/quiz/edit/{quizId}', 'Quiz@edit', ['AuthMiddleware']); // Create questions
 $router->post('/quiz/delete/{quizId}', 'Quiz@doDelete', ['AuthMiddleware', 'CSRFMiddleware']);
+$router->get('/quiz/search', 'Quiz@search', ['AuthMiddleware', 'AdminMiddleware']);
+
 
 // Routes question
 $router->post('/question/create', 'Question@doCreate', ['AuthMiddleware', 'CSRFMiddleware']);
 $router->post('/question/edit/{questionId}', 'Question@doEdit', ['AuthMiddleware', 'CSRFMiddleware']);
 $router->post('/question/delete/{questionId}', 'Question@doDelete', ['AuthMiddleware', 'CSRFMiddleware']);
+$router->get('/question/search', 'Question@search', ['AuthMiddleware', 'AdminMiddleware']);
 
 
 // Routes admin

@@ -35,8 +35,6 @@ class Auth
         $_SESSION['user_full_name'] = $user->getFullName();
         $_SESSION['user_role'] = $user->isAdmin() ? 'admin' : 'user';
         $_SESSION['user_avatar'] = $user->getAvatarUrl();
-        $_SESSION['user_points'] = $user->getTotalPoints();
-        $_SESSION['user_games_played'] = $user->getGamesPlayed();
         
         // Tạo session ID mới để tránh session fixation
         session_regenerate_id(true);
@@ -95,9 +93,7 @@ class Auth
                 'email' => $_SESSION['user_email'],
                 'full_name' => $_SESSION['user_full_name'],
                 'is_admin' => $_SESSION['user_role'] === 'admin',
-                'avatar_url' => $_SESSION['user_avatar'],
-                'total_points' => $_SESSION['user_points'],
-                'games_played' => $_SESSION['user_games_played']
+                'avatar_url' => $_SESSION['user_avatar']
             ]);
         }
 
@@ -138,8 +134,6 @@ class Auth
             $_SESSION['user_email'] = $user->getEmail();
             $_SESSION['user_full_name'] = $user->getFullName();
             $_SESSION['user_avatar'] = $user->getAvatarUrl();
-            $_SESSION['user_points'] = $user->getTotalPoints();
-            $_SESSION['user_games_played'] = $user->getGamesPlayed();
             
             // Reset user object để load lại từ session
             $this->user = null;
@@ -157,7 +151,7 @@ class Auth
     /**
      * Kiểm tra session có hết hạn không
      */
-    public function isSessionExpired($maxLifetime = 3600) // 1 hour default
+    public function isSessionExpired($maxLifetime = 86400) // 1 day default
     {
         if (!$this->check()) {
             return true;

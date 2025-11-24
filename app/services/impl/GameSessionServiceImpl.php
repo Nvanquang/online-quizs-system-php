@@ -37,7 +37,11 @@ class GameSessionServiceImpl implements GameSessionService
         if(!$this->quizRepository->exists(['id' => $quizId])) {
             throw new Exception("Trò chơi không tồn tại!");
         }
-        if ($this->gameSessionRepository->exists(['id' => $quizId])) {
+        if ($this->gameSessionRepository->exists(
+            ['id' => $quizId, 
+                        'host_id' => (int)$hostId,
+                        'quiz_id' => (int)$quizId,
+                        'status' => 'waiting'])) {
             // Nếu đã có session đang chờ cho host + quiz này thì dùng lại (idempotent)
             $existing = $this->gameSessionRepository->findOneBy([
                 'host_id' => (int)$hostId,

@@ -83,6 +83,7 @@ class QuestionController extends Controller
             $this->quizService->update($quizId, [
                 'title' => null,
                 'image' => null,
+                'rating' => null,
                 'total_questions' => $nextOrder,
                 'is_public' => null,
                 'updated_at' => date('Y-m-d H:i:s'),
@@ -176,7 +177,7 @@ class QuestionController extends Controller
             $this->questionService->delete($questionId);
 
             http_response_code(200);
-            echo json_encode(['success' => false, 'message' => 'Xóa câu hỏi thành công'], JSON_UNESCAPED_UNICODE);
+            echo json_encode(['success' => true, 'message' => 'Xóa câu hỏi thành công'], JSON_UNESCAPED_UNICODE);
         } catch (Throwable $e) {
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => $e->getMessage()], JSON_UNESCAPED_UNICODE);

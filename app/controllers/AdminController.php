@@ -24,14 +24,32 @@ class AdminController extends Controller
 
     public function users()
     {
+        // $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        // $perPage = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 10;
+
+        // $result = $this->userService->findAllWithPagination($page, $perPage);
+
+        // echo $this->renderPartial('admin/users', [
+        //     'users' => $result['data'],
+        //     'total' => $result['total'],
+        //     'page' => $result['page'],
+        //     'per_page' => $result['per_page'],
+        //     'total_pages' => $result['total_pages']
+        // ]);
+        $keyword = trim($_GET['query'] ?? '');
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $perPage = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 10;
+        $searchField = 'username';
+        $orderBy = ['created_at' => 'ASC'];
 
-        $result = $this->userService->findAllWithPagination($page, $perPage);
+
+        $result = $this->userService->filterAllWithPagination($searchField, $keyword, $page, $perPage, [], $orderBy);
+
 
         echo $this->renderPartial('admin/users', [
             'users' => $result['data'],
-            'total' => $result['total'],
+            'total' => $result['total'] ?? 0,
+            'keyword' => $keyword,
             'page' => $result['page'],
             'per_page' => $result['per_page'],
             'total_pages' => $result['total_pages']
@@ -40,14 +58,19 @@ class AdminController extends Controller
 
     public function quizzes()
     {
+        $keyword = trim($_GET['query'] ?? '');
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $perPage = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 10;
+        $searchField = 'title'; 
+        $orderBy = ['created_at' => 'ASC']; 
+       
+        $result = $this->quizService->filterAllWithPagination($searchField, $keyword, $page, $perPage, [], $orderBy);
 
-        $result = $this->quizService->findAllWithPagination($page, $perPage);
-
+        
         echo $this->renderPartial('admin/quizzes', [
             'quizzes' => $result['data'],
-            'total' => $result['total'],
+            'total' => $result['total'] ?? 0,
+            'keyword' => $keyword,
             'page' => $result['page'],
             'per_page' => $result['per_page'],
             'total_pages' => $result['total_pages']
@@ -56,14 +79,20 @@ class AdminController extends Controller
 
     public function questions()
     {
+        $keyword = trim($_GET['query'] ?? '');
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $perPage = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 10;
+        $searchField = 'content'; 
+        $orderBy = ['created_at' => 'ASC']; 
 
-        $result = $this->questionService->findAllWithPagination($page, $perPage);
 
+        $result = $this->questionService->filterAllWithPagination($searchField, $keyword, $page, $perPage, [], $orderBy);
+
+        
         echo $this->renderPartial('admin/questions', [
             'questions' => $result['data'],
-            'total' => $result['total'],
+            'total' => $result['total'] ?? 0,
+            'keyword' => $keyword,
             'page' => $result['page'],
             'per_page' => $result['per_page'],
             'total_pages' => $result['total_pages']

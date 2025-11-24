@@ -21,13 +21,17 @@ class HomeController extends Controller
             // User not logged in or error
         }
 
-        // Get all quizzes
-        $quizzes = $this->quizService->getAll();
+        // 12 câu hỏi mới tạo gần nhất
+        $recentlyCreatedQuizzes  = $this->quizService->findByCondition([], 'created_at DESC', 12);
+
+        // 12 câu hỏi đánh giá cao nhất
+        $highestRatedQuizzes = $this->quizService->findByCondition([], '(rating_sum / NULLIF(rating_count, 0)) DESC', 12);
 
         echo $this->renderPartial('home/index', [
             'title' => 'Trang Chủ - Quiz System',
             'user' => $user,
-            'quizzes' => $quizzes,
+            'recentlyCreatedQuizzes' => $recentlyCreatedQuizzes,
+            'highestRatedQuizzes' => $highestRatedQuizzes,
         ]);
     }
 
@@ -37,5 +41,4 @@ class HomeController extends Controller
             'title' => 'Test PHP Info',
         ]);
     }
-
 }

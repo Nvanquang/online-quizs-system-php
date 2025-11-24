@@ -7,8 +7,8 @@ class UploadFileServiceImpl implements UploadFileService
 
     // Default config
     private array $defaultConfig = [
-        'allowedMimes' => ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
-        'allowedExtensions' => ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+        'allowedMimes' => ['image/jpeg', 'image/png'],
+        'allowedExtensions' => ['jpg', 'jpeg', 'png'],
         'maxFileSize' => 3 * 1024 * 1024,
         'maxImageWidth' => 3000,
         'maxImageHeight' => 3000,

@@ -53,9 +53,13 @@ class QuizServiceImpl implements QuizService
         if($data['total_questions']){
             $quiz->setTotalQuestions($data['total_questions']);
         }
-        
-        $quiz->setIsPublic($data['is_public']);
-
+        if($data['rating']){
+            $quiz->setRatingSum($quiz->getRatingSum() + $data['rating']);
+            $quiz->setRatingCount($quiz->getRatingCount() + 1);
+        }
+        if(isset($data['is_public'] )){
+            $quiz->setIsPublic($data['is_public']);
+        }
         if($data['updated_at']){
             $quiz->setUpdatedAt($data['updated_at']);
         }
@@ -70,9 +74,17 @@ class QuizServiceImpl implements QuizService
         return $quiz;
     }
 
+    public function findByCondition($conditions, $orderBy, $limit){
+        return $this->quizRepository->findAll($conditions, $orderBy, $limit);
+    }
+
     public function delete($id){
+        $quiz = $this->quizRepository->findById($id);
         if(!$this->quizRepository->exists(['id' => $id])){
             throw new Exception("Trò chơi không tồn tại!");
+        }
+        if(!Auth::getInstance()->isAdmin() || $_SESSION['user_id'] !== $quiz->getCreatedBy()){
+            throw new Exception("Bạn không có quyền xóa!");
         }
         return $this->quizRepository->delete($id);
     }
@@ -83,5 +95,9 @@ class QuizServiceImpl implements QuizService
 
     public function getTotalQuizzes() {
         return $this->quizRepository->countBy([]); 
+    }
+
+    public function filterAllWithPagination($searchField, $keyword, $page, $perPage, $extraConditions, $orderBy){
+        return $this->quizRepository->filterAllWithPagination($searchField, $keyword, $page, $perPage, $extraConditions, $orderBy);
     }
 }

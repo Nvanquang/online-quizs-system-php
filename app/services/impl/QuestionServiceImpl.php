@@ -92,4 +92,7 @@ class QuestionServiceImpl implements QuestionService
     public function findAllWithPagination($page, $perPage){
         return $this->questionRepository->findAllWithPagination($page, $perPage);
     }
+    public function filterAllWithPagination($searchField, $keyword, $page, $perPage, $extraConditions, $orderBy){
+        return $this->questionRepository->filterAllWithPagination($searchField, $keyword, $page, $perPage, $extraConditions, $orderBy);
+    }
 }

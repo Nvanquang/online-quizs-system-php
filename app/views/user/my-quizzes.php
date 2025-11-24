@@ -30,11 +30,14 @@
                         </a>
                     </button>
                 </div>
-                <div class="col">
-                    <div class="search-wrapper">
+                <div class="col d-flex align-items-center gap-2">
+                    <div class="search-wrapper flex-grow-1">
                         <i class="bi bi-search search-icon"></i>
-                        <input type="text" class="form-control search-input" placeholder="Tìm kiếm các bộ quiz của bạn...">
+                        <input type="text" id="searchInput" class="form-control search-input" placeholder="Tìm kiếm các bộ quiz của bạn..." value="<?= htmlspecialchars($keyword ?? '') ?>">
                     </div>
+                    <a href="/user/my-quizzes" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-clockwise"></i> Reset
+                    </a>
                 </div>
                 <div class="col-auto">
                     <?php $auth = Auth::getInstance(); ?>
@@ -78,53 +81,83 @@
                 </nav>
             </div>
         </div>
-        <div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-4">
-            <!-- Blooket Card -->
-            <?php foreach ($quizzes as $quiz) : ?>
-                <div class="col">
-                    <div class="quiz-card card-blooket">
-                        <div class="card-image-wrapper">
-                            <img src="<?php echo htmlspecialchars('../../../public/uploads/quizzes/' . $quiz->getImage()); ?>" alt="<?php echo htmlspecialchars($quiz->getTitle()); ?>">
-                            <div class="card-views-badge" data-bs-toggle="tooltip" data-bs-placement="top" title="Xem Quiz">
-                                <a href="/quiz/view/<?= $quiz->getId() ?>" style="text-decoration: none;color:inherit">
-                                    <i class="bi bi-eye-fill"></i>
-                                </a>
+        <?php if (empty($quizzes)): ?>
+            <div class="row">
+                <div class="col-12 text-center py-5">
+                    <i class="bi bi-inbox display-1 text-muted mb-3"></i>
+                    <h5 class="text-muted">Không có dữ liệu</h5>
+                    <p class="text-muted">Chưa có bộ quiz nào. Hãy tạo mới để bắt đầu!</p>
+                </div>
+            </div>
+        <?php else: ?>
+            <div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-4">
+                <!-- Blooket Card -->
+                <?php foreach ($quizzes as $quiz) : ?>
+                    <div class="col">
+                        <div class="quiz-card card-blooket">
+                            <div class="card-image-wrapper">
+                                <img src="<?php echo htmlspecialchars('../../../public/uploads/quizzes/' . $quiz->getImage()); ?>" alt="<?php echo htmlspecialchars($quiz->getTitle()); ?>">
+                                <div class="card-views-badge" data-bs-toggle="tooltip" data-bs-placement="top" title="Xem Quiz">
+                                    <a href="/quiz/view/<?= $quiz->getId() ?>" style="text-decoration: none;color:inherit">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+                                </div>
+                                <div class="card-questions-badge"><?php echo $quiz->getTotalQuestions(); ?> Câu hỏi</div>
                             </div>
-                            <div class="card-questions-badge"><?php echo $quiz->getTotalQuestions(); ?> Câu hỏi</div>
-                        </div>
-                        <div class="card-body">
-                            <h3 class="card-title"><?php echo $quiz->getTitle(); ?></h3>
-                            <div class="card-edited">Đã chỉnh sửa <?php echo DateUtils::daysFromNow($quiz->getUpdatedAt()); ?> ngày trước</div>
+                            <div class="card-body">
+                                <h3 class="card-title"><?php echo $quiz->getTitle(); ?></h3>
+                                <div class="card-edited">Đã chỉnh sửa <?php echo DateUtils::daysFromNow($quiz->getUpdatedAt()); ?> ngày trước</div>
 
-                            <div class="card-actions">
-                                <a href="/quiz/edit/<?= $quiz->getId() ?>" class="btn action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Chỉnh sửa">
-                                    <i class="bi bi-pencil-fill"></i>
-                                </a>
-                                <button class="btn action-btn openModalDelete" data-action="delete" data-bs-toggle="tooltip" data-bs-placement="top" title="Xóa" data-quiz-id="<?= (int)$quiz->getId() ?>">
-                                    <i class="bi bi-trash-fill"></i>
-                                </button>
-                                <button class="btn action-btn" data-action="settings" data-bs-toggle="tooltip" data-bs-placement="top" title="Cài đặt">
-                                    <i class="bi bi-gear-fill"></i>
-                                </button>
-                            </div>
-
-                            <div class="assign-host-group mt-0">
-                                <span class="btn btn-assign flex-fill d-flex justify-content-center align-items-center gap-2" role="button" tabindex="0">
-                                    <i class="bi bi-clipboard"></i>
-                                    <span>Chia</span>
-                                </span>
-                                <form action="/game/lobby/<?= $quiz->getId() ?>" method="post" class="flex-fill" style="margin:0;">
-                                    <button type="submit" class="btn btn-host d-flex justify-content-center align-items-center gap-2 w-100">
-                                        <i class="bi bi-play-fill"></i>
-                                        <span>Chơi</span>
+                                <div class="card-actions">
+                                    <a href="/quiz/edit/<?= $quiz->getId() ?>" class="btn action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Chỉnh sửa">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                    <button class="btn action-btn openModalDelete" data-action="delete" data-bs-toggle="tooltip" data-bs-placement="top" title="Xóa" data-quiz-id="<?= (int)$quiz->getId() ?>">
+                                        <i class="bi bi-trash-fill"></i>
                                     </button>
-                                </form>
+                                    <button class="btn action-btn" data-action="settings" data-bs-toggle="tooltip" data-bs-placement="top" title="Cài đặt">
+                                        <i class="bi bi-gear-fill"></i>
+                                    </button>
+                                </div>
+
+                                <div class="assign-host-group mt-0">
+                                    <span class="btn btn-assign flex-fill d-flex justify-content-center align-items-center gap-2" role="button" tabindex="0">
+                                        <i class="bi bi-clipboard"></i>
+                                        <span>Chia</span>
+                                    </span>
+                                    <form action="/game/lobby/<?= $quiz->getId() ?>" method="post" class="flex-fill" style="margin:0;">
+                                        <button type="submit" class="btn btn-host d-flex justify-content-center align-items-center gap-2 w-100">
+                                            <i class="bi bi-play-fill"></i>
+                                            <span>Chơi</span>
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+        <!-- Pagination Start -->
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center mt-3">
+                <?php if ($page > 1): ?>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=<?php echo $page - 1; ?>&per_page=<?php echo $per_page; ?>">Trước</a>
+                    </li>
+                <?php endif; ?>
+                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                    <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
+                        <a class="page-link" href="?page=<?php echo $i; ?>&per_page=<?php echo $per_page; ?>"><?php echo $i; ?></a>
+                    </li>
+                <?php endfor; ?>
+                <?php if ($page < $total_pages): ?>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=<?php echo $page + 1; ?>&per_page=<?php echo $per_page; ?>">Sau</a>
+                    </li>
+                <?php endif; ?>
+            </ul>
+        </nav>
     </main>
 
     <!-- Delete Confirm Modal -->
@@ -156,22 +189,36 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Handle search submission (Enter key or button click)
+        function handleSearch() {
+            const query = searchInput.value.trim();
+            if (query) {
+                // Redirect with GET to /search?q=query
+                window.location.href = `/user/my-quizzes?query=${encodeURIComponent(query)}`;
+            }
+        }
+
+        // Initialize elements after DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+
+            // Enter key on input
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        searchInput.focus();
+                        e.preventDefault(); // Prevent any default form submission if wrapped in form later
+                        handleSearch();
+                    }
+                });
+            }
+
+        });
+
         $(document).ready(function() {
             // Initialize Bootstrap tooltips
             const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
-            // Search functionality
-            $('.search-input').on('input', function() {
-                const searchTerm = $(this).val().toLowerCase();
-                $('.quiz-card').each(function() {
-                    const title = $(this).find('.card-title').text().toLowerCase();
-                    if (title.includes(searchTerm)) {
-                        $(this).closest('.col').show();
-                    } else {
-                        $(this).closest('.col').hide();
-                    }
-                });
-            });
 
             // Delete confirm flow
             let pendingQuizId = null;

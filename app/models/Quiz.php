@@ -4,14 +4,15 @@ class Quiz extends Model
     protected $table = 'quizzes';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'title','quiz_code','created_by','is_public','total_questions','rating','created_at','updated_at','author','image'
+        'title','quiz_code','created_by','is_public','total_questions','rating_sum', 'rating_count','created_at','updated_at','author','image'
     ];
     protected $casts = [
         'id' => 'int',
         'created_by' => 'int',
         'is_public' => 'int',
         'total_questions' => 'int',
-        'rating' => 'int',
+        'rating_sum' => 'int',
+        'rating_count' => 'int',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -19,11 +20,12 @@ class Quiz extends Model
     private $id;
     private $title;
     private $quiz_code;
-    private $created_by;
     private $is_public;
     private $total_questions;
-    private $rating;
+    private $rating_sum;
+    private $rating_count;
     private $created_at;
+    private $created_by;
     private $updated_at;
     private $author;
     private $image;
@@ -47,8 +49,10 @@ class Quiz extends Model
     public function setIsPublic($v): void { $this->is_public = (int)$v; }
     public function getTotalQuestions() { return (int)$this->total_questions; }
     public function setTotalQuestions($v): void { $this->total_questions = (int)$v; }
-    public function getRating() { return (int)$this->rating; }
-    public function setRating($v): void { $this->rating = (int)$v; }
+    public function getRatingSum() { return (int)$this->rating_sum; }
+    public function setRatingSum($v): void { $this->rating_sum = (int)$v; }
+    public function getRatingCount() { return (int)$this->rating_count; }
+    public function setRatingCount($v): void { $this->rating_count = (int)$v; }
     public function getCreatedAt() { return $this->created_at; }
     public function setCreatedAt($v): void { $this->created_at = $v; }
     public function getUpdatedAt() { return $this->updated_at; }
@@ -67,7 +71,8 @@ class Quiz extends Model
             'created_by' => $this->getCreatedBy(),
             'is_public' => $this->isPublic(),
             'total_questions' => $this->getTotalQuestions(),
-            'rating' => $this->getRating(),
+            'rating_count' => $this->getRatingCount(),
+            'rating_sum' => $this->getRatingSum(),
             'created_at' => $this->getCreatedAt(),
             'updated_at' => $this->getUpdatedAt(),
             'author' => $this->getAuthor(),

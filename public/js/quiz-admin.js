@@ -206,7 +206,7 @@ async function handleFormSubmit(e) {
                     }, 2000);
                 }
                 else {
-                    toastr.success(res.message);
+                    toastr.error(res.message);
                     setTimeout(() => {
                         location.reload();
                     }, 2000);

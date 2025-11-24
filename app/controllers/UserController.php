@@ -14,11 +14,22 @@ class UserController extends Controller
 
     public function myQuizzes()
     {
-        $auth = Auth::getInstance();
-        $userId = $auth->id();
+        $keyword = trim($_GET['query'] ?? '');
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $perPage = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 10;
+        $searchField = 'title'; 
+        $orderBy = ['created_at' => 'ASC']; 
+        $result = $this->quizService->filterAllWithPagination($searchField, $keyword, $page, $perPage, [], $orderBy);
 
-        $quizzes = $this->quizService->findAllByUserId($userId);
-        echo $this->renderPartial('user/my-quizzes', ['quizzes' => $quizzes]);
+        
+        echo $this->renderPartial('user/my-quizzes', [
+            'quizzes' => $result['data'],
+            'total' => $result['total'] ?? 0,
+            'keyword' => $keyword,
+            'page' => $result['page'],
+            'per_page' => $result['per_page'],
+            'total_pages' => $result['total_pages']
+        ]);
     }
 
     public function profile()
@@ -136,7 +147,7 @@ class UserController extends Controller
             $validated = $this->validate($_POST, [
                 'user_id' => 'required|interger|positive',
             ]);
-            if($validated) {
+            if ($validated) {
                 $user_id = (int)$validated['user_id'];
 
                 $user = $this->userService->delete($user_id);
@@ -148,8 +159,7 @@ class UserController extends Controller
                     echo json_encode(['success' => false, 'message' => 'Xóa user thất bại'], JSON_UNESCAPED_UNICODE);
                 }
             }
-        }
-        catch (Throwable $e) {
+        } catch (Throwable $e) {
             http_response_code(500);
             header('Content-Type: text/plain; charset=UTF-8');
             echo json_encode(['message' => $e->getMessage()], JSON_UNESCAPED_UNICODE);

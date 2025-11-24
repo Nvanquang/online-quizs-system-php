@@ -60,4 +60,8 @@ class UserRepository extends BaseRepository
         return (int)$this->model->count($conditions);
     }
 
+    public function filterAllWithPagination($searchField, $keyword, $page, $perPage, $extraConditions, $orderBy){
+        return $this->model->paginateWithSearch($searchField, $keyword, $page, $perPage, $extraConditions, $orderBy);
+    }
+
 }

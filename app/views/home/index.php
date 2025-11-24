@@ -90,104 +90,54 @@
             </div>
         </section>
 
-        <!-- Recently Published (Enhanced Carousel) -->
-        <section class="quiz-section py-5 bg-light">
-            <div class="container-fluid px-4">
-                <div class="d-flex align-items-center justify-content-between mb-3">
-                    <div class="d-flex align-items-center gap-2">
-                        <h3 class="section-title mb-0 me-2">Mới tạo</h3>
-                        <a href="#" class="see-all-link text-decoration-none">Xem tất cả (<?php echo count($quizzes); ?>)</a>
-                    </div>
-                    <div class="d-flex align-items-center gap-2">
-                        <button class="btn btn-outline-secondary btn-sm" id="quizPrevBtn" aria-label="Previous quizzes">‹</button>
-                        <button class="btn btn-outline-secondary btn-sm" id="quizPlayPauseBtn" aria-pressed="false" aria-label="Pause auto slide">Pause</button>
-                        <button class="btn btn-outline-secondary btn-sm" id="quizNextBtn" aria-label="Next quizzes">›</button>
-                    </div>
-                </div>
-
-                <div id="quizCarouselRegion" class="position-relative" role="region" aria-roledescription="carousel" aria-label="Recently published quizzes">
-                    <div id="quizCarouselViewport" class="overflow-hidden w-100">
-                        <div id="quizCarouselTrack" class="d-flex" style="will-change: transform; transition: transform 400ms ease;">
-                            <?php foreach ($quizzes as $quiz): ?>
-                                <div class="quiz-col px-2 flex-shrink-0" style="width:auto;">
-                                    <div class="quiz-card">
-                                        <div class="quiz-image-wrapper">
-                                            <?php
-                                            $hasImage = $quiz->getImage() != null && $quiz->getImage() && file_exists(__DIR__ . "/../../../public/uploads/quizzes/{$quiz->getImage()}");
-                                            $fallback = "background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);";
-                                            ?>
-                                            <div class="quiz-image" style="<?= $hasImage ? '' : $fallback ?>">
-                                                <?php if ($hasImage): ?>
-                                                    <img src="../../../public/uploads/quizzes/<?= htmlspecialchars($quiz->getImage()) ?>" alt="<?= htmlspecialchars($quiz->getTitle()) ?>" style="width:100%;height:100%;object-fit:cover;">
-                                                <?php endif; ?>
-                                                <form action="/game/lobby/<?= $quiz->getId() ?>" method="post" style="display:inline;">
-                                                    <button type="submit" class="play-now-btn">Chơi ngay</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                        <div class="quiz-info">
-                                            <h5 class="quiz-title"><?= $quiz->getTitle() ?></h5>
-                                            <div class="quiz-meta">
-                                                <span class="quiz-rating">
-                                                    <i class="fas fa-star"></i>
-                                                </span>
-                                                <span class="quiz-author">Bởi <?= $quiz->getAuthor() ?></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="quizEmptyAlert" class="alert alert-warning mt-3 d-none" role="alert">
-                    Không có quiz nào để hiển thị.
-                </div>
+        <!-- Recently Published Section -->
+<section class="quiz-section py-5 bg-light">
+    <div class="container-fluid px-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="d-flex align-items-center gap-2">
+                <h3 class="section-title mb-0 me-2">Mới tạo</h3>
+                <a href="#" class="see-all-link text-decoration-none">
+                    Xem tất cả (<?php echo count($recentlyCreatedQuizzes); ?>)
+                </a>
             </div>
-        </section>
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-outline-secondary btn-sm carousel-prev-btn" aria-label="Previous quizzes">‹</button>
+                <button class="btn btn-outline-secondary btn-sm carousel-next-btn" aria-label="Next quizzes">›</button>
+            </div>
+        </div>
 
-        <!-- Best Rating -->
-        <section class="quiz-section py-5">
-            <div class="container-fluid px-4">
-                <div class="d-flex align-items-center gap-2 mb-4">
-                    <h3 class="section-title mb-0" style="margin-right:10px;">Đánh giá cao</h3>
-                    <a href="#" class="see-all-link">Xem tất cả (23)</a>
-                </div>
-                <div class="row g-4">
-                    <?php
-                    $bestQuizzes = [
-                        ['title' => 'Famous ASEAN Tourist Attractions', 'rating' => 4.6, 'author' => 'HuiLam', 'image' => 'xe.jpeg'],
-                        ['title' => '🚗 More Car Slogans 🚗', 'rating' => 4.3, 'author' => 'CandyQueen', 'image' => 'xe.jpeg'],
-                        ['title' => 'Recognize a city by its monument', 'rating' => 4.3, 'author' => 'Lord_Buba', 'image' => 'xe.jpeg'],
-                        ['title' => 'Recognize a car by its interior', 'rating' => 4.3, 'author' => 'Lord_Buba', 'image' => 'xe.jpeg'],
-                        ['title' => 'Movie Emoji Trivia', 'rating' => 4.2, 'author' => 'yaroslav', 'image' => 'xe.jpeg'],
-                        ['title' => 'Guess the car by its front view', 'rating' => 4.2, 'author' => 'Lord_Buba', 'image' => 'xe.jpeg']
-                    ];
-
-                    foreach ($bestQuizzes as $quiz): ?>
-                        <div class="col-lg-2 col-md-4 col-sm-6">
+        <div class="quiz-carousel-container" role="region" aria-roledescription="carousel" aria-label="Recently created quizzes">
+            <div class="quiz-carousel-viewport overflow-hidden w-100">
+                <div class="quiz-carousel-track d-flex" style="will-change: transform; transition: transform 400ms ease;">
+                    <?php foreach ($recentlyCreatedQuizzes as $quiz): ?>
+                        <div class="quiz-col px-2 flex-shrink-0">
                             <div class="quiz-card">
                                 <div class="quiz-image-wrapper">
                                     <?php
-                                    $hasImage = isset($quiz['image']) && $quiz['image'] && file_exists(__DIR__ . "/../../../public/uploads/quizzes/{$quiz['image']}");
-                                    $fallback = "background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);";
+                                    $hasImage = $quiz->getImage() != null && $quiz->getImage() && file_exists(__DIR__ . "/../../../public/uploads/quizzes/{$quiz->getImage()}");
+                                    $fallback = "background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);";
                                     ?>
                                     <div class="quiz-image" style="<?= $hasImage ? '' : $fallback ?>">
                                         <?php if ($hasImage): ?>
-                                            <img src="../../../public/uploads/quizzes/<?= htmlspecialchars($quiz['image']) ?>" alt="<?= htmlspecialchars($quiz['title']) ?>" style="width:100%;height:100%;object-fit:cover;">
+                                            <img src="../../../public/uploads/quizzes/<?= htmlspecialchars($quiz->getImage()) ?>" 
+                                                 alt="<?= htmlspecialchars($quiz->getTitle()) ?>" 
+                                                 style="width:100%;height:100%;object-fit:cover;">
                                         <?php endif; ?>
-                                        <a href="#" class="play-now-btn">Chơi ngay</a>
-                                        <?php if (isset($quiz['ai']) && $quiz['ai']): ?>
-                                            <span class="ai-badge">AI GENERATED</span>
-                                        <?php endif; ?>
+                                        <form action="/game/lobby/<?= $quiz->getId() ?>" method="post" style="display:inline;">
+                                            <button type="submit" class="play-now-btn">Chơi ngay</button>
+                                        </form>
                                     </div>
                                 </div>
                                 <div class="quiz-info">
-                                    <h5 class="quiz-title"><?= $quiz['title'] ?></h5>
+                                    <h5 class="quiz-title"><?= htmlspecialchars($quiz->getTitle()) ?></h5>
                                     <div class="quiz-meta">
-                                        <span class="quiz-rating"><?= $quiz['rating'] ?> <i class="fas fa-star"></i></span>
-                                        <span class="quiz-author">Bởi <?= $quiz['author'] ?></span>
+                                        <span class="quiz-rating">
+                                            <?php if($quiz->getRatingCount() > 0): ?>
+                                                <?= round($quiz->getRatingSum() / $quiz->getRatingCount(), 2) ?>
+                                            <?php endif; ?>
+                                            <i class="fas fa-star"></i>
+                                        </span>
+                                        <span class="quiz-author">Bởi <?= htmlspecialchars($quiz->getAuthor()) ?></span>
                                     </div>
                                 </div>
                             </div>
@@ -195,7 +145,76 @@
                     <?php endforeach; ?>
                 </div>
             </div>
-        </section>
+        </div>
+
+        <div class="quiz-empty-alert alert alert-warning mt-3 d-none" role="alert">
+            Không có quiz nào để hiển thị.
+        </div>
+    </div>
+</section>
+
+<!-- Best Rating Section -->
+<section class="quiz-section py-5 bg-light">
+    <div class="container-fluid px-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="d-flex align-items-center gap-2">
+                <h3 class="section-title mb-0 me-2">Đánh giá cao nhất</h3>
+                <a href="#" class="see-all-link text-decoration-none">
+                    Xem tất cả (<?php echo count($highestRatedQuizzes); ?>)
+                </a>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-outline-secondary btn-sm carousel-prev-btn" aria-label="Previous quizzes">‹</button>
+                <button class="btn btn-outline-secondary btn-sm carousel-next-btn" aria-label="Next quizzes">›</button>
+            </div>
+        </div>
+
+        <div class="quiz-carousel-container" role="region" aria-roledescription="carousel" aria-label="Highest rated quizzes">
+            <div class="quiz-carousel-viewport overflow-hidden w-100">
+                <div class="quiz-carousel-track d-flex" style="will-change: transform; transition: transform 400ms ease;">
+                    <?php foreach ($highestRatedQuizzes as $quiz): ?>
+                        <div class="quiz-col px-2 flex-shrink-0">
+                            <div class="quiz-card">
+                                <div class="quiz-image-wrapper">
+                                    <?php
+                                    $hasImage = $quiz->getImage() != null && $quiz->getImage() && file_exists(__DIR__ . "/../../../public/uploads/quizzes/{$quiz->getImage()}");
+                                    $fallback = "background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);";
+                                    ?>
+                                    <div class="quiz-image" style="<?= $hasImage ? '' : $fallback ?>">
+                                        <?php if ($hasImage): ?>
+                                            <img src="../../../public/uploads/quizzes/<?= htmlspecialchars($quiz->getImage()) ?>" 
+                                                 alt="<?= htmlspecialchars($quiz->getTitle()) ?>" 
+                                                 style="width:100%;height:100%;object-fit:cover;">
+                                        <?php endif; ?>
+                                        <form action="/game/lobby/<?= $quiz->getId() ?>" method="post" style="display:inline;">
+                                            <button type="submit" class="play-now-btn">Chơi ngay</button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="quiz-info">
+                                    <h5 class="quiz-title"><?= htmlspecialchars($quiz->getTitle()) ?></h5>
+                                    <div class="quiz-meta">
+                                        <span class="quiz-rating">
+                                            <?php if($quiz->getRatingCount() > 0): ?>
+                                                <?= round($quiz->getRatingSum() / $quiz->getRatingCount(), 2) ?>
+                                            <?php endif; ?>
+                                            <i class="fas fa-star"></i>
+                                        </span>
+                                        <span class="quiz-author">Bởi <?= htmlspecialchars($quiz->getAuthor()) ?></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+
+        <div class="quiz-empty-alert alert alert-warning mt-3 d-none" role="alert">
+            Không có quiz nào để hiển thị.
+        </div>
+    </div>
+</section>
 
         <!-- Popular Right Now -->
         <section class="quiz-section py-5 bg-light">
@@ -247,58 +266,6 @@
             </div>
         </section>
 
-        <!-- Trivia Section -->
-        <section class="quiz-section py-5">
-            <div class="container-fluid px-4">
-                <div class="d-flex align-items-center gap-2 mb-4">
-                    <h3 class="section-title mb-0" style="margin-right:10px;">Thú vị</h3>
-                    <a href="#" class="see-all-link">Xem tất cả (67)</a>
-                </div>
-                <div class="row g-4">
-                    <?php
-                    $triviaQuizzes = [
-                        ['title' => 'Fun Quiz', 'rating' => 3.9, 'author' => 'BobbyBob', 'image' => 'xe.jpeg'],
-                        ['title' => 'FAST: TOP 100 Crypto tokens', 'rating' => 3.9, 'author' => 'Taidzokai', 'hard' => true, 'image' => 'xe.jpeg'],
-                        ['title' => 'FAST: Even MORE Crypto tokens', 'rating' => 1.0, 'author' => 'Taidzokai', 'hard' => true, 'image' => 'xe.jpeg'],
-                        ['title' => 'Fast Food Logos', 'rating' => 4.0, 'author' => 'brittanyk', 'image' => 'xe.jpeg'],
-                        ['title' => 'Guess the app logo!', 'rating' => 4.0, 'author' => 'Nias', 'image' => 'xe.jpeg'],
-                        ['title' => 'Guess anime part 2(medium)', 'rating' => 4.1, 'author' => 'scypthe', 'image' => 'xe.jpeg']
-                    ];
-
-                    foreach ($triviaQuizzes as $quiz): ?>
-                        <div class="col-lg-2 col-md-4 col-sm-6">
-                            <div class="quiz-card">
-                                <div class="quiz-image-wrapper">
-                                    <?php
-                                    $hasImage = isset($quiz['image']) && $quiz['image'] && file_exists(__DIR__ . "/../../../public/uploads/quizzes/{$quiz['image']}");
-                                    $fallback = "background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);";
-                                    ?>
-                                    <div class="quiz-image" style="<?= $hasImage ? '' : $fallback ?>">
-                                        <?php if ($hasImage): ?>
-                                            <img src="../../../public/uploads/quizzes/<?= htmlspecialchars($quiz['image']) ?>" alt="<?= htmlspecialchars($quiz['title']) ?>" style="width:100%;height:100%;object-fit:cover;">
-                                        <?php endif; ?>
-                                        <a href="#" class="play-now-btn">Chơi ngay</a>
-                                        <?php if (isset($quiz['ai']) && $quiz['ai']): ?>
-                                            <span class="ai-badge">AI GENERATED</span>
-                                        <?php endif; ?>
-                                        <?php if (isset($quiz['hard']) && $quiz['hard']): ?>
-                                            <span class="hard-badge">HARD</span>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
-                                <div class="quiz-info">
-                                    <h5 class="quiz-title"><?= $quiz['title'] ?></h5>
-                                    <div class="quiz-meta">
-                                        <span class="quiz-rating"><?= $quiz['rating'] ?> <i class="fas fa-star"></i></span>
-                                        <span class="quiz-author">Bởi <?= $quiz['author'] ?></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-        </section>
     </main>
     <?php include __DIR__ . '/../layouts/footer.php'; ?>
 

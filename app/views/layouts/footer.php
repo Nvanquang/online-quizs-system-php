@@ -7,7 +7,7 @@
                 <div class="discord-icon">
                     <i class="fab fa-discord"></i>
                 </div>
-                <button class="btn btn-discord">JOIN OUR DISCORD</button>
+                <button class="btn btn-discord">THAM GIA QUIZZ VỚI CHÚNG TÔI</button>
             </div>
         </div>
     </div>
@@ -18,11 +18,11 @@
             <div class="footer-links">
                 <span>© Old Apes</span>
                 <span class="separator">•</span>
-                <a href="#">Contact</a>
+                <a href="#">Liên hệ</a>
                 <span class="separator">•</span>
-                <a href="#">Terms & Privacy</a>
+                <a href="#">Điều khoản & Quyền riêng tư</a>
                 <span class="separator">•</span>
-                <a href="#">Status</a>
+                <a href="#">Trạng thái</a>
             </div>
         </div>
     </div>

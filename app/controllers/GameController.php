@@ -149,15 +149,27 @@ class GameController extends Controller
                 'correct_answers' => 'required|integer',
                 'total_score' => 'required|integer',
                 'id' => 'required|integer',
+                'rating' => 'nullable|integer|enum:1,2,3,4,5',
             ]);
 
             if ($validated) {
                 $totalQuestions = (int)$validated['total_questions'];
-                $correctAnswers = (int)$validated['corect_answers'];
+                $correctAnswers = (int)$validated['correct_answers'];
                 $totalScore = (int)$validated['total_score'];
                 $sessionPlayerId = (int)$validated['id'];
+                $rating = isset($validated['rating']) ? (int)$validated['rating'] : null;
 
                 $gameSession = $this->gameSessionService->findBySessionCode($sessionCode);
+
+                // update quiz rating
+                $this->quizService->update($gameSession->getQuizId(), [
+                    'title' => null,
+                    'image' => null,
+                    'total_questions' => null,
+                    'is_public' => null,
+                    'rating' => $rating,
+                    'updated_at' => null,
+                ]);
 
                 // update game session
                 $this->gameSessionService->update($sessionCode, [
