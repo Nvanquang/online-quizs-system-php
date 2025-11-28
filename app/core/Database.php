@@ -81,26 +81,4 @@ class Database
     {
         return $this->connection->lastInsertId();
     }
-
-    public function beginTransaction()
-    {
-        return $this->connection->beginTransaction();
-    }
-
-    public function commit()
-    {
-        return $this->connection->commit();
-    }
-
-    public function rollback()
-    {
-        return $this->connection->rollback();
-    }
-
-    private function __clone() {}
-
-    public function __wakeup()
-    {
-        throw new Exception("Cannot unserialize singleton");
-    }
 }

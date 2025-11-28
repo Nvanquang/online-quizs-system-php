@@ -24,18 +24,6 @@ class AdminController extends Controller
 
     public function users()
     {
-        // $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-        // $perPage = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 10;
-
-        // $result = $this->userService->findAllWithPagination($page, $perPage);
-
-        // echo $this->renderPartial('admin/users', [
-        //     'users' => $result['data'],
-        //     'total' => $result['total'],
-        //     'page' => $result['page'],
-        //     'per_page' => $result['per_page'],
-        //     'total_pages' => $result['total_pages']
-        // ]);
         $keyword = trim($_GET['query'] ?? '');
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $perPage = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 10;

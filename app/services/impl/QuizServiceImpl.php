@@ -83,7 +83,7 @@ class QuizServiceImpl implements QuizService
         if(!$this->quizRepository->exists(['id' => $id])){
             throw new Exception("Trò chơi không tồn tại!");
         }
-        if(!Auth::getInstance()->isAdmin() || $_SESSION['user_id'] !== $quiz->getCreatedBy()){
+        if(!Auth::getInstance()->isAdmin() || $_COOKIE['user_id'] !== $quiz->getCreatedBy()){
             throw new Exception("Bạn không có quyền xóa!");
         }
         return $this->quizRepository->delete($id);

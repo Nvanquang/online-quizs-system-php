@@ -28,8 +28,8 @@ class AuthMiddleware
             exit();
         }
 
-        // Kiểm tra session timeout (1 day)
-        if ($auth->isSessionExpired(86400)) {
+        // Kiểm tra session timeout (1 hour)
+        if ($auth->isSessionExpired(3600)) {
             $auth->logout();
             $auth->setRedirectAfterLogin($_SERVER['REQUEST_URI']);
             header('Location: /auth/login?expired=1');

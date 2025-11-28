@@ -486,28 +486,4 @@ class Model
         $model->fromArray($row);
         return $model;
     }
-
-    /**
-     * Begin transaction
-     */
-    public function beginTransaction()
-    {
-        return $this->db->beginTransaction();
-    }
-
-    /**
-     * Commit transaction
-     */
-    public function commit()
-    {
-        return $this->db->commit();
-    }
-
-    /**
-     * Rollback transaction
-     */
-    public function rollback()
-    {
-        return $this->db->rollback();
-    }
 }
